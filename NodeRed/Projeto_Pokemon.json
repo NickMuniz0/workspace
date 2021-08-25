@@ -1,0 +1,2225 @@
+[
+    {
+        "id": "1385cccb4ae982ef",
+        "type": "tab",
+        "label": "Projeto",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "50ce1cccedcfb818",
+        "type": "tab",
+        "label": "Desafio",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "5f298411f647e884",
+        "type": "tab",
+        "label": "Exemple Save",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "c103bada.2497",
+        "type": "subflow",
+        "name": "Iterator Leveled",
+        "info": "",
+        "category": "function",
+        "in": [
+            {
+                "x": 200,
+                "y": 220,
+                "wires": [
+                    {
+                        "id": "b04542d4.8b221"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 454,
+                "y": 174,
+                "wires": [
+                    {
+                        "id": "b04542d4.8b221",
+                        "port": 0
+                    }
+                ]
+            },
+            {
+                "x": 455,
+                "y": 259,
+                "wires": [
+                    {
+                        "id": "b04542d4.8b221",
+                        "port": 1
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "iterator_level",
+                "type": "num",
+                "value": "0"
+            }
+        ],
+        "icon": "font-awesome/fa-retweet"
+    },
+    {
+        "id": "4427621b.554264",
+        "type": "ui_group",
+        "name": "Crew",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "0d551559501e7dc0",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#1bbfff",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#0094ce",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "3c5da821.6d5638",
+        "type": "ui_group",
+        "name": "Two dimension Array",
+        "tab": "f9ac9e91.20e588",
+        "order": 2,
+        "disp": true,
+        "width": "15",
+        "collapse": true
+    },
+    {
+        "id": "f9ac9e91.20e588",
+        "type": "ui_tab",
+        "name": "Table Examples",
+        "icon": "dashboard",
+        "order": 1
+    },
+    {
+        "id": "2c9ece7d3815dc3c",
+        "type": "ui_spacer",
+        "z": "1385cccb4ae982ef",
+        "name": "spacer",
+        "group": "3c5da821.6d5638",
+        "order": 1,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "abb08971971b1353",
+        "type": "oracle-server",
+        "connectionname": "XE",
+        "tnsname": "",
+        "connectiontype": "Classic",
+        "instantclientpath": "Z:\\OracleEXED\\dbhomeXE\\network\\admin",
+        "host": "localhost",
+        "port": "1521",
+        "reconnect": true,
+        "reconnecttimeout": "5000",
+        "db": "XE"
+    },
+    {
+        "id": "b04542d4.8b221",
+        "type": "function",
+        "z": "c103bada.2497",
+        "name": "Iterator",
+        "func": " const iteratorLevel = env.get(\"iterator_level\");\n const iteratorName = `iState${iteratorLevel > 0 ? iteratorLevel : \"\"}`;\n let currentMsg = null;\n let outMessage = null;\n let iState = msg[iteratorName];\n if (!iState) {\n // we received an initial message\n // if the message is not an array, make it one\n if (Object.prototype.toString.call(msg.payload) !== \"[object Array]\") {\n msg.payload = [msg.payload];\n }\n iState = {};\n iState.index = 0;\n iState.inArray = msg.payload;\n iState.outArray = [];\n msg[iteratorName] = iState;\n } else {\n // save results from the last iteration\n iState.outArray.push(msg.payload);\n }\n //If there are still objects left to iterate goto the next one in the original array\n if (iState.index < iState.inArray.length) {\n currentMsg = msg;\n msg.payload = iState.inArray[iState.index];\n } else {\n currentMsg = null;\n outMessage = msg;\n msg.payload = iState.outArray;\n delete msg[iteratorName];\n }\n iState.index++;\n return [currentMsg, outMessage];",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 340,
+        "y": 220,
+        "wires": [
+            [],
+            []
+        ],
+        "icon": "font-awesome/fa-retweet"
+    },
+    {
+        "id": "cf4cd4a98ed1f5a9",
+        "type": "comment",
+        "z": "1385cccb4ae982ef",
+        "name": "Projeto Pokemon",
+        "info": "",
+        "x": 180,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "cb8c5d9058cde129",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "SET VARIAVEIS AND URL",
+        "func": "let pokemonApiURL = \"https://pokeapi.co/api/v2\"\nflow.set(\"POKEMON_API_URL\",pokemonApiURL)\nlet pokemonApi = 'https://pokeapi.co/api/v2/pokemon/'\nflow.set(\"POKEMON_API\",pokemonApi)\nlet pokemons =[]\nflow.set(\"POKEMONS\",pokemons)\nlet habitat =[]\nflow.set(\"POKEMONS\",habitat)\nlet TotalDePokemon =''\nflow.set(\"POKEMONS_TOTAL\",TotalDePokemon)\nlet LimiteTotalDePokemons = 6\nflow.set(\"LimiteTotalDePokemons\",LimiteTotalDePokemons)\nlet varPokemon= 'pokemon'\nlet varHabitat=\"pokemon-species\"\nflow.set(\"varPokemon\",varPokemon)\nflow.set(\"varHabitat\",varHabitat)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c629e3e1a897ef21",
+        "type": "inject",
+        "z": "1385cccb4ae982ef",
+        "name": "Get Pokemons",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 140,
+        "wires": [
+            [
+                "cb8c5d9058cde129"
+            ]
+        ]
+    },
+    {
+        "id": "3d201d07e23e9e9f",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Find Pokemons e Habitat",
+        "func": "let pokemons = flow.get(\"POKEMON_API\")\nmsg.url = pokemons\nmsg.KEY =1\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 460,
+        "wires": [
+            [
+                "84cc84dbb5353154"
+            ]
+        ]
+    },
+    {
+        "id": "84cc84dbb5353154",
+        "type": "http request",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 810,
+        "y": 460,
+        "wires": [
+            [
+                "1144013698011e1b"
+            ]
+        ]
+    },
+    {
+        "id": "1144013698011e1b",
+        "type": "json",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 970,
+        "y": 460,
+        "wires": [
+            [
+                "97a0afdb852f450f"
+            ]
+        ]
+    },
+    {
+        "id": "97a0afdb852f450f",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Limit Pokemons and Get URL",
+        "func": "flow.set(\"POKEMONS\",[])\nlet lista =[]\n\nif(msg.KEY==1){\n    msg.payload.results.forEach((ob,indice)=> {\n            if (!lista.includes(ob.url)){\n               lista.push(ob.url) \n            }\n    });\n    msg.payload =lista\n}\nif(msg.KEY==2 && msg.statusOperation==10 && !lista.includes(msg.url)) {\n    lista.push(msg.url)\n    msg.payload =lista\n}\n\nflow.set(\"POKEMONS_TOTAL\",msg.payload.length)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 460,
+        "wires": [
+            [
+                "ef09197a889cacea"
+            ]
+        ]
+    },
+    {
+        "id": "7078b41763683fc9",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Pokemon",
+        "func": "let ob =  msg.payload\nmsg.pokemon = {'id':ob.id,\"name\":ob.name,\n                \"weight\":ob.weight,statusOperation:11,\n                \"imagem\":ob.sprites.front_default,\n                \"url\":ob.forms[0].url\n} \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1120,
+        "y": 580,
+        "wires": [
+            [
+                "2e45acd9507044ed"
+            ]
+        ]
+    },
+    {
+        "id": "987224d0013ef4e0",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Entrega as URLs Habitat",
+        "func": "msg.url =msg.payload\nlet pokemon = flow.get(\"varPokemon\")\nlet habitat = flow.get(\"varHabitat\")\nmsg.url = msg.responseUrl.replace(pokemon,habitat)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 660,
+        "wires": [
+            [
+                "ee2602acb270ca7a"
+            ]
+        ]
+    },
+    {
+        "id": "ee2602acb270ca7a",
+        "type": "http request",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 810,
+        "y": 660,
+        "wires": [
+            [
+                "46b41372561767b7"
+            ]
+        ]
+    },
+    {
+        "id": "46b41372561767b7",
+        "type": "json",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 970,
+        "y": 660,
+        "wires": [
+            [
+                "575a181cb79b74fb"
+            ]
+        ]
+    },
+    {
+        "id": "575a181cb79b74fb",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Habitat",
+        "func": "let ob =  msg.payload\nlet Poko = flow.get(\"POKEMONSESCOLHIDO\")\nlet limite = flow.get(\"LimiteTotalDePokemons\")\nlet Pokemon =  flow.get('POKEMONS')\n\n        //Sem Habitat NULL\n        if(msg.payload.habitat ===null)\n            {\n                msg.payload = Poko;return msg;\n                \n            }else{\n                let HabitatExiste =Poko.some(objeto=>{ return objeto.habitat ==ob.habitat.name})  \n\n                //Primeiro Cadastro\n                if(Poko.length==0 && HabitatExiste==false )\n                    {\n                        let objeto ={...msg.pokemon,\"habitat\":ob.habitat.name}\n                        Poko.push(objeto)\n                        msg.payload = Poko\n                        return msg;\n                    }        \n            \n                \n                \n                if(Poko.length<limite )\n                    {\n                        // Buscar somente Pokemons de Habitats Iguais\n                        // if(HabitatExiste==false)  {msg.payload = Poko;return msg;}\n                        \n                        // if(HabitatExiste==false){\n                        let objeto ={...msg.pokemon,\"habitat\":ob.habitat.name}\n                        Poko.push(objeto)\n                        msg.payload = Poko\n                        return msg;\n                        // }\n                       \n                    \n                    }\n\n                \n                \n                \n                \n                \n                \n                \n            }\n\n       \n\n\n\n\n\n\n\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1120,
+        "y": 660,
+        "wires": [
+            [
+                "958fe4cbf41b03aa"
+            ]
+        ]
+    },
+    {
+        "id": "ef09197a889cacea",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [],
+        "x": 1415,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "42afd523a6c49e88",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "2653662f67768ebc"
+        ],
+        "x": 1415,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "020970e205b1f8ef",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [],
+        "x": 115,
+        "y": 460,
+        "wires": [
+            [
+                "3d201d07e23e9e9f"
+            ]
+        ]
+    },
+    {
+        "id": "2e45acd9507044ed",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "33bfe7d86722a26b"
+        ],
+        "x": 1415,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "33bfe7d86722a26b",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "2e45acd9507044ed"
+        ],
+        "x": 275,
+        "y": 660,
+        "wires": [
+            [
+                "987224d0013ef4e0"
+            ]
+        ]
+    },
+    {
+        "id": "56e158625f66b62f",
+        "type": "http in",
+        "z": "1385cccb4ae982ef",
+        "d": true,
+        "name": "",
+        "url": "/pokemon/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 380,
+        "wires": [
+            [
+                "25a72a89e8508b6a"
+            ]
+        ]
+    },
+    {
+        "id": "a792f2c047fbbf9f",
+        "type": "http request",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 810,
+        "y": 380,
+        "wires": [
+            [
+                "db6339732377f9c8"
+            ]
+        ]
+    },
+    {
+        "id": "25a72a89e8508b6a",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Status - Limite",
+        "func": "msg.url = \"https://pokeapi.co/api/v2\"+msg.req.url\nlet LimiteTotalDePokemons = 1\nflow.set(\"LimiteTotalDePokemons\",LimiteTotalDePokemons)\nmsg.statusOperation=0\nlet varPokemon= 'pokemon'\nlet varHabitat=\"pokemon-species\"\nflow.set(\"varPokemon\",varPokemon)\nflow.set(\"varHabitat\",varHabitat)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 380,
+        "wires": [
+            [
+                "a792f2c047fbbf9f"
+            ]
+        ]
+    },
+    {
+        "id": "b2f1779ecf0c605f",
+        "type": "inject",
+        "z": "1385cccb4ae982ef",
+        "name": "Manualmente Alguns Pokemons",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 220,
+        "wires": [
+            [
+                "b82153630efd8156"
+            ]
+        ]
+    },
+    {
+        "id": "9991a64c54424d57",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "883e0bf7e0d16dbe"
+        ],
+        "x": 975,
+        "y": 420,
+        "wires": [
+            [
+                "97a0afdb852f450f"
+            ]
+        ]
+    },
+    {
+        "id": "883e0bf7e0d16dbe",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "9991a64c54424d57"
+        ],
+        "x": 1415,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "db6339732377f9c8",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Status",
+        "func": "if(msg.statusCode==404){\n    msg.statusOperation =19\n    node.warn(msg.statusOperation)\n    return;\n}\nmsg.statusOperation =10\nmsg.KEY =2\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1110,
+        "y": 380,
+        "wires": [
+            [
+                "883e0bf7e0d16dbe"
+            ]
+        ]
+    },
+    {
+        "id": "556732e2723b613a",
+        "type": "inject",
+        "z": "1385cccb4ae982ef",
+        "d": true,
+        "name": "Manualmente 1 pokemon",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "url",
+                "v": "https://pokeapi.co/api/v2/pokemon/14",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 230,
+        "y": 300,
+        "wires": [
+            [
+                "b7b71ebfd4d440bc"
+            ]
+        ]
+    },
+    {
+        "id": "b82153630efd8156",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "SET VARIAVEIS AND URL",
+        "func": "let pokemonApiURL = \"https://pokeapi.co/api/v2\"\nflow.set(\"POKEMON_API_URL\",pokemonApiURL)\nlet pokemonApi = 'https://pokeapi.co/api/v2/pokemon/'\nflow.set(\"POKEMON_API\",pokemonApi)\nlet pokemons =[]\nflow.set(\"POKEMONS\",pokemons)\nlet pokemonsEscolhido =[]\nflow.set(\"POKEMONSESCOLHIDO\",pokemonsEscolhido)\nlet pokemonsEspecies =[]\nflow.set(\"POKEMONSESPECIES\",pokemonsEspecies)\nlet habitat =[]\nflow.set(\"POKEMONS\",habitat)\n\nlet pokemons_habitat =[]\nflow.set(\"POKEMONS_HABITAT\",pokemons_habitat)\n\nlet TotalDePokemon =''\nflow.set(\"POKEMONS_TOTAL\",TotalDePokemon)\nlet LimiteTotalDePokemons = 2\nflow.set(\"LimiteTotalDePokemons\",LimiteTotalDePokemons)\nlet varPokemon= 'pokemon'\nlet varHabitat=\"pokemon-species\"\nflow.set(\"varPokemon\",varPokemon)\nflow.set(\"varHabitat\",varHabitat)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 220,
+        "wires": [
+            [
+                "42afd523a6c49e88"
+            ]
+        ]
+    },
+    {
+        "id": "0f703e32c927a1ca",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "5e29af68fa5413ed"
+        ],
+        "x": 595,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "5e29af68fa5413ed",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "0f703e32c927a1ca"
+        ],
+        "x": 655,
+        "y": 300,
+        "wires": [
+            [
+                "a792f2c047fbbf9f"
+            ]
+        ]
+    },
+    {
+        "id": "fdb57a3c84b08b93",
+        "type": "csv",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "name,id,habitat,weight,statusOperation,pokemon_species",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 310,
+        "y": 1180,
+        "wires": [
+            [
+                "8b3abcd922d3f96e"
+            ]
+        ]
+    },
+    {
+        "id": "8b3abcd922d3f96e",
+        "type": "file",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "filename": "Z:\\NodeRed\\Teste.csv",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 560,
+        "y": 1180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a2079ac519254285",
+        "type": "excel",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "file": "",
+        "x": 830,
+        "y": 1180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6a08addf96dbe931",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "71a87bf8faf0e145"
+        ],
+        "x": 1415,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "71a87bf8faf0e145",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "6a08addf96dbe931",
+            "891b970d8a5b5389"
+        ],
+        "x": 115,
+        "y": 1180,
+        "wires": [
+            [
+                "fdb57a3c84b08b93"
+            ]
+        ]
+    },
+    {
+        "id": "e8068317955334aa",
+        "type": "comment",
+        "z": "1385cccb4ae982ef",
+        "name": "SAVE CSV",
+        "info": "",
+        "x": 160,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "ae8b19b4cdb63a43",
+        "type": "comment",
+        "z": "1385cccb4ae982ef",
+        "name": "Deploy Pokemon Species",
+        "info": "",
+        "x": 210,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "30ace45ed2655eb3",
+        "type": "comment",
+        "z": "1385cccb4ae982ef",
+        "name": "Send To Email",
+        "info": "",
+        "x": 170,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "604f7edd445f01ed",
+        "type": "e-mail",
+        "z": "1385cccb4ae982ef",
+        "server": "smtp.outlook.com",
+        "port": "587",
+        "secure": false,
+        "tls": true,
+        "name": "",
+        "dname": "Pokemons",
+        "x": 330,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "b7b71ebfd4d440bc",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Set Limite",
+        "func": "let LimiteTotalDePokemons = 1\nflow.set(\"LimiteTotalDePokemons\",LimiteTotalDePokemons)\nlet varPokemon= 'pokemon'\nlet varHabitat=\"pokemon-species\"\nflow.set(\"varPokemon\",varPokemon)\nflow.set(\"varHabitat\",varHabitat)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 300,
+        "wires": [
+            [
+                "0f703e32c927a1ca"
+            ]
+        ]
+    },
+    {
+        "id": "6e1b3622870b2fba",
+        "type": "ui_template",
+        "z": "1385cccb4ae982ef",
+        "group": "3c5da821.6d5638",
+        "name": "Format Table",
+        "order": 2,
+        "width": "15",
+        "height": "16",
+        "format": "<table id=\"table\" border=\"1\">\n <tr>\n <th>id</th> \n <th>name</th>\n <th>habitat</th>\n <th>imagem</th>\n </tr>\n <tbody>\n <tr ng-repeat=\"row in msg.payload\">\n <td >{{row.id}}</td>\n <td >{{row.name}}</td>\n <td >{{row.habitat}}</td>\n <td ><img src={{row.imagem}} /></td>\n </tr>\n </tbody>\n</table>\n\n",
+        "storeOutMessages": false,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "x": 330,
+        "y": 1020,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "84768a77ee508da3",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "fd045097740eae2a",
+            "9dc2d3ac8bbbb54d"
+        ],
+        "x": 1415,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "fd045097740eae2a",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "84768a77ee508da3"
+        ],
+        "x": 115,
+        "y": 1280,
+        "wires": [
+            [
+                "604f7edd445f01ed"
+            ]
+        ]
+    },
+    {
+        "id": "4b4077c34a7f1730",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [],
+        "x": 115,
+        "y": 1020,
+        "wires": [
+            [
+                "6e1b3622870b2fba"
+            ]
+        ]
+    },
+    {
+        "id": "2653662f67768ebc",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "42afd523a6c49e88"
+        ],
+        "x": 115,
+        "y": 580,
+        "wires": [
+            [
+                "5beee67d6e7c7c2c"
+            ]
+        ]
+    },
+    {
+        "id": "30357a3f5c8f20c1",
+        "type": "subflow:c103bada.2497",
+        "z": "1385cccb4ae982ef",
+        "name": "LVL 1",
+        "env": [
+            {
+                "name": "iterator_level",
+                "value": "1",
+                "type": "num"
+            }
+        ],
+        "x": 470,
+        "y": 580,
+        "wires": [
+            [
+                "002d115a492a98b1"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "958fe4cbf41b03aa",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "19fdf976379c0164",
+            "27ec9c685ccc8ff6"
+        ],
+        "x": 1415,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "19fdf976379c0164",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "958fe4cbf41b03aa",
+            "6f1a8738e441cfb9"
+        ],
+        "x": 35,
+        "y": 700,
+        "wires": [
+            [
+                "5beee67d6e7c7c2c"
+            ]
+        ]
+    },
+    {
+        "id": "5beee67d6e7c7c2c",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "func": "let pokemons = flow.get(\"POKEMON_API\")\nlet max=893\nlet min = 1\nlet numberRange= Math.floor(Math.random() * (max - min ) + min);\nlet Pokemon =  flow.get('POKEMONS')\nmsg.KEY =1\nlet Poko = flow.get(\"POKEMONSESCOLHIDO\")\nlet limite = flow.get(\"LimiteTotalDePokemons\")\n\nmsg.url = pokemons+numberRange\nPokemon.push(msg.url) \nmsg.payload = Pokemon\nreturn msg;\n\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 580,
+        "wires": [
+            [
+                "30357a3f5c8f20c1"
+            ]
+        ]
+    },
+    {
+        "id": "002d115a492a98b1",
+        "type": "http request",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 810,
+        "y": 580,
+        "wires": [
+            [
+                "1cde8e6cfce9ca32"
+            ]
+        ]
+    },
+    {
+        "id": "1cde8e6cfce9ca32",
+        "type": "json",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 970,
+        "y": 580,
+        "wires": [
+            [
+                "7078b41763683fc9"
+            ]
+        ]
+    },
+    {
+        "id": "6eac098dac724c28",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Habitat + Pokemons",
+        "func": "let Poko = flow.get(\"POKEMONSESCOLHIDO\")\nlet limite = flow.get(\"LimiteTotalDePokemons\")\nif(Poko.length == limite){\n    msg={result:true,pokemon:Poko}\nreturn msg;\n\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 780,
+        "wires": [
+            [
+                "d83a6c71ae88c6e3",
+                "e878b4f58e3cc47d"
+            ]
+        ]
+    },
+    {
+        "id": "d83a6c71ae88c6e3",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "67e549e0f11d4c9e"
+        ],
+        "x": 1415,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "27ec9c685ccc8ff6",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "958fe4cbf41b03aa"
+        ],
+        "x": 115,
+        "y": 780,
+        "wires": [
+            [
+                "6eac098dac724c28"
+            ]
+        ]
+    },
+    {
+        "id": "0908e41afcc7d4e3",
+        "type": "comment",
+        "z": "1385cccb4ae982ef",
+        "name": "Habitat + Pokemon",
+        "info": "",
+        "x": 190,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "af0db4fdcc885d92",
+        "type": "comment",
+        "z": "1385cccb4ae982ef",
+        "name": "Formatar Tabela",
+        "info": "",
+        "x": 180,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "731ffde82b3616c9",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Pokemons Sem Species",
+        "func": "let Poko = flow.get(\"POKEMONSESCOLHIDO\")\nmsg.payload = msg.pokemon\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 880,
+        "wires": [
+            [
+                "d9f7a6b01518264b"
+            ]
+        ]
+    },
+    {
+        "id": "d9f7a6b01518264b",
+        "type": "subflow:c103bada.2497",
+        "z": "1385cccb4ae982ef",
+        "name": "LVL 2",
+        "env": [
+            {
+                "name": "iterator_level",
+                "value": "2",
+                "type": "num"
+            }
+        ],
+        "x": 470,
+        "y": 880,
+        "wires": [
+            [
+                "f010a9768dfd4baa"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "f010a9768dfd4baa",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Replace Get Specie",
+        "func": "msg.url = msg.payload.url.replace('pokemon-form','pokemon-habitat').replace(`${msg.payload.id}`,msg.payload.habitat)\nmsg.pokemon= msg.payload\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 880,
+        "wires": [
+            [
+                "24610446d6feea96",
+                "cf4d332e30f2a056"
+            ]
+        ]
+    },
+    {
+        "id": "e878b4f58e3cc47d",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "7d0c3a41e40530ad"
+        ],
+        "x": 1415,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "7d0c3a41e40530ad",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "e878b4f58e3cc47d"
+        ],
+        "x": 115,
+        "y": 880,
+        "wires": [
+            [
+                "731ffde82b3616c9"
+            ]
+        ]
+    },
+    {
+        "id": "57b08d22dce9d293",
+        "type": "link in",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "cf4d332e30f2a056"
+        ],
+        "x": 395,
+        "y": 940,
+        "wires": [
+            [
+                "d9f7a6b01518264b"
+            ]
+        ]
+    },
+    {
+        "id": "cf4d332e30f2a056",
+        "type": "link out",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "links": [
+            "57b08d22dce9d293"
+        ],
+        "x": 795,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "9f0dc33839690b97",
+        "type": "function",
+        "z": "1385cccb4ae982ef",
+        "name": "Pokemon + Habitat + Species",
+        "func": "let pokoh = flow.get(\"POKEMONS_HABITAT\")\nlet limite = flow.get(\"LimiteTotalDePokemons\")\nlet pokemon ={\"pokemon\":msg.pokemon}\nlet species ={\"species\":msg.payload.pokemon_species}\nlet objeto ={...pokemon,...species}\nif(pokoh.length<limite){\n    pokoh.push(objeto) \nreturn msg;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1270,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "24610446d6feea96",
+        "type": "http request",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 890,
+        "y": 880,
+        "wires": [
+            [
+                "091dbccc80d37ba0"
+            ]
+        ]
+    },
+    {
+        "id": "091dbccc80d37ba0",
+        "type": "json",
+        "z": "1385cccb4ae982ef",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1050,
+        "y": 880,
+        "wires": [
+            [
+                "9f0dc33839690b97"
+            ]
+        ]
+    },
+    {
+        "id": "56a0fed85f259d72",
+        "type": "comment",
+        "z": "50ce1cccedcfb818",
+        "name": "Desafio Pokemon",
+        "info": "",
+        "x": 760,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "d3178e8b37296b3b",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "Find Pokemons",
+        "func": "let pokemons = flow.get(\"POKEMON_API\")\nmsg.url = pokemons\nmsg.statusOp=1\nmsg.KEY =1\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 360,
+        "wires": [
+            [
+                "08cac15644944c43"
+            ]
+        ]
+    },
+    {
+        "id": "01089eb6b11928b7",
+        "type": "link out",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "c541b8a0e8104ea5",
+            "d191cbea260eca84"
+        ],
+        "x": 1415,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "d191cbea260eca84",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "01089eb6b11928b7"
+        ],
+        "x": 75,
+        "y": 360,
+        "wires": [
+            [
+                "d3178e8b37296b3b"
+            ]
+        ]
+    },
+    {
+        "id": "0c3dc8824e845adc",
+        "type": "http in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "url": "/pokemon/?",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "f652be06dda1be55"
+            ]
+        ]
+    },
+    {
+        "id": "f652be06dda1be55",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "Get Params",
+        "func": "let tipo= msg.req.query.type\nflow.set(\"TYPE_PK\",tipo)\nlet qtd= msg.req.query.qtd\n\nlet stats= msg.req.query.stats\nflow.set(\"STATS\",stats)\n\n/////\nlet pokemonApi = 'https://pokeapi.co/api/v2/pokemon/'\nflow.set(\"POKEMON_API\",pokemonApi)\nlet pokemonType = 'https://pokeapi.co/api/v2/type/'\nflow.set(\"POKEMON_TYPE\",pokemonType)\n\nlet TODOS_OS_POKEMONS =[]\nflow.set(\"POKEMON\",TODOS_OS_POKEMONS)\nlet TODOS_OS_POKEMONS_AGUA =[]\nflow.set(\"POKEMON_AGUA\",TODOS_OS_POKEMONS_AGUA)\nlet pokemons = []\nflow.set(\"POK\",pokemons)\n\nlet NumeroFinal = qtd ==undefined? 10 : qtd\nflow.set(\"Numero_Final\",NumeroFinal)\nlet NumeroInicial = 0\nflow.set(\"Numero_Inicial\",NumeroInicial)\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 140,
+        "wires": [
+            [
+                "aaa199f74894f4ad"
+            ]
+        ]
+    },
+    {
+        "id": "ebba84bab5099c55",
+        "type": "inject",
+        "z": "50ce1cccedcfb818",
+        "name": "Manualmente Alguns Pokemons",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 240,
+        "wires": [
+            [
+                "b0aaf5f6921293d9"
+            ]
+        ]
+    },
+    {
+        "id": "b0aaf5f6921293d9",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "SET VARIAVEIS AND URL",
+        "func": "let tipo= 'water'\nflow.set(\"TYPE_PK\",tipo)\nlet qtd =151\nlet stats= undefined\nflow.set(\"STATS\",stats)\n\n\n\n/////\nlet pokemonApi = 'https://pokeapi.co/api/v2/pokemon/'\nflow.set(\"POKEMON_API\",pokemonApi)\nlet pokemonType = 'https://pokeapi.co/api/v2/type/'\nflow.set(\"POKEMON_TYPE\",pokemonType)\n\nlet TODOS_OS_POKEMONS =[]\nflow.set(\"POKEMON\",TODOS_OS_POKEMONS)\nlet TODOS_OS_POKEMONS_AGUA =[]\nflow.set(\"POKEMON_AGUA\",TODOS_OS_POKEMONS_AGUA)\nlet pokemons = []\nflow.set(\"POK\",pokemons)\n\n\nlet NumeroFinal = qtd ==undefined? 10 : qtd\nflow.set(\"Numero_Final\",NumeroFinal)\nlet NumeroInicial = 0\nflow.set(\"Numero_Inicial\",NumeroInicial)\n\nreturn  msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 240,
+        "wires": [
+            [
+                "01089eb6b11928b7"
+            ]
+        ]
+    },
+    {
+        "id": "215c237878331291",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "Config Loop",
+        "func": "let lista_de_pokemons = flow.get(\"POK\")\nlet url_pokemon = flow.get(\"POKEMON_API\")\nlet id_dos_pokemons =  lista_de_pokemons.length+1\nlista_de_pokemons.push(id_dos_pokemons)\nmsg.payload= lista_de_pokemons\nmsg.url = url_pokemon\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 360,
+        "wires": [
+            [
+                "832148387962fd34"
+            ]
+        ]
+    },
+    {
+        "id": "832148387962fd34",
+        "type": "subflow:c103bada.2497",
+        "z": "50ce1cccedcfb818",
+        "name": "LVL 0",
+        "env": [],
+        "x": 770,
+        "y": 360,
+        "wires": [
+            [
+                "ae19a0a15bfe6cb8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "ae19a0a15bfe6cb8",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "Request Pokemons",
+        "func": "let lista_de_pokemons = flow.get(\"POK\")\nlet numero_final = flow.get(\"Numero_Final\")\nlet url_pokemon =flow.get(\"POKEMON_API\")\nif((lista_de_pokemons.length)<=numero_final+1){\n     msg.url=msg.url+msg.payload\n     return msg;\n\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 360,
+        "wires": [
+            [
+                "ad4710c967d2c688"
+            ]
+        ]
+    },
+    {
+        "id": "0d4cd86251c0331e",
+        "type": "link out",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "1e525c47992ad47f"
+        ],
+        "x": 1415,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "1e525c47992ad47f",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "0d4cd86251c0331e"
+        ],
+        "x": 495,
+        "y": 380,
+        "wires": [
+            [
+                "215c237878331291"
+            ]
+        ]
+    },
+    {
+        "id": "35e4512b443bdba9",
+        "type": "json",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1310,
+        "y": 360,
+        "wires": [
+            [
+                "0d4cd86251c0331e",
+                "aa4859b0edd1a012"
+            ]
+        ]
+    },
+    {
+        "id": "ad4710c967d2c688",
+        "type": "http request",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1150,
+        "y": 360,
+        "wires": [
+            [
+                "35e4512b443bdba9"
+            ]
+        ]
+    },
+    {
+        "id": "6ded99a4c2f01554",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "ADD POKEMON IN LIST",
+        "func": "let lista_de_pokemons = flow.get(\"POK\")\nlet numero_final = flow.get(\"Numero_Final\")\nlet url_pokemon =flow.get(\"POKEMON_API\")\nlet Pokemons = flow.get(\"POKEMON\")\n\nif((lista_de_pokemons.length)<=numero_final+1){\n    Pokemons.push(msg.payload)\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 440,
+        "wires": [
+            [
+                "583de7ac26dfc6a9"
+            ]
+        ]
+    },
+    {
+        "id": "e86482e0477e54c0",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "ADD LIST POKEMONS DO TIPO ESCOLHIDO",
+        "func": "let Pokemons = flow.get(\"POKEMON\")\nlet lista_de_pokemons = flow.get(\"POK\")\nlet numero_final = flow.get(\"Numero_Final\")\nlet pokemons_agua = flow.get(\"POKEMON_AGUA\")\nlet TIPO = flow.get(\"TYPE_PK\")\n\nif((lista_de_pokemons.length)==(numero_final+1)){\n    \n    \n    let tipo  =Pokemons.forEach((obj)=> {\n                     obj.types.forEach(types=>{\n                                if(types.type.name==TIPO){\n                                    // node.warn(obj)\n                                    pokemons_agua.push(obj)\n                                }\n\n                   })\n    })\n }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 860,
+        "y": 440,
+        "wires": [
+            [
+                "a38d5d3eda70189d"
+            ]
+        ]
+    },
+    {
+        "id": "6a28873a963c0245",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "aa4859b0edd1a012"
+        ],
+        "x": 75,
+        "y": 440,
+        "wires": [
+            [
+                "6ded99a4c2f01554"
+            ]
+        ]
+    },
+    {
+        "id": "aa4859b0edd1a012",
+        "type": "link out",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "6a28873a963c0245"
+        ],
+        "x": 1415,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "a38d5d3eda70189d",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "BASE ATACK MAIOR",
+        "func": "let pokemons_agua = flow.get(\"POKEMON_AGUA\")\nlet lista_de_pokemons = flow.get(\"POK\")\nlet numero_final = flow.get(\"Numero_Final\")\nlet ListaPokemonAgua = []\nlet ListaPokemonAguaMaisForte ={}\nlet stats = flow.get(\"STATS\")\n\n\n\n\nif((lista_de_pokemons.length)==(numero_final+1)){\n    pokemons_agua.forEach(PokeAgua=>{\n            let atackMaior = 0\n            let ObAgua ={'name':'','attack':''}\n\n            PokeAgua.stats.forEach((attack)=>{\n                \n                if(stats==undefined){\n                             if(atackMaior<attack.base_stat){\n                                atackMaior=attack.base_stat\n                            }\n                }else{\n                            if(stats==attack.base_stat){\n                                atackMaior=attack.base_stat\n                            }\n                }\n            })\n            ObAgua.name = PokeAgua.name\n            ObAgua.attack =atackMaior\n            ListaPokemonAgua.push(ObAgua)\n    })\n    \n    let atackMaior = 0\n    let ObAgua ={'name':'','attack':''}\n\n    ListaPokemonAgua.forEach(ob=>{\n            if(atackMaior<ob.attack){\n                atackMaior=ob.attack\n                ObAgua.name = ob.name\n                ObAgua.attack= ob.attack\n            }\n\n    })\n    node.warn(ObAgua)\n    msg.payload =ObAgua\n    \n    return msg;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1240,
+        "y": 440,
+        "wires": [
+            [
+                "fe3c775238bcfef8"
+            ]
+        ]
+    },
+    {
+        "id": "af02d0475b4a8b7b",
+        "type": "comment",
+        "z": "50ce1cccedcfb818",
+        "name": "Send To Response Web",
+        "info": "",
+        "x": 160,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "98470fce37ddafa0",
+        "type": "e-mail",
+        "z": "50ce1cccedcfb818",
+        "server": "smtp.outlook.com",
+        "port": "587",
+        "secure": false,
+        "tls": true,
+        "name": "",
+        "dname": "Pokemons",
+        "x": 1370,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "9dc2d3ac8bbbb54d",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "84768a77ee508da3",
+            "fe3c775238bcfef8"
+        ],
+        "x": 75,
+        "y": 860,
+        "wires": [
+            [
+                "b6297b5f59eee0f3"
+            ]
+        ]
+    },
+    {
+        "id": "fe3c775238bcfef8",
+        "type": "link out",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "9dc2d3ac8bbbb54d"
+        ],
+        "x": 1415,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "2cdfbb897c0312d2",
+        "type": "http response",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1390,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "aaa199f74894f4ad",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "STO 0",
+        "func": "msg.statusOp=0\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 140,
+        "wires": [
+            [
+                "40e1a8e385d29120"
+            ]
+        ]
+    },
+    {
+        "id": "08cac15644944c43",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "STO 1",
+        "func": "msg.statusOp=1\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 360,
+        "wires": [
+            [
+                "215c237878331291"
+            ]
+        ]
+    },
+    {
+        "id": "b6297b5f59eee0f3",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "STO 5",
+        "func": "msg.statusOp=5\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 210,
+        "y": 860,
+        "wires": [
+            [
+                "2cdfbb897c0312d2",
+                "7996491b825bfd8a"
+            ]
+        ]
+    },
+    {
+        "id": "9d228f210fb1909d",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "40e1a8e385d29120"
+        ],
+        "x": 1415,
+        "y": 200,
+        "wires": [
+            [
+                "01089eb6b11928b7"
+            ]
+        ]
+    },
+    {
+        "id": "40e1a8e385d29120",
+        "type": "link out",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "9d228f210fb1909d"
+        ],
+        "x": 1415,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "7477d8ace06de586",
+        "type": "comment",
+        "z": "50ce1cccedcfb818",
+        "name": "Start WEB",
+        "info": "",
+        "x": 120,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "3bc2f828bf8f1fa4",
+        "type": "comment",
+        "z": "50ce1cccedcfb818",
+        "name": "Start Manual",
+        "info": "",
+        "x": 130,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "1c57a3b1d22e5384",
+        "type": "comment",
+        "z": "50ce1cccedcfb818",
+        "name": "Processing",
+        "info": "",
+        "x": 120,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "f1421a69fdadd3d4",
+        "type": "comment",
+        "z": "50ce1cccedcfb818",
+        "name": "Send To Email",
+        "info": "",
+        "x": 130,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "6da26422fb7e5705",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [],
+        "x": 75,
+        "y": 780,
+        "wires": [
+            [
+                "98470fce37ddafa0"
+            ]
+        ]
+    },
+    {
+        "id": "7996491b825bfd8a",
+        "type": "link out",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [],
+        "x": 275,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "583de7ac26dfc6a9",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "func": "let Pokemons = flow.get(\"POKEMON\")\nlet lista_de_pokemons = flow.get(\"POK\")\nlet numero_final = flow.get(\"Numero_Final\")\nlet pokemons_agua = flow.get(\"POKEMON_AGUA\")\nlet TIPO = flow.get(\"TYPE_PK\")\nlet ListaPokemon = []\nif((lista_de_pokemons.length)==(numero_final+1)){\n\nlet tipo  =Pokemons.forEach((obj)=> {\n                let atackMaior = 0\n                let ObAgua ={id:'','name':'','attack':'','tipo':''}\n\n                obj.stats.forEach((attack)=>{\n                    if(atackMaior<attack.base_stat){\n                        atackMaior=attack.base_stat\n                    }\n                })\n                let tipos =obj.types.map(ob=>ob.type.name).join()\n             \n            ObAgua.id = obj.id\n            ObAgua.name = obj.name\n            ObAgua.attack =atackMaior\n            ObAgua.tipo=tipos\n            ListaPokemon.push(ObAgua)\n})\nmsg.payload = ListaPokemon\nreturn msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 540,
+        "wires": [
+            [
+                "77d50eda39880e3e"
+            ]
+        ]
+    },
+    {
+        "id": "77d50eda39880e3e",
+        "type": "subflow:c103bada.2497",
+        "z": "50ce1cccedcfb818",
+        "name": "LVL 1",
+        "env": [
+            {
+                "name": "iterator_level",
+                "value": "1",
+                "type": "num"
+            }
+        ],
+        "x": 770,
+        "y": 540,
+        "wires": [
+            [
+                "79470b4a0a201142"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "79470b4a0a201142",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "Request Pokemons",
+        "func": "msg.pokemon= msg.payload\nmsg.query= `INSERT INTO Pokemon(id,name,attack,tipo) values(:id,:name,:attack,:tipo)`\nmsg.payload =[msg.payload.id,msg.payload.name,msg.payload.attack,msg.payload.tipo]\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 540,
+        "wires": [
+            [
+                "0865cdca7589fb09",
+                "2f8bca4a0421827f"
+            ]
+        ]
+    },
+    {
+        "id": "6af99f913286cd19",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "2f8bca4a0421827f"
+        ],
+        "x": 655,
+        "y": 600,
+        "wires": [
+            [
+                "77d50eda39880e3e"
+            ]
+        ]
+    },
+    {
+        "id": "2f8bca4a0421827f",
+        "type": "link out",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "6af99f913286cd19"
+        ],
+        "x": 1415,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "768070582e4292c9",
+        "type": "oracledb",
+        "z": "50ce1cccedcfb818",
+        "name": "ORACLE HOME",
+        "usequery": false,
+        "query": "QUIT",
+        "usemappings": false,
+        "mappings": "",
+        "server": "abb08971971b1353",
+        "resultaction": "multi",
+        "resultlimit": "1",
+        "x": 1350,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f883e32d8f0a6d51",
+        "type": "csv",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "name,id,habitat,weight,statusOperation,pokemon_species",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 1150,
+        "y": 660,
+        "wires": [
+            [
+                "3025ab7de11ed3c1"
+            ]
+        ]
+    },
+    {
+        "id": "3025ab7de11ed3c1",
+        "type": "file",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "filename": "Z:\\NodeRed\\Teste.csv",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 1340,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4f182e5d18017ce2",
+        "type": "function",
+        "z": "50ce1cccedcfb818",
+        "name": "Format to Save CSV",
+        "func": "msg.payload =msg.pokemon.tipo.replace(',','-') \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960,
+        "y": 660,
+        "wires": [
+            [
+                "f883e32d8f0a6d51"
+            ]
+        ]
+    },
+    {
+        "id": "015ea20fcadc35f2",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "0865cdca7589fb09"
+        ],
+        "x": 75,
+        "y": 700,
+        "wires": [
+            [
+                "768070582e4292c9"
+            ]
+        ]
+    },
+    {
+        "id": "0865cdca7589fb09",
+        "type": "link out",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [
+            "015ea20fcadc35f2"
+        ],
+        "x": 1095,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "90b9b92715c56e55",
+        "type": "link in",
+        "z": "50ce1cccedcfb818",
+        "name": "",
+        "links": [],
+        "x": 75,
+        "y": 660,
+        "wires": [
+            [
+                "4f182e5d18017ce2"
+            ]
+        ]
+    },
+    {
+        "id": "560c331d6cb919a9",
+        "type": "comment",
+        "z": "5f298411f647e884",
+        "name": "Exemple Save CSV",
+        "info": "",
+        "x": 150,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "5ba8088dbcae9877",
+        "type": "link in",
+        "z": "5f298411f647e884",
+        "name": "",
+        "links": [],
+        "x": 75,
+        "y": 140,
+        "wires": [
+            [
+                "683dfd1cc5514ae2"
+            ]
+        ]
+    },
+    {
+        "id": "683dfd1cc5514ae2",
+        "type": "csv",
+        "z": "5f298411f647e884",
+        "name": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "name,id,habitat,weight,statusOperation,pokemon_species",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 190,
+        "y": 140,
+        "wires": [
+            [
+                "4d94c0c09355d864"
+            ]
+        ]
+    },
+    {
+        "id": "4d94c0c09355d864",
+        "type": "file",
+        "z": "5f298411f647e884",
+        "name": "",
+        "filename": "Z:\\NodeRed\\Teste.csv",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 440,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4e60fe8816f3e087",
+        "type": "comment",
+        "z": "5f298411f647e884",
+        "name": "Exemple Base Oracle",
+        "info": "",
+        "x": 160,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "8c0621916d316f87",
+        "type": "link in",
+        "z": "5f298411f647e884",
+        "name": "",
+        "links": [],
+        "x": 75,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9f221eb90df3c723",
+        "type": "oracledb",
+        "z": "5f298411f647e884",
+        "name": "ORACLE HOME",
+        "usequery": false,
+        "query": "select * from POKEMON",
+        "usemappings": false,
+        "mappings": "",
+        "server": "abb08971971b1353",
+        "resultaction": "multi",
+        "resultlimit": 100,
+        "x": 750,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4c8e821c7569b076",
+        "type": "inject",
+        "z": "5f298411f647e884",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 230,
+        "y": 240,
+        "wires": [
+            [
+                "1dd3de36a1bdf45a"
+            ]
+        ]
+    },
+    {
+        "id": "1dd3de36a1bdf45a",
+        "type": "function",
+        "z": "5f298411f647e884",
+        "name": "",
+        "func": "msg.query=`INSERT INTO Pokemon(id,name,attack) values(2,'nick','200')`\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 240,
+        "wires": [
+            [
+                "9f221eb90df3c723"
+            ]
+        ]
+    },
+    {
+        "id": "f38779aeaffe8ca1",
+        "type": "comment",
+        "z": "50ce1cccedcfb818",
+        "name": "Save",
+        "info": "",
+        "x": 110,
+        "y": 620,
+        "wires": []
+    }
+]

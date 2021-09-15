@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            overflow: hidden;
+        }
+        input{
+            width: 80px;
+        }
+
+        p{
+            width: 94px;
+            margin: 0 !important;
+        }
+
+        td{
+            overflow-wrap: anywhere;
+
+        }     
+
+        .desabilitado{ color: currentColor; cursor: not-allowed; opacity: 0.5; text-decoration: none; }
+        
+        .sectionTable{
+            margin-top: 2% !important;
+            margin-left: 4% !important;
+            height:640px !important;
+            width:92% !important;
+            background-color: #d8d8d8a3 !important;
+            padding-top: 4% !important;
+            border-radius: 30px;
+            padding-left: 2%;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+
+        }
+
+        .sectionButton{
+            margin-left: 17% !important;
+            margin-top: 2% !important;
+        }
+
+        .tabela01{
+            width: 450px !important;
+        }
+
+        .tabela1{
+            /* background-color: cyan; */
+            width: 450px !important;
+            margin-right: 4%;
+        }
+
+        .tabela02{
+            width: 320px !important;
+        }
+
+        .tabela2{
+            /* background-color: gold; */
+            width: 360px !important;
+            margin-right: 8%;
+
+
+        }
+
+        .tabela03{
+            width: 600px !important;
+        }
+
+        .tabela3{
+            /* background-color: chartreuse; */
+            width: 600px !important;
+
+        }
+
+        .container{
+            margin-left: 0 !important;
+        }
+
+        .btn-clear{
+
+        }
+
+        .btn-execute{
+            box-shadow: -1px 5px 35px black;
+
+        }
+
+        .btn-addkeys{
+
+        }
+
+        .logo{
+           background-color:  #002E46;
+           height: 60px;
+        }
+
+        .imagem_logo{
+            margin-left: 5%;
+        margin-top: 1%;
+        }
+
+        .usuario1{
+            padding: 0;
+            left: 20px;
+            position: relative;
+        }
+
+        .horaExec1{
+            padding: 0;
+            position: relative;
+            left: -12px;
+
+        }
+
+        .dataExec1{
+            padding: 0;
+            position: relative;
+            left: -47px;
+
+        }
+
+        .cpf{
+            padding: 0;
+            left: 2px;
+            position: relative;
+        }
+
+        .telefone{
+            padding: 0;
+            position: relative;
+            left: -76px;
+
+        }
+
+        .msgAlert{
+            width: 300px;
+            height: 100px;
+        }
+
+        .msgToSendTop{
+            width: 500px;
+            height: 300px;
+            background-color: #002e46 !important;
+            border-radius: 10px 20px;
+                -moz-transition: all 0.5s ease;
+                    -webkit-transition: all 0.5s ease;
+                        -o-transition: all 0.5s ease;
+                            transition: all 0.5s ease;
+            background-image: -moz-linear-gradient(135deg, #002e46, #002e46);
+            background-image: -webkit-linear-gradient(135deg, #002e46, #002e46);
+            background-image: -o-linear-gradient(135deg, #002e46, #002e46);
+            background-image: -ms-linear-gradient(135deg, #002e46, #002e46);
+            background-image: linear-gradient(135deg, #002e46,#002e46);
+            margin-left: 35%;
+            color: blanchedalmond;
+            overflow:hidden;
+            position:fixed;
+            left: 0%;
+            top:-50%;
+            z-index: 3;
+        }
+
+        .boxGrayALL{
+            background-color: #002e46;
+            width: 1900px;
+            height: 1900px;
+            top: -1000px;
+            position: relative;
+            z-index: 2;
+            opacity: 0.5;
+        }
+
+        .boxMsg{
+                background-color: 002e46 !important;
+                width: 85%;
+                height: 60%;
+                margin-top: 15px;
+                margin-left: 20px;
+        }
+
+        .msgTop {
+                background-color: #002e46 !important;
+                border-radius: 10px 20px;
+                    -moz-transition: all 0.5s ease;
+                        -webkit-transition: all 0.5s ease;
+                            -o-transition: all 0.5s ease;
+                                transition: all 0.5s ease;
+                background-image: -moz-linear-gradient(135deg, #002e46, #002e46);
+                background-image: -webkit-linear-gradient(135deg, #002e46, #002e46);
+                background-image: -o-linear-gradient(135deg, #002e46, #002e46);
+                background-image: -ms-linear-gradient(135deg, #002e46, #002e46);
+                background-image: linear-gradient(135deg, #002e46,#002e46);
+                margin-left: 40%;
+                color: blanchedalmond;
+                overflow:hidden;
+                position:fixed;
+                left: 0%;
+                top:-20%
+        }
+
+        .msgTextBoxMsgToSend{
+            margin-top: -18%;
+            margin-left: 33%;
+        }
+
+        .btnBoxMsgToSend{
+            margin-top: 35%;
+            margin-left: 38%;
+        }
+
+        .msgTopHover  {
+                /* overflow-y:scroll; */
+                -moz-transform: translatey(100%);
+                    -webkit-transform: translatey(100%);
+                        -o-transform: translatey(100%);
+                            transform: translatey(100%);
+                            top:20%;
+
+                padding-right:0;
+        }
+
+        .TopHover  {
+                /* overflow-y:scroll; */
+                -moz-transform: translatey(100%);
+                    -webkit-transform: translatey(100%);
+                        -o-transform: translatey(100%);
+                            transform: translatey(100%);
+                            top:2%;
+
+                padding-right:0;
+        }
+       
+        .disableButtonToSend{
+            display: none;
+
+        }
+
+        .pushGrayALL{
+            display: none;
+
+        }
+
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+     integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <title>Document</title>
+    </head>
+    <body >
+        <div class="">
+            <div class="msgToSend msgToSendTop" id="msgToSend">
+                <div class="boxMsgToSend" id="boxMsgToSend" >
+                    <div class="btnBoxMsgToSend disableButtonToSend" id="executeB">
+                        <button type="button" class="btn btn-danger btn-clear" onClick="PermissionToSendExecute(false)" >Não </button>
+                        <button type="button" class="btn btn-primary btn-addkeys"  onClick="PermissionToSendExecute(true)" >Sim</button>                    
+                    </div>
+                    <div class="btnBoxMsgToSend disableButtonToSend" id="clearB">
+                        <button type="button" class="btn btn-danger btn-clear" onClick="PermissionToSendClear(false)" >Não </button>
+                        <button type="button" class="btn btn-primary btn-addkeys"  onClick="PermissionToSendClear(true)" >Sim</button>                    
+                    </div>
+                    <div class="btnBoxMsgToSend disableButtonToSend" id="addLB">
+                        <button type="button" class="btn btn-danger btn-clear" onClick="PermissionToSendAdd(false)" >Não </button>
+                        <button type="button" class="btn btn-primary btn-addkeys"  onClick="PermissionToSendAdd(true)" >Sim</button>                    
+                    </div>
+                    
+                
+                </div>
+            </div>
+
+            <div class="msgAlert msgTop" id="msgAlert">
+                <div class="boxMsg" id="boxMsg" >
+                </div>
+            </div>
+
+            <div class="logo">
+                <img class="imagem_logo" src=""/>
+            </div>      
+            
+            <div class="row sectionTable ">
+        
+                <section class="col-6 table-responsive-sm table-responsive-md table-responsive-xl tabela1">
+                    
+                        <table class="table tabela01" id="tabela1">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">
+                                    <p>Usuario</p>
+                                    <input type="text" name="tf" id="usuario" >
+
+                                </th>
+                                <th scope="col">
+                                    <p>Hora Exec</p>
+                                    <input  type="text" name="tf" id="horaExec" disabled >
+                                </th>
+                                <th scope="col">
+                                    <p>Data Exec</p>
+                                    <input type="text" name="tf" id="dataExec" disabled>
+                                </th>
+                                <th scope="col">  <button type="button" class="btn btn-info" onClick="clearTabela1()" ><span class="material-icons material-icons-outlined">restore</span></button>
+                                </th>
+
+                            </tr>
+                            </thead>
+                            <tbody id="linhas1">
+                            </tbody>
+                        </table>     
+        
+                </section>
+        
+                <section class="col-4 table-responsive-sm table-responsive-md table-responsive-xl tabela2">
+                    
+                    <table class="table tabela02 " id="tabela2">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">
+                                <p>CPF</p>
+                                <input type="text" name="tf" id="cpf" >
+                            </th>
+                            <th scope="col">
+                                <p>TELEFONE</p>
+                                <input type="text" name="tf" id="telefone" disabled >
+                            </th>
+                            <th scope="col">  <button type="button" class="btn btn-info" onClick="clearTabela2()" ><span class="material-icons material-icons-outlined">restore</span></button>
+                        </tr>
+                        </thead>
+                        <tbody id="linhas2">
+                        
+                        
+                        </tbody>
+                    </table>  
+                </section>
+
+                <section class="col-7 table-responsive-sm table-responsive-md table-responsive-xl tabela3">
+                    <table class="table tabela03 " id="tabela3">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">ID Usuario</th>
+                            <th scope="col">Máquina</th>
+                            <th scope="col">ID Máquina</th>
+                        </tr>
+                        </thead>
+                        <tbody id="linhas3">
+                                            
+                        
+                        </tbody>
+                    </table>     
+        
+                </section>
+        
+            </div>
+
+            <div class="row sectionButton">
+                <section class="col">
+                    <button type="button" class="btn btn-danger btn-clear" onClick="permissionToSendMsg('Limpar Licença')" >Limpar Licença</button>
+        
+                </section>          
+        
+                <section class="col">
+                    <button type="button" class="btn btn-success btn-execute" onClick="permissionToSendMsg('Executar')"> Executar</button>
+        
+                </section>
+                <section class="col">
+                    <button type="button" class="btn btn-primary btn-addkeys"  onClick="permissionToSendMsg('Atribuir Licença')" > Atribuir Licença</button>
+        
+        
+                </section>
+        
+        
+            </div>
+
+        
+
+        </div>
+        <div class="boxGrayALL pushGrayALL" id="boxGrayALL"></div>
+    
+    
+    </body>
+    <script>
+
+let tabela1_usuario  = "usuario"
+let tabela1_horaExec = "horaExec"
+let tabela1_dataExec = "dataExec"
+
+let tabela2_cpf = "cpf"
+let tabela2_telefone = "telefone"
+
+let objeto_tabela1 ={usuario:[],horaExec:[],dataExec:[]}
+let objeto_tabela2 ={cpf:[],telefone:[]}
+
+let objeto_reported ={}
+
+let time_MSG = 2000
+
+start()
+
+function start(){
+    setInterval(()=>{
+    removeReported()
+    getReport()
+
+    },15000)
+}
+
+
+function create(lista,linhas){
+    if(!document.getElementById("linhas1")){
+            var tabela =document.getElementById('tabela1')
+            var tbody = document.createElement('tbody');
+            tbody.setAttribute('id','linhas1')
+            tabela.appendChild(tbody)
+        }
+
+
+ 
+    var ul = document.getElementById(linhas);
+    for (var i = 0; i < lista.length; i++) {
+            var valor = lista[i];            
+            var tr = document.createElement('tr');
+            tr.setAttribute('id',`linha`)  
+            var td0 = document.createElement('td')
+            td0.setAttribute('id',`c0`) 
+            tr.appendChild(td0);      
+            ul.appendChild(tr);
+    }
+}
+
+function create2(lista,linhas){
+    if(!document.getElementById("linhas2")){
+            var tabela =document.getElementById('tabela2')
+            var tbody = document.createElement('tbody');
+            tbody.setAttribute('id','linhas2')
+            tabela.appendChild(tbody)
+        }
+
+
+    var ul = document.getElementById(linhas);
+    for (var i = 0; i < lista.length; i++) {
+            var valor = lista[i];            
+            var tr = document.createElement('tr');
+            tr.setAttribute('id',`linha2`)  
+            var td0 = document.createElement('td')
+            td0.setAttribute('id',`c0`) 
+            tr.appendChild(td0);      
+            ul.appendChild(tr);
+    }
+}
+
+document.body.addEventListener("keydown", function (ev) {  
+  ev = ev || window.event; 
+  var key = ev.which || ev.keyCode; 
+  var ctrl = ev.ctrlKey ? ev.ctrlKey : ((key === 17)
+      ? true : false);
+  if (key == 86 && ctrl) {
+      setTimeout(()=>{      
+
+            getValorUsuario(ev)
+            getValorHoraExec(ev)
+            getValorDataExec(ev)     
+            getValorCpf(ev)  
+            getValorTelefone(ev) 
+      },500)
+  }
+}, false);
+
+function getValorUsuario(valor){
+   
+
+    if(valor.srcElement.id==tabela1_usuario && !limiterObjectTabela1(objeto_tabela1)){
+        document.getElementById(tabela1_horaExec).disabled = false
+
+        let valor = document.getElementById(tabela1_usuario).value
+        valor =valor.replace(/( )+/g,',')
+        let lista = valor.split(',')
+        objeto_tabela1.usuario= lista
+        formatColunaUsuario(lista)
+    }   
+}
+
+function getValorHoraExec(valor){
+
+    if(valor.srcElement.id==tabela1_horaExec && !limiterObjectTabela1(objeto_tabela1)){
+        document.getElementById(tabela1_dataExec).disabled = false
+
+        let valor = document.getElementById(tabela1_horaExec).value
+        valor =valor.replace(/( )+/g,',')
+        let lista = valor.split(',')
+        objeto_tabela1.horaExec= lista
+        formatColunaHoraExec(lista)
+    }   
+}
+
+function getValorDataExec(valor){
+
+    if(valor.srcElement.id==tabela1_dataExec && !limiterObjectTabela1(objeto_tabela1)){
+        let valor = document.getElementById(tabela1_dataExec).value
+        valor =valor.replace(/( )+/g,',')
+        let lista = valor.split(',')
+        objeto_tabela1.dataExec= lista
+        formatColunaDataExec(lista)
+    }    
+}
+
+function getValorCpf(valor){
+
+    if(valor.srcElement.id==tabela2_cpf && !limiterObjectTabela2(objeto_tabela2)){
+        document.getElementById(tabela2_telefone).disabled = false
+
+        let valor = document.getElementById(tabela2_cpf).value
+        valor =valor.replace(/( )+/g,',')
+        let lista = valor.split(',')
+        objeto_tabela2.cpf= lista
+        formatColunaCpf(lista)
+    }    
+}
+
+function getValorTelefone(valor){
+
+    if(valor.srcElement.id==tabela2_telefone && !limiterObjectTabela2(objeto_tabela2)){
+        let valor = document.getElementById(tabela2_telefone).value
+        valor =valor.replace(/( )+/g,',')
+        let lista = valor.split(',')
+        objeto_tabela2.telefone= lista
+        formatColunaTelefone(lista)
+    }    
+}
+
+function formatColunaUsuario(lista){
+    let elemento = document.getElementById("linha")
+    let naoExisteLinha = !elemento
+    if(naoExisteLinha) this.create(lista,'linhas1')  
+    if(document.all.c1!=undefined) remove(lista,'c1','tabela1')
+    this.addValor(lista,'c1')  
+}
+
+function formatColunaHoraExec(lista){
+    let elemento = document.getElementById("linha")
+    let naoExisteLinha = !elemento
+    if(naoExisteLinha) this.create(lista,'linhas1','tabela1')  
+    if(document.all.c2!=undefined) remove(lista,'c2')
+    this.addValor(lista,'c2') 
+}
+
+function formatColunaDataExec(lista){
+    let elemento = document.getElementById("linha")
+    let naoExisteLinha = !elemento
+    if(naoExisteLinha) this.create(lista,'linhas1','tabela1')   
+    if(document.all.c3!=undefined) remove(lista,'c3')
+    this.addValor(lista,'c3') 
+}
+
+function formatColunaCpf(lista){
+    let elemento = document.getElementById("linha2")
+    let naoExisteLinha = !elemento
+    if(naoExisteLinha) this.create2(lista,'linhas2') 
+    if(document.all.c4!=undefined) remove(lista,'c4')
+    this.addValor2(lista,'c4')  
+}
+
+function formatColunaTelefone(lista){
+    let elemento = document.getElementById("linha2")
+    let naoExisteLinha = !elemento
+    if(naoExisteLinha) this.create2(lista,'linhas2') 
+    if(document.all.c5!=undefined) remove(lista,'c5')
+    this.addValor2(lista,'c5')  
+}
+
+function addValor(lista,coluna){
+    for (var i = 0; i < lista.length; i++) {
+        var valor = lista[i]; 
+        var td2Valor = document.createTextNode(valor); 
+        var linha = document.all.linha[i]
+        var td1 = document.createElement('td')
+        var p = document.createElement('p')
+        p.appendChild(td2Valor)
+        td1.setAttribute('id',coluna)
+        td1.appendChild(p);
+        linha.appendChild(td1)    
+    }
+} 
+
+function addValor2(lista,coluna){
+    for (var i = 0; i < lista.length; i++) {
+        var valor = lista[i]; 
+        var td2Valor = document.createTextNode(valor); 
+        var linha = document.all.linha2[i]
+        var td1 = document.createElement('td')
+        var p = document.createElement('p')
+        p.appendChild(td2Valor)
+        td1.setAttribute('id',coluna)
+        td1.appendChild(p);
+        linha.appendChild(td1)    
+    }
+} 
+
+function remove(lista,coluna,tabela){
+    document.getElementById("linhas")? document.getElementById("linhas").remove() :null
+}
+
+function addKeys(){    
+    var params = JSON.stringify({value:objeto_tabela1,value2:objeto_tabela2}) 
+    var url = "http://localhost:1880/teste1"; 
+    var xmlhttp = new XMLHttpRequest(); 
+    xmlhttp.open("POST", url,true);
+    xmlhttp.onreadystatechange=function() {
+                    if (xmlhttp.readyState==4) {
+                    moveMSG(xmlhttp.responseText);
+                    }
+    }
+    xmlhttp.send(params)
+}
+
+function execute(){   
+    var params = JSON.stringify({value:objeto_tabela1,value2:objeto_tabela2}) 
+    var url = "http://localhost:1880/teste2"; 
+    var xmlhttp = new XMLHttpRequest(); 
+    xmlhttp.open("POST", url,true);
+    xmlhttp.onreadystatechange=function() {
+                    if (xmlhttp.readyState==4) {
+                    moveMSG(xmlhttp.responseText);
+                    }
+    }
+    xmlhttp.send(params)
+
+}
+
+function clear(){    
+    var params = JSON.stringify({value:objeto_tabela1,value2:objeto_tabela2}) 
+    var url = "http://localhost:1880/teste3"; 
+    var xmlhttp = new XMLHttpRequest(); 
+    xmlhttp.open("POST", url,true);
+    xmlhttp.onreadystatechange=function() {
+                    if (xmlhttp.readyState==4) {
+                    moveMSG(xmlhttp.responseText);
+                    }
+    }
+    xmlhttp.send(params)
+}
+
+function getReport(){
+    var xhr =new XMLHttpRequest();
+        xhr.open('GET',"http://localhost:1880/getReport",true)
+        xhr.responseType = 'text';
+
+        xhr.onload = function () {
+            if (xhr.readyState === xhr.DONE) {
+                if (xhr.status === 200) {
+                    Reported(xhr.response)
+                }
+            }
+        };
+        xhr.send(null);       
+}
+
+function Reported(valor){
+        objeto_reported=JSON.parse(valor)
+
+        if(!document.getElementById("linhas3")){
+            var tabela =document.getElementById('tabela3')
+            var tbody = document.createElement('tbody');
+            tbody.setAttribute('id','linhas3')
+            tabela.appendChild(tbody)
+        }
+
+        var array = objeto_reported.resp   
+        for(var x = 0 ; x < array.length; x++){
+            var valor = array[x]
+            var elemento = document.getElementById("linhas3")
+            var tr = document.createElement('tr');
+            var td0 = document.createElement('td')
+            var td1 = document.createElement('td')
+            var td2 = document.createElement('td')
+            var td3 = document.createElement('td')
+            var td4 = document.createElement('td')
+            td0.appendChild(document.createTextNode(''))
+            td1.appendChild(document.createTextNode(valor.usuario))
+            td2.appendChild(document.createTextNode(valor.id_usuario))
+            td3.appendChild(document.createTextNode(valor.maquina))
+            td4.appendChild(document.createTextNode(valor.id_maquina))
+            tr.appendChild(td0)
+            tr.appendChild(td1)
+            tr.appendChild(td2) 
+            tr.appendChild(td3) 
+            tr.appendChild(td4)
+            elemento.appendChild(tr);      
+    }
+    
+    
+
+
+}
+
+function removeReported(){
+    objeto_reported={}
+    document.getElementById("linhas3")? document.getElementById("linhas3").remove() :null
+
+}
+
+function clearTabela1(){
+    document.getElementById("linhas1").remove()
+    document.getElementById(tabela1_horaExec).disabled = true
+    document.getElementById(tabela1_dataExec).disabled = true
+
+
+}
+
+function clearTabela2(){
+    document.getElementById("linhas2").remove()
+    document.getElementById(tabela2_telefone).disabled = true
+
+}
+
+function moveMSG(result){
+    
+    var valor = document.createTextNode(JSON.parse(result).msg);
+    document.getElementById("msgAlert").classList.add("msgTopHover")  
+
+    var p = document.createElement('p')
+    p.setAttribute('id','MSG')
+    p.appendChild(valor)
+    document.getElementById("boxMsg").appendChild(p) 
+
+
+    setTimeout(()=>{
+        document.getElementById("msgAlert").classList.remove("msgTopHover") 
+        document.getElementById("MSG").remove()
+
+    },time_MSG)
+}
+
+function permissionToSendMsg(valor){
+    var elemento = document.getElementById("boxMsgToSend")
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(`Gostaria de ${valor} ?`))
+    div.setAttribute("class","msgTextBoxMsgToSend")
+    div.setAttribute("id","execute")
+
+    valor=="Executar"?  div.setAttribute("id","executeM") :null
+    valor=="Atribuir Licença"?  div.setAttribute("id","addM") :null
+    valor=="Limpar Licença"? div.setAttribute("id","clearM") :null
+
+    elemento.appendChild(div);        
+    document.getElementById("msgToSend").classList.add("TopHover") 
+
+
+    valor=="Executar"?  document.getElementById('executeB').classList.remove("disableButtonToSend") :null
+    valor=="Atribuir Licença"?  document.getElementById('addLB').classList.remove("disableButtonToSend") :null
+    valor=="Limpar Licença"?  document.getElementById('clearB').classList.remove("disableButtonToSend") :null
+    document.getElementById('boxGrayALL').classList.remove("pushGrayALL")
+
+}
+
+function PermissionToSendExecute(valor){
+    document.getElementById("msgToSend").classList.remove("TopHover") 
+    valor==true ? execute():null
+    document.getElementById('executeB').classList.add("disableButtonToSend")
+    document.getElementById('executeM').remove()
+    document.getElementById('boxGrayALL').classList.add("pushGrayALL")
+}
+
+function PermissionToSendClear(valor){
+    document.getElementById("msgToSend").classList.remove("TopHover") 
+    valor==true ? clear():null
+    document.getElementById('clearB').classList.add("disableButtonToSend")
+    document.getElementById('clearM').remove()
+    document.getElementById('boxGrayALL').classList.add("pushGrayALL")
+
+
+}
+function PermissionToSendAdd(valor){
+    document.getElementById("msgToSend").classList.remove("TopHover") 
+    valor==true ? addKeys():null
+    document.getElementById('addLB').classList.add("disableButtonToSend")
+    document.getElementById('addM').remove()
+    document.getElementById('boxGrayALL').classList.add("pushGrayALL")
+
+
+}
+
+
+
+function limiterObjectTabela1(objeto){
+    
+    return objeto.usuario.length>0 & objeto.horaExec.length >0 & objeto.dataExec.length > 0
+}
+function limiterObjectTabela2(objeto){
+    
+    return objeto.cpf.length>0 & objeto.telefone.length  >0 
+  }
+
+</script>  
+
+
+</html>

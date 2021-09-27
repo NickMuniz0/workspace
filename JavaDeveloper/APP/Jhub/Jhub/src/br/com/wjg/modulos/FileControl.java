@@ -91,9 +91,8 @@ public class FileControl {
                                 LocalDate key,
                                 JSONObject objetoAntigo) throws IOException{
         Object objA = JSONValue.parse(nivel.toJSONString());  
-        JSONObject jsonObject = (JSONObject) objA;
-        objetoAntigo.put(key, jsonObject.get(key.toString()));
-
+        JSONObject jsonObjectA = (JSONObject) objA;
+        objetoAntigo.put(key, jsonObjectA.get(key.toString()));
             toSave(objetoAntigo);
     }
 
@@ -103,7 +102,7 @@ public class FileControl {
 
     public void toSave(JSONObject objeto) throws IOException{
         FileWriter writeFile =  new FileWriter(getPath());
-        writeFile.write(objeto.toJSONString());
+        writeFile.append(objeto.toJSONString());
         writeFile.close();
 		new Mensagens("Informações armazenada!");
 

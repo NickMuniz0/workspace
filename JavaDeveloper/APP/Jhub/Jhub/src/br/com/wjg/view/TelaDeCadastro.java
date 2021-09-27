@@ -18,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -94,6 +95,7 @@ public class TelaDeCadastro {
     
     private JLabel definaObjeto;
     private JComboBox<Objeto> jtdefinaobjeto;    
+    private JScrollPane scroll;
 
 
 
@@ -239,7 +241,7 @@ public class TelaDeCadastro {
 		this.frame = new JFrame(labelFrame);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		this.frame.setSize(800,500);		
-		this.frame.setBounds((largura/5), (altura/15), 800, 600);
+		this.frame.setBounds((largura/5), (altura/15), 800, 650);
 	}
 		
 	public JPanel getPanel() {
@@ -530,6 +532,13 @@ public class TelaDeCadastro {
 	public void setJtdefinaobjeto(Objeto[] objeto) {
 		this.jtdefinaobjeto = new JComboBox<>(objeto); 
 	}
+	
+	public JScrollPane getScroll() {
+		return scroll;
+	}
+	public void setScroll(JTextArea textArea) {
+		this.scroll = new JScrollPane (textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	}
 
 	
 	public void configuraComponentes() {
@@ -617,6 +626,8 @@ public class TelaDeCadastro {
     setAddPanel(getDefinaObjeto());
     setAddPanel(getJtdefinaobjeto());
     
+    setScroll(getJtresult());
+    setAddPanel(getScroll());
     
     
     
@@ -660,8 +671,8 @@ public class TelaDeCadastro {
 	                            .addComponent(getSalvar())
 	                            .addComponent(getSalvarConfig())
                     )
-
-                    .addComponent(getJtresult())
+                    .addComponent(getScroll())
+                    //                    .addComponent(getJtresult())
 
     )    
    
@@ -728,7 +739,9 @@ public class TelaDeCadastro {
 		            )     
 		    .addGroup(getLayout().createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(getResult())
-                    .addComponent(getJtresult())
+                    .addComponent(getScroll())
+
+//                    .addComponent(getJtresult())
 		            )    
 
     );

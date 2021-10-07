@@ -18,8 +18,7 @@ public class ExecuteGit implements Runnable {
         execute(comandos);
         
     }
-    
-
+  
     
     public StringBuilder execute(String... comandos){
         StringBuilder saida = new StringBuilder();

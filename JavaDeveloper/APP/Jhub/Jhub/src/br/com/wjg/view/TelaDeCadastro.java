@@ -833,7 +833,7 @@ public class TelaDeCadastro {
 						String SSLTRUE= "git config http.sslVerify true";
 
                         String pegaOArquivoEAdicionaAoGit =   String.format("git add %s",arquivo);
-                        String adicionarComentario = String.format("git commit -m '%s'", comentario);
+                        String adicionarComentario = String.format("git commit -m %s", comentario);
                         String sobeOArquivoParaORepositorio = String.format("git push origin %s", branchAtual);
                        
                         File path = new File(local);                        	
@@ -859,9 +859,9 @@ public class TelaDeCadastro {
 
 						Thread threadCalculo =  new Thread(result, "Thread Calculador");
 						threadCalculo.start();
-                        getJtresult().setText(result.toString());                        
-                        if(result.toString().substring(0,5).equals("fatal")) { new Mensagens(result.toString()); return; }
-                        new Mensagens("Arquivo enviado para o repositorio!");
+                        // getJtresult().setText(result.toString());                        
+                        // if(result.toString().substring(0,5).equals("fatal")) { new Mensagens(result.toString()); return; }
+                        // new Mensagens("Arquivo enviado para o repositorio!");
                         
                      
                 }

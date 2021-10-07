@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import javax.swing.JTextArea;
+
 public class ExecuteGit implements Runnable {
 
     private String[] comandos;
+    private JTextArea result;
 
     public ExecuteGit(String... comandos){
         this.comandos = comandos;
@@ -15,11 +18,13 @@ public class ExecuteGit implements Runnable {
 
     @Override
     public void run() {
-        execute(comandos);
-        toString();
+        StringBuilder execute = execute(comandos);
+        result.setText( execute.toString()); 
+        if(execute.toString().substring(0,5).equals("fatal")) { new Mensagens(execute.toString()); return; }
+        new Mensagens("Arquivo enviado para o repositorio!");
+       
     }
-  
-    
+     
     public StringBuilder execute(String... comandos){
         StringBuilder saida = new StringBuilder();
         BufferedReader leitor;
@@ -50,9 +55,12 @@ public class ExecuteGit implements Runnable {
     }
 
 
-    @Override
-    public String toString() {
-        return execute(comandos).toString();
+    public void write(JTextArea result){
+        this.result = result;        
+       
     }
+
+
+
 
 }

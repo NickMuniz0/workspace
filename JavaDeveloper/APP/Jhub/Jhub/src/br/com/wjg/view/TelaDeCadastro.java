@@ -803,15 +803,35 @@ public class TelaDeCadastro {
 	    }
 		
 	public String  ObjectChoice(String objeto,String escolha) {
-		if(escolha =="ARQUIVO") {
-			return objeto+".json" ;
-		}
+			
 		if(escolha =="PASTA") {
 			return objeto;
 		}
 		
+		if(escolha =="ARQUIVO") {
+						
+			return objeto+".json" ;
+		}
+		
 		return ".";	
 		
+	}
+
+	public boolean TestObjectNameArquivo(String objeto){
+			return objeto.trim().length()>0; 
+	}
+
+	public boolean  CheckNameArquivo(boolean nome, String escolha){
+	
+		if(nome==true && escolha =="ARQUIVO"){
+			new Mensagens("Escreva o nome do arquivo");
+			return false;
+		}
+		if(nome==true && escolha =="PASTA"){
+			new Mensagens("Escreva o caminho da pasta");
+			return false;
+		}
+		return true;
 	}
 	
     public void botaoGit(){
@@ -820,14 +840,18 @@ public class TelaDeCadastro {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 		
-                        String branchAtual = getGitConf().getBranch().getText();
-                        String comentario =  '"'+getGitConf().getComentario().getText() +'"';
-                        String arquivo = ObjectChoice(getGitConf().getArquivo().getText(),getJtdefinaobjeto().getSelectedItem().toString());
-                        String local = getGitConf().getPathRespositorio().getText();
-                        
-						try{
+						boolean checkNameArquivo = CheckNameArquivo(!TestObjectNameArquivo(getGitConf().getArquivo().getText()), getJtdefinaobjeto().getSelectedItem().toString());
+						if(checkNameArquivo==false ){return;}
 
+
+                        String branchAtual = getGitConf().getBranch().getText();
+                        String comentario =  '"'+getGitConf().getComentario().getText() +'"';	
+                        String arquivo = ObjectChoice(getGitConf().getArquivo().getText(),getJtdefinaobjeto().getSelectedItem().toString());
+                        String local = getGitConf().getPathRespositorio().getText();      
 						String particao = local.substring(0,2);
+
+						try{
+						
                         String vaiAteORepositorio =  String.format("cd %s", local);
                         String gitpull = "git pull";
 						String SSLFALSE= "git config http.sslVerify false";

@@ -858,8 +858,8 @@ public class TelaDeCadastro {
 
 
 						Thread threadCalculo =  new Thread(result, "Thread Calculador");
-                        getJtresult().setText(result.toString()); 
-                        if(result.toString().substring(0,5).equals("fatal")) { new Mensagens(result.toString()); return; }
+                        getJtresult().setText(threadCalculo.toString()); 
+                        if(threadCalculo.toString().substring(0,5).equals("fatal")) { new Mensagens(result.toString()); return; }
                         new Mensagens("Arquivo enviado para o repositorio!");
 						threadCalculo.start();
 

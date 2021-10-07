@@ -838,14 +838,7 @@ public class TelaDeCadastro {
                        
                         File path = new File(local);                        	
                         if(!path.exists()) {  new Mensagens("Caminho Inexistente!"); return ; }                        
-                        // StringBuilder result = execute(particao,
-                        //         vaiAteORepositorio,
-                        //         gitpull,
-						// 		SSLFALSE,
-						// 		SSLTRUE,
-                        //         pegaOArquivoEAdicionaAoGit,
-                        //         adicionarComentario,
-                        //         sobeOArquivoParaORepositorio); 
+                  
 						ExecuteGit result = new ExecuteGit(particao,
                                 vaiAteORepositorio,
                                 gitpull,
@@ -854,16 +847,10 @@ public class TelaDeCadastro {
                                 pegaOArquivoEAdicionaAoGit,
                                 adicionarComentario,
                                 sobeOArquivoParaORepositorio); 
-
 						result.write(getJtresult());
-
 						Thread threadCalculo =  new Thread(result, "Thread Calculador");
-						threadCalculo.start();
-
-
-                     
+						threadCalculo.start();                     
                 }
-        
               });
 
     }

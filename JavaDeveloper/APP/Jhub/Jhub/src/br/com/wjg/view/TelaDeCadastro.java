@@ -848,6 +848,7 @@ public class TelaDeCadastro {
                                 adicionarComentario,
                                 sobeOArquivoParaORepositorio); 
 						result.write(getJtresult());
+						getJtresult().setText("loading...");
 						Thread threadCalculo =  new Thread(result, "Thread Calculador");
 						threadCalculo.start();                     
                 }

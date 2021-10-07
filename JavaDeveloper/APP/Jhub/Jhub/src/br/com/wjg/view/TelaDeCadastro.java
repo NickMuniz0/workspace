@@ -863,7 +863,6 @@ public class TelaDeCadastro {
                        
                         File path = new File(local);                        	
                         if(!path.exists()) {  new Mensagens("Caminho Inexistente!"); return ; }       
-						System.out.println(adicionarComentario);                 
 						ExecuteGit result = new ExecuteGit(particao,
                                 vaiAteORepositorio,
                                 gitpull,

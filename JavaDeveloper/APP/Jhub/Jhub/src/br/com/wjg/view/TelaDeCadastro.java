@@ -829,19 +829,36 @@ public class TelaDeCadastro {
                         String particao = local.substring(0,2);
                         String vaiAteORepositorio =  String.format("cd %s", local);
                         String gitpull = "git pull";
+						String SSLFALSE= "git config http.sslVerify false";
+						String SSLTRUE= "git config http.sslVerify true";
+
                         String pegaOArquivoEAdicionaAoGit =   String.format("git add %s",arquivo);
                         String adicionarComentario = String.format("git commit -m '%s'", comentario);
                         String sobeOArquivoParaORepositorio = String.format("git push origin %s", branchAtual);
                        
                         File path = new File(local);                        	
                         if(!path.exists()) {  new Mensagens("Caminho Inexistente!"); return ; }                        
-                        StringBuilder result = execute(particao,
+                        // StringBuilder result = execute(particao,
+                        //         vaiAteORepositorio,
+                        //         gitpull,
+						// 		SSLFALSE,
+						// 		SSLTRUE,
+                        //         pegaOArquivoEAdicionaAoGit,
+                        //         adicionarComentario,
+                        //         sobeOArquivoParaORepositorio); 
+						ExecuteGit result = new ExecuteGit(particao,
                                 vaiAteORepositorio,
                                 gitpull,
+								SSLFALSE,
+								SSLTRUE,
                                 pegaOArquivoEAdicionaAoGit,
                                 adicionarComentario,
                                 sobeOArquivoParaORepositorio); 
-                        
+
+
+
+						Thread threadCalculo =  new Thread(result, "Thread Calculador");
+						threadCalculo.start();
                         getJtresult().setText(result.toString());                        
                         if(result.toString().substring(0,5).equals("fatal")) { new Mensagens(result.toString()); return; }
                         new Mensagens("Arquivo enviado para o repositorio!");

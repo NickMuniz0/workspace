@@ -16,7 +16,7 @@ public class ExecuteGit implements Runnable {
     @Override
     public void run() {
         execute(comandos);
-        
+        toString();
     }
   
     

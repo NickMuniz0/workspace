@@ -21,8 +21,7 @@ public class ExecuteGit implements Runnable {
         StringBuilder execute = execute(comandos);
         result.setText( execute.toString()); 
         if(execute.toString().substring(0,5).equals("fatal")) { new Mensagens(execute.toString()); return; }
-        new Mensagens("Arquivo enviado para o repositorio!");
-       
+      
     }
      
     public StringBuilder execute(String... comandos){

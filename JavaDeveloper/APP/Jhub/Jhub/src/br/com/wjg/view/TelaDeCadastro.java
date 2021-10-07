@@ -821,12 +821,13 @@ public class TelaDeCadastro {
                 public void actionPerformed(ActionEvent e) {
                 		
                         String branchAtual = getGitConf().getBranch().getText();
-                        String comentario =String.format("%s", getGitConf().getComentario().getText());
+                        String comentario =  '"'+getGitConf().getComentario().getText() +'"';
                         String arquivo = ObjectChoice(getGitConf().getArquivo().getText(),getJtdefinaobjeto().getSelectedItem().toString());
                         String local = getGitConf().getPathRespositorio().getText();
                         
+						try{
 
-                        String particao = local.substring(0,2);
+						String particao = local.substring(0,2);
                         String vaiAteORepositorio =  String.format("cd %s", local);
                         String gitpull = "git pull";
 						String SSLFALSE= "git config http.sslVerify false";
@@ -837,8 +838,8 @@ public class TelaDeCadastro {
                         String sobeOArquivoParaORepositorio = String.format("git push origin %s", branchAtual);
                        
                         File path = new File(local);                        	
-                        if(!path.exists()) {  new Mensagens("Caminho Inexistente!"); return ; }                        
-                  
+                        if(!path.exists()) {  new Mensagens("Caminho Inexistente!"); return ; }       
+						System.out.println(adicionarComentario);                 
 						ExecuteGit result = new ExecuteGit(particao,
                                 vaiAteORepositorio,
                                 gitpull,
@@ -850,38 +851,13 @@ public class TelaDeCadastro {
 						result.write(getJtresult());
 						getJtresult().setText("loading...");
 						Thread threadCalculo =  new Thread(result, "Thread Calculador");
-						threadCalculo.start();                     
+						threadCalculo.start();           
+						}catch(Exception e2){
+							new Mensagens("Preencha o campo do repositório ou defina o objeto para Tudo");
+						}
+                                  
                 }
               });
-
-    }
-
-    public StringBuilder execute(String... comandos){
-        StringBuilder saida = new StringBuilder();
-        BufferedReader leitor;
-        ProcessBuilder processos;
-        Process processo;
-        try {
-
-                processos = new ProcessBuilder("cmd.exe", "/c", String.join(" && ", comandos));   
-                processos.redirectErrorStream(true);
-                processo = processos.start();
-                processo.waitFor();
-                leitor = new BufferedReader(new InputStreamReader(processo.getInputStream()));
-                String linha = "";
-
-                while ((linha = leitor.readLine()) != null) {
-                  saida.append(linha).append("\n");
-                } 
-                
-                
-        } catch (IOException e1) {
-                new Mensagens(e1.getMessage());
-        } catch (InterruptedException e1) {
-            	new Mensagens(e1.getMessage());
-        }
-        
-        return saida;
 
     }
 
@@ -913,17 +889,26 @@ public class TelaDeCadastro {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						
-                        String local = getGitConf().getPathRespositorio().getText();
-                        String particao = local.substring(0,2);
-                        String vaiAteORepositorio =  String.format("cd %s", local);
-                        String listarBranch = "git branch -a";
-                        
-                        File path = new File(local);
-                        if(!path.exists()) {  new Mensagens("Caminho Inexistente!"); return ; }
-                        
-                        StringBuilder result = execute(particao,vaiAteORepositorio,listarBranch);
-                        getJtresult().setText(result.toString());
+						try{
+							String local = getGitConf().getPathRespositorio().getText();
+							String particao = local.substring(0,2);
+							String vaiAteORepositorio =  String.format("cd %s", local);
+							String listarBranch = "git branch -a";
+							
+							File path = new File(local);
+							if(!path.exists()) {  new Mensagens("Caminho Inexistente!"); return ; }                       
+						  
+							ExecuteGit result = new ExecuteGit(particao,vaiAteORepositorio,listarBranch) ;
+							result.write(getJtresult());
+							getJtresult().setText("loading...");
+							Thread threadCalculo =  new Thread(result, "Thread Calculador");
+							threadCalculo.start(); 
 
+						}catch(Exception e2){
+							new Mensagens("Preencha o campo do repositório ou defina o objeto para Tudo");
+
+						}
+                       
 
 						
 					}

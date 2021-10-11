@@ -20,6 +20,7 @@ public class Servidor {
         // ExecutorService threadPool = Executors.newFixedThreadPool(4);//fi xo
         this.threadPool = Executors.newCachedThreadPool();//dinamico
         this.serverSocket = new ServerSocket(12345);
+        this.threadPool = Executors.newFixedThreadPool(4,new FabricaDeThreads());
         this.estaRodando= true;
     }
 
@@ -28,7 +29,7 @@ public class Servidor {
             try {
                 Socket accept = serverSocket.accept();
                 System.out.println("Aceitando Novo Cliente na porta: " + accept.getPort());
-                DistribuirTarefas distribuirTarefas = new DistribuirTarefas(accept, this);
+                DistribuirTarefas distribuirTarefas = new DistribuirTarefas(threadPool,accept, this);
                 threadPool.execute(distribuirTarefas);//reaproveita thread
                 // Thread threadCliente = new Thread(distribuirTarefas);//nao reaproveita
                 // threadCliente.start();

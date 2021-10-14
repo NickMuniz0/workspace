@@ -51,10 +51,8 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
             .antMatchers("/auth/**").permitAll()
             .antMatchers("/actuator/**").permitAll()
-
-            
-
             .anyRequest().authenticated()
+
             // .and().formLogin()
             .and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -66,8 +64,8 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     //Recursos Estaticos
     @Override
     public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
-    }
+        web.ignoring()
+        .antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**");    }
 
 
     public void geraEncode(){

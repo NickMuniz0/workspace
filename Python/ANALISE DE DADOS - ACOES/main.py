@@ -82,6 +82,7 @@ class ACAO():
         ax1.set_xticklabels(dx.Data)
         ax1.set_xticks(np.arange(len(dx.Data)))
         # plt.savefig(f'{acao}.png')
+        
 
     def UP_DOWN(self,dx):
         dx.plot(kind="bar",x="ACAO",y=['PRECO','VALOR_COMPRA'])

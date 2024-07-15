@@ -18,14 +18,17 @@ class ACAO():
         self.carteira=CARTEIRA
 
     def start(self):
-        df =pd.DataFrame([],columns=['ACAO','PRECO','PRECOTETO','VARIACAO','DIV.MEDIO','VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO','VALOR_COMPRA'])
-        print("QUANTIDADE DE ACAO:",self.quantidade_de_acao_prospectada)
+        df =pd.DataFrame([],columns=['VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO','ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','DIV.MEDIO'])
+        print("VALOR A APLICAR:",self.quantidade_de_acao_prospectada)
         for x,y in enumerate(self.ativos):
             self.get_dados(x,y,df)
         df = df.sort_values(['VALOR_PROSPECTADO_DIV_MEDIO'], ascending=[False])
 
-        print(df)
+        # print(df)
         print('DIVIDENDO TOTAL ANO:',df['VALOR_REAL_DIV_MEDIO'].sum())
+        
+        print(df[df['VARIACAO']<0])
+
         # self.UP_DOWN(df)
 
     def get_dados(self,index,acao,df):
@@ -33,18 +36,27 @@ class ACAO():
         VPA=aapl.info['bookValue']
         PL = aapl.info['trailingPE']
         LPA =aapl.info['trailingEps']
-        num= (22.5* PL* VPA*LPA)
+        num= (2.25* PL* VPA*LPA)
         preco_justo = math.pow(num, 1/2)
         dividendo_medio_5= pd.Series(aapl.dividends.resample('YE').sum()).tail(5).mean()
         preco_teto = round(dividendo_medio_5/0.06,2)
         df.loc[index,'ACAO']=acao
         df.loc[index,'PRECO']=aapl.info['currentPrice']
-        df.loc[index,'PRECOTETO']=round(preco_teto,2)
         df.loc[index,'VARIACAO']= round(aapl.info['52WeekChange']*100,2)
+        df.loc[index,'PRECOJUSTO']= round(preco_justo,2)
+        df.loc[index,'VALOR_COMPRA']= round(preco_justo*0.94,2)
         df.loc[index,'DIV.MEDIO']=float(dividendo_medio_5)
         df.loc[index,'VALOR_PROSPECTADO_DIV_MEDIO'] =   round((self.quantidade_de_acao_prospectada/aapl.info['currentPrice']) * dividendo_medio_5,2)
         df.loc[index,'VALOR_REAL_DIV_MEDIO']=round(self.carteira[index]*dividendo_medio_5,2)
-        df.loc[index,'VALOR_COMPRA']= round(preco_teto*0.60,2)
+        df.loc[index,'PRECOTETO_8']=(float(dividendo_medio_5)/0.08)
+        df.loc[index,'PRECOTETO_10']=(float(dividendo_medio_5)/0.1)
+
+
+
+
+
+
+
 
     def lucro_por_preco(self,acao):
         aapl = yf.Ticker(f"{acao}.SA")
@@ -89,9 +101,9 @@ class ACAO():
         plt.show()
 
 
-CARTEIRA= [500,700,1500,600,0,0,0]
-ATIVOS =  ['CXSE3','BBSE3','BBAS3','TAEE11','CSMG3','UNIP6','TRPL4']
-valor_prospectado = 40000
+CARTEIRA= [500,700,1500,600,0,0,0,0,0,0,0]
+ATIVOS =  ['CXSE3','BBSE3','BBAS3','TAEE11','CSMG3','UNIP6','TRPL4','CMIN3','CSNA3','VALE3']
+valor_prospectado = 17000
 ACAO(valor_prospectado,ATIVOS,CARTEIRA).start()
 # ACAO(valor_aplicado,ativos,CARTEIRA).lucro_por_preco("TRPL4")
 

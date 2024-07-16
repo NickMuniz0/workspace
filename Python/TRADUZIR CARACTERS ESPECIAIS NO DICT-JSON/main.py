@@ -12,7 +12,11 @@ char_to_replace={
 ultimo= texto[-3:]
 texto=texto.translate(char_to_replace)
 texto= texto.replace(texto[-3:],ultimo).replace(':¢',':[')
-texto = re.sub(r'([\\u00-\\u7F]{6,8})','',texto) # Remove Unicode
+texto = re.sub(r'([\\u00-\\u7F]{4,10})','',texto) # Remove Unicode
 print(texto)
 print(texto_antigo)
 print(hex(ord('\u0014')))
+
+
+# Regex unicode ([\\u00-\\u7F]{4,10})
+# Regex valores dict 

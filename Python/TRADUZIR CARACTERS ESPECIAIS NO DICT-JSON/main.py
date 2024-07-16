@@ -1,22 +1,39 @@
 import re
-texto = '{"body":{"dados_fixos":{"T1":{"C1":"^"},"T2":"¢","T3":{"C1":{"D1":"!","D2":"¬"}}},"dados_variaveis":[{"Teste1":"!^"},{"Teste2":"^"},{"Teste3":"A\\u0014"}]}}'
-texto_antigo = '{"body":{"dados_fixos":{"T1":{"C1":"^"},"T2":"¢","T3":{"C1":{"D1":"!","D2":"¬"}}},"dados_variaveis":[{"Teste1":"!^"},{"Teste2":"^"},{"Teste3":"A\\u0014"}]}}'
-char_to_replace={
-                    ord(']'):'!',
-                    ord('^'):'¬',
-                    ord('!'):'|',
-                    ord('¢'):'^',
-                    ord('¬'):'[',
-                    ord('|'):']'
-                }
-ultimo= texto[-3:]
-texto=texto.translate(char_to_replace)
-texto= texto.replace(texto[-3:],ultimo).replace(':¢',':[')
-texto = re.sub(r'([\\u00-\\u7F]{4,10})','',texto) # Remove Unicode
-print(texto)
-print(texto_antigo)
+import json
+
+
 print(hex(ord('\u0014')))
 
+def traduzir_caracter(texto):
+    char_to_replace={
+                        ord(']'):'!',
+                        ord('^'):'¬',
+                        ord('!'):'|',
+                        ord('¢'):'^',
+                        ord('¬'):'[',
+                        ord('|'):']'
+                    }
+    texto=texto.translate(char_to_replace)
+    return texto
 
-# Regex unicode ([\\u00-\\u7F]{4,10})
-# Regex valores dict 
+def remove_unicode(texto):
+    return re.sub(r'([\\]+[u]+[00]+([0-9]|[A-Z]){2})|([0]+[x]+([0-9]){2})','',texto) # Remove Unicode
+
+def formatar(texto):
+    dados = json.loads(texto)
+    dados['body']['metadado']['codigo_comprovante']="\u0014"
+    for key,values in dados['body']['metadado'].items():
+        dados['body']['metadado'][key]=remove_unicode(traduzir_caracter(values))
+
+    for obj_variaveis in dados['body']['dados_variaveis']:
+        for key,values in obj_variaveis.items():
+            obj_variaveis[key]=remove_unicode(traduzir_caracter(values))
+    return dados
+
+texto = '{"body":{"metadado":{"codigo_comprovante":"","versao":"![|]"},"dados_fixos":"","dados_variaveis":[{"TEXTE":"OLA"},{"TEXTE1":"OLA2"}]}}'
+
+resultado = formatar(texto)
+print(resultado)
+
+
+(:+".*?")+ # REGEX VALORES DE UM JSON EM STRING

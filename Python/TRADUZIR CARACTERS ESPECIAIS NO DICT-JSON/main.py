@@ -36,4 +36,4 @@ resultado = formatar(texto)
 print(resultado)
 
 
-(:+".*?")+ # REGEX VALORES DE UM JSON EM STRING
+#(:+".*?")+ # REGEX VALORES DE UM JSON EM STRING

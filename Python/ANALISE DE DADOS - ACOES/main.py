@@ -26,9 +26,10 @@ class ACAO():
 
         # print(df)
         print('DIVIDENDO TOTAL ANO:',df['VALOR_REAL_DIV_MEDIO'].sum())
-        
-        print(df[df['VARIACAO']<0])
-
+        dd = df[df['VARIACAO']<0]
+        print(dd[['ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO']])
+        dd1 = dd[['ACAO','VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO']]
+        # print(dd1)
         # self.UP_DOWN(df)
 
     def get_dados(self,index,acao,df):

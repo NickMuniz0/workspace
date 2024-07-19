@@ -30,7 +30,7 @@ def formatar(texto):
             obj_variaveis[key]=remove_unicode(traduzir_caracter(values))
     return dados
 
-texto = '{"body":{"metadado":{"codigo_comprovante":"","versao":"![|]"},"dados_fixos":"","dados_variaveis":[{"TEXTE":"OLA"},{"TEXTE1":"OLA2"}]}}'
+texto = '{"body":{"metadado":{"codigo_comprovante":"","versao":"![|]"},"dados_fixos":"","dados_variaveis":[{"TEXTE":""},{"TEXTE1":"OLA2"}]}}'
 
 resultado = formatar(texto)
 print(resultado)

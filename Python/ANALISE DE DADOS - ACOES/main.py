@@ -19,18 +19,30 @@ class ACAO():
 
     def start(self):
         df =pd.DataFrame([],columns=['VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO','ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','DIV.MEDIO'])
-        print("VALOR A APLICAR:",self.quantidade_de_acao_prospectada)
         for x,y in enumerate(self.ativos):
             self.get_dados(x,y,df)
         df = df.sort_values(['VALOR_PROSPECTADO_DIV_MEDIO'], ascending=[False])
-
+        print('######################### COMPRAR ##################################')
+        dd = df[(df['PRECO']-df['VALOR_COMPRA']<=0)]
+        dd = dd[['ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO']]
+        dd = dd[ (dd['VARIACAO']<0)]
+        print(dd)
+        print('######################### VENDER  ##################################')
+        dd0 =  df[(df['PRECO']-df['VALOR_COMPRA']>0)]
+        dd0 =  dd0[ (dd0['VARIACAO']>0)]
+        dd0 =  dd0[['ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO']]
+        print(dd0)
+        print('####################################################################')
         print(df)
-        print('DIVIDENDO TOTAL ANO:',df['VALOR_REAL_DIV_MEDIO'].sum())
-        dd = df[df['VARIACAO']<0]
-        print(dd[['ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO']])
-        dd1 = dd[['ACAO','VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO']]
+        print('####################################################################')
+        self.GRAFICO(dd,"COMPRAR")
+        self.GRAFICO(dd0,"VENDER")
+
+        # dd1 = df[['ACAO','VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO']]
+        # print("VALOR A APLICAR:",self.quantidade_de_acao_prospectada)
+        # print('DIVIDENDO TOTAL ANO:',df['VALOR_REAL_DIV_MEDIO'].sum())
         # print(dd1)
-        self.UP_DOWN(df)
+
 
     def get_dados(self,index,acao,df):
         aapl = yf.Ticker(f"{acao}.SA")
@@ -51,13 +63,6 @@ class ACAO():
         df.loc[index,'VALOR_REAL_DIV_MEDIO']=round(self.carteira[index]*dividendo_medio_5,2)
         df.loc[index,'PRECOTETO_8']=(float(dividendo_medio_5)/0.08)
         df.loc[index,'PRECOTETO_10']=(float(dividendo_medio_5)/0.1)
-
-
-
-
-
-
-
 
     def lucro_por_preco(self,acao):
         aapl = yf.Ticker(f"{acao}.SA")
@@ -95,11 +100,12 @@ class ACAO():
         ax1.set_xticklabels(dx.Data)
         ax1.set_xticks(np.arange(len(dx.Data)))
         # plt.savefig(f'{acao}.png')
-        
 
-    def UP_DOWN(self,dx):
+    def GRAFICO(self,dx,tag):
         dx.plot(kind="bar",x="ACAO",y=['PRECO','VALOR_COMPRA'])
-        plt.show()
+        # plt.show()
+        plt.savefig(f'{tag}.png')
+
 
 
 CARTEIRA= [500,700,1500,600,0,0,0,0,0,0,0]

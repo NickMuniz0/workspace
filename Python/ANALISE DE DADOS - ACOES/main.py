@@ -24,13 +24,13 @@ class ACAO():
             self.get_dados(x,y,df)
         df = df.sort_values(['VALOR_PROSPECTADO_DIV_MEDIO'], ascending=[False])
 
-        # print(df)
+        print(df)
         print('DIVIDENDO TOTAL ANO:',df['VALOR_REAL_DIV_MEDIO'].sum())
         dd = df[df['VARIACAO']<0]
         print(dd[['ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO']])
         dd1 = dd[['ACAO','VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO']]
         # print(dd1)
-        # self.UP_DOWN(df)
+        self.UP_DOWN(df)
 
     def get_dados(self,index,acao,df):
         aapl = yf.Ticker(f"{acao}.SA")
@@ -103,7 +103,7 @@ class ACAO():
 
 
 CARTEIRA= [500,700,1500,600,0,0,0,0,0,0,0]
-ATIVOS =  ['CXSE3','BBSE3','BBAS3','TAEE11','CSMG3','UNIP6','TRPL4','CMIN3','CSNA3','VALE3']
+ATIVOS =  ['CXSE3','BBSE3','BBAS3','TAEE11','CSMG3','UNIP6','TRPL4','VALE3']
 valor_prospectado = 17000
 ACAO(valor_prospectado,ATIVOS,CARTEIRA).start()
 # ACAO(valor_aplicado,ativos,CARTEIRA).lucro_por_preco("TRPL4")

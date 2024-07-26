@@ -57,7 +57,7 @@ class ACAO():
         df.loc[index,'PRECO']=aapl.info['currentPrice']
         df.loc[index,'VARIACAO']= round(aapl.info['52WeekChange']*100,2)
         df.loc[index,'PRECOJUSTO']= round(preco_justo,2)
-        df.loc[index,'VALOR_COMPRA']= round(preco_justo*0.94,2)
+        df.loc[index,'VALOR_COMPRA']= round(preco_justo*0.90,2)
         df.loc[index,'DIV.MEDIO']=float(dividendo_medio_5)
         df.loc[index,'VALOR_PROSPECTADO_DIV_MEDIO'] =   round((self.quantidade_de_acao_prospectada/aapl.info['currentPrice']) * dividendo_medio_5,2)
         df.loc[index,'VALOR_REAL_DIV_MEDIO']=round(self.carteira[index]*dividendo_medio_5,2)
@@ -106,13 +106,25 @@ class ACAO():
         # plt.show()
         plt.savefig(f'{tag}.png')
 
-
-
-CARTEIRA= [500,700,1500,600,0,0,0,0,0,0,0]
-ATIVOS =  ['CXSE3','BBSE3','BBAS3','TAEE11','CSMG3','UNIP6','TRPL4','VALE3']
-valor_prospectado = 17000
-ACAO(valor_prospectado,ATIVOS,CARTEIRA).start()
-# ACAO(valor_aplicado,ativos,CARTEIRA).lucro_por_preco("TRPL4")
+CARTEIRA = {
+    "CXSE3":500,
+    "BBSE3":700,
+    "BBAS3":1500,
+    "TAEE11":600,
+    "CSMG3":0,
+    "UNIP6":0,
+    "TRPL4":0,
+    "VALE3":0,
+    "BBDC4":0,
+    "GOAU4":0,
+    "GGBR4":0
+}
+ACOES = list(CARTEIRA.keys())
+VALORES = list(CARTEIRA.values())
+# VALORES = [1000 for x in range(0,9)]
+valor_prospectado = 30000
+ACAO(valor_prospectado,ACOES,VALORES).start()
+# # ACAO(valor_aplicado,ativos,CARTEIRA).lucro_por_preco("TRPL4")
 
 
 

@@ -47,7 +47,7 @@ try:
                 df1 = pd.read_parquet(file_path,engine="fastparquet") 
                 df2 = pd.concat([df,df1])
                 write(file_path, df2, partition_on = partitions) 
-                write(file_path, df2, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
+                #write(file_path, df2, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
 
         else:
                 print("criou de novo")

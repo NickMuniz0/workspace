@@ -56,12 +56,12 @@ try:
                 index_file = name_file[namefile.group(0).index("-")+1:]
                 index_file_novo = int(index_file)+1
                 write(f'{path}/parquet-{index_file_novo}.parquet', df, partition_on = partitions)
-                ##write(f'{path}/parquet-{index_file_novo}.parquet', df, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
+                #write(f'{path}/parquet-{index_file_novo}.parquet', df, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
 
     else:
         os.makedirs(path)## ALTERAR PARA AWS
         write(f'{path}/parquet-0.parquet', df, partition_on = partitions)
-        # write(f'{path}/parquet-0.parquet', df, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
+        #write(f'{path}/parquet-0.parquet', df, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
 
 except Exception as e:
       print(e)

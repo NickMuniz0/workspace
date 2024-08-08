@@ -5,6 +5,7 @@ import math
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt  
+from pprint import pprint
 
 
 # https://github.com/ranaroussi/yfinance
@@ -12,31 +13,37 @@ import matplotlib.pyplot as plt
 
 class ACAO():
         
-    def __init__(self,quantidade_de_acao_prospectada,ativos,CARTEIRA) -> None:
+    def __init__(self,quantidade_de_acao_prospectada,ativos,CARTEIRA,valor_disponivel) -> None:
         self.ativos=ativos
         self.quantidade_de_acao_prospectada = quantidade_de_acao_prospectada
         self.carteira=CARTEIRA
+        self.valor_disponivel = valor_disponivel
 
     def start(self):
-        df =pd.DataFrame([],columns=['VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO','ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','DIV.MEDIO'])
+        pd.reset_option('max_columns')
+        df =pd.DataFrame([],columns=['VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO','ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','DIV.MEDIO','V/VP','EV/EBITDA','VARIACAO'])
         for x,y in enumerate(self.ativos):
             self.get_dados(x,y,df)
         df = df.sort_values(['VALOR_PROSPECTADO_DIV_MEDIO'], ascending=[False])
-        print('######################### COMPRAR ##################################')
-        dd = df[(df['PRECO']-df['VALOR_COMPRA']<=0)]
-        dd = dd[['ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO']]
-        dd = dd[ (dd['VARIACAO']<0)]
-        print(dd)
-        print('######################### VENDER  ##################################')
-        dd0 =  df[(df['PRECO']-df['VALOR_COMPRA']>0)]
+        print('######################### POSSIVEL OPORTUNIDADE DE COMPRAR ##################################')
+        dd = df[ (df['PRECO']-df['VALOR_COMPRA']<=0) & (df['PRECO']-df['PRECOJUSTO']<=0)& (df['PRECO']-df['PRECOTETO_8']<=0) & (df['EV/EBITDA']<=10.0) & (df['EV/EBITDA']>0.0)]
+
+        dd = dd[['ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','V/VP','EV/EBITDA','VARIACAO']]
+        dd['VALOR_DISPONIVEL'] = dd['PRECO'].apply(lambda x : x*  (self.valor_disponivel/ (dd['PRECO'].sum())))
+        dd['QUANTIDADE_ACAO']  = round(dd['VALOR_DISPONIVEL']/dd['PRECO'],2)
+
+        pprint(dd)
+
+        print('######################### POSSIVEL OPORTUNIDADE DE VENDER  ##################################')
+        dd0 =  df[(df['PRECO']-df['VALOR_COMPRA']>0) & (df['EV/EBITDA']>=10.0) ]
         dd0 =  dd0[ (dd0['VARIACAO']>0)]
-        dd0 =  dd0[['ACAO','VARIACAO','PRECO','VALOR_COMPRA','PRECOJUSTO']]
+        dd0 =  dd0[['ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','V/VP','EV/EBITDA','VARIACAO']]
         print(dd0)
         print('####################################################################')
         print(df)
         print('####################################################################')
-        self.GRAFICO(dd,"COMPRAR")
-        self.GRAFICO(dd0,"VENDER")
+        # self.GRAFICO(dd,"COMPRAR")
+        # self.GRAFICO(dd0,"VENDER")
 
         # dd1 = df[['ACAO','VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO']]
         # print("VALOR A APLICAR:",self.quantidade_de_acao_prospectada)
@@ -51,18 +58,24 @@ class ACAO():
         LPA =aapl.info['trailingEps']
         num= (2.25* PL* VPA*LPA)
         preco_justo = math.pow(num, 1/2)
-        dividendo_medio_5= pd.Series(aapl.dividends.resample('YE').sum()).tail(5).mean()
+        dividendo_medio_5= pd.Series(aapl.dividends.resample('YE').sum()).tail(3).mean()         #3 anos
         preco_teto = round(dividendo_medio_5/0.06,2)
         df.loc[index,'ACAO']=acao
         df.loc[index,'PRECO']=aapl.info['currentPrice']
-        df.loc[index,'VARIACAO']= round(aapl.info['52WeekChange']*100,2)
+        df.loc[index,'VARIACAO']= round(aapl.info['52WeekChange']*100,2) if "52WeekChange" in aapl.info else 0.0
         df.loc[index,'PRECOJUSTO']= round(preco_justo,2)
-        df.loc[index,'VALOR_COMPRA']= round(preco_justo*0.90,2)
-        df.loc[index,'DIV.MEDIO']=float(dividendo_medio_5)
+        df.loc[index,'VALOR_COMPRA']= round(preco_justo*0.95,2)
+        df.loc[index,'DIV.MEDIO']=round(float(dividendo_medio_5),2)
         df.loc[index,'VALOR_PROSPECTADO_DIV_MEDIO'] =   round((self.quantidade_de_acao_prospectada/aapl.info['currentPrice']) * dividendo_medio_5,2)
         df.loc[index,'VALOR_REAL_DIV_MEDIO']=round(self.carteira[index]*dividendo_medio_5,2)
-        df.loc[index,'PRECOTETO_8']=(float(dividendo_medio_5)/0.08)
-        df.loc[index,'PRECOTETO_10']=(float(dividendo_medio_5)/0.1)
+        # df.loc[index,'PRECOTETO_8']=round(float(dividendo_medio_5)/0.08,2)
+        df.loc[index,'PRECOTETO_8']=round(float(dividendo_medio_5)/0.08,2)
+        df.loc[index,'PRECOTETO_10']=round(float(dividendo_medio_5)/0.1,2)
+
+        df.loc[index,'V/VP']= round(aapl.info['priceToBook'],2)
+        df.loc[index,'EV/EBITDA']= round(aapl.info['enterpriseToEbitda'],2) if "enterpriseToEbitda" in aapl.info else 0.0
+
+        
 
     def lucro_por_preco(self,acao):
         aapl = yf.Ticker(f"{acao}.SA")
@@ -108,22 +121,29 @@ class ACAO():
 
 CARTEIRA = {
     "CXSE3":500,
-    "BBSE3":700,
+    "BBSE3":0,
     "BBAS3":1500,
     "TAEE11":600,
-    "CSMG3":0,
     "UNIP6":0,
     "TRPL4":0,
-    "VALE3":0,
+    "VALE3":600,
     "BBDC4":0,
-    "GOAU4":0,
-    "GGBR4":0
+    "SAPR11":0,
+    "CSMG3":0,
+    "SANB11":0,
+    "ITSA4":0,
+    "CMIG4":0
 }
+
+# CARTEIRA = {
+#     "CXSE3":500
+# }
 ACOES = list(CARTEIRA.keys())
 VALORES = list(CARTEIRA.values())
 # VALORES = [1000 for x in range(0,9)]
 valor_prospectado = 30000
-ACAO(valor_prospectado,ACOES,VALORES).start()
+valor_disponivel = 6000 #float(input("Digite Valor Total Disponivel: "))
+ACAO(valor_prospectado,ACOES,VALORES,valor_disponivel).start()
 # # ACAO(valor_aplicado,ativos,CARTEIRA).lucro_por_preco("TRPL4")
 
 

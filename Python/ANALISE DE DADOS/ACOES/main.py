@@ -21,14 +21,14 @@ class ACAO():
 
     def start(self):
         pd.reset_option('max_columns')
-        df =pd.DataFrame([],columns=['VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO','ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','DIV.MEDIO','V/VP','EV/EBITDA','VARIACAO'])
+        df =pd.DataFrame([],columns=['VALOR_PROSPECTADO_DIV_MEDIO','VALOR_REAL_DIV_MEDIO','ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','DIV.MEDIO','V/VP','EV/EBITDA','EV/REVENUE','VARIACAO'])
         for x,y in enumerate(self.ativos):
             self.get_dados(x,y,df)
         df = df.sort_values(['VALOR_PROSPECTADO_DIV_MEDIO'], ascending=[False])
         print('######################### POSSIVEL OPORTUNIDADE DE COMPRAR ##################################')
         dd = df[ (df['PRECO']-df['VALOR_COMPRA']<=0) & (df['PRECO']-df['PRECOJUSTO']<=0)& (df['PRECO']-df['PRECOTETO_8']<=0) & (df['EV/EBITDA']<=10.0) & (df['EV/EBITDA']>0.0)]
 
-        dd = dd[['ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','V/VP','EV/EBITDA','VARIACAO']]
+        dd = dd[['ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','V/VP','EV/EBITDA','EV/REVENUE','VARIACAO']]
         dd['VALOR_DISPONIVEL'] = dd['PRECO'].apply(lambda x : x*  (self.valor_disponivel/ (dd['PRECO'].sum())))
         dd['QUANTIDADE_ACAO']  = round(dd['VALOR_DISPONIVEL']/dd['PRECO'],2)
 
@@ -37,7 +37,7 @@ class ACAO():
         print('######################### POSSIVEL OPORTUNIDADE DE VENDER  ##################################')
         dd0 =  df[(df['PRECO']-df['VALOR_COMPRA']>0) & (df['EV/EBITDA']>=10.0) ]
         dd0 =  dd0[ (dd0['VARIACAO']>0)]
-        dd0 =  dd0[['ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','V/VP','EV/EBITDA','VARIACAO']]
+        dd0 =  dd0[['ACAO','PRECO','VALOR_COMPRA','PRECOJUSTO','PRECOTETO_8','PRECOTETO_10','V/VP','EV/EBITDA','EV/REVENUE','VARIACAO']]
         print(dd0)
         print('####################################################################')
         print(df)
@@ -53,6 +53,8 @@ class ACAO():
 
     def get_dados(self,index,acao,df):
         aapl = yf.Ticker(f"{acao}.SA")
+        pd.set_option('display.max_rows', None)
+
         VPA=aapl.info['bookValue']
         PL = aapl.info['trailingPE']
         LPA =aapl.info['trailingEps']
@@ -74,6 +76,9 @@ class ACAO():
 
         df.loc[index,'V/VP']= round(aapl.info['priceToBook'],2)
         df.loc[index,'EV/EBITDA']= round(aapl.info['enterpriseToEbitda'],2) if "enterpriseToEbitda" in aapl.info else 0.0
+        df.loc[index,'EV/REVENUE']= round(aapl.info['enterpriseToRevenue'],2) if "enterpriseToRevenue" in aapl.info else 0.0
+
+        
 
         
 
@@ -132,17 +137,20 @@ CARTEIRA = {
     "CSMG3":0,
     "SANB11":0,
     "ITSA4":0,
-    "CMIG4":0
+    "CMIG4":0,
+    "RANI3":0,
+    "KLBN11":0
 }
 
 # CARTEIRA = {
-#     "CXSE3":500
+#     "VALE3":0
 # }
 ACOES = list(CARTEIRA.keys())
 VALORES = list(CARTEIRA.values())
 # VALORES = [1000 for x in range(0,9)]
-valor_prospectado = 30000
-valor_disponivel = 6000 #float(input("Digite Valor Total Disponivel: "))
+valor = 1200
+valor_prospectado = valor
+valor_disponivel = valor #float(input("Digite Valor Total Disponivel: "))
 ACAO(valor_prospectado,ACOES,VALORES,valor_disponivel).start()
 # # ACAO(valor_aplicado,ativos,CARTEIRA).lucro_por_preco("TRPL4")
 

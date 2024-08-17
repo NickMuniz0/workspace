@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 from fastparquet import write
 import re
-import s3fs  # PARA AWS
 class Teste:
     nome:str
     id:str
@@ -38,16 +37,13 @@ def get_file_path():
                   return path_0
 
 try:
-    s3=s3fs.S3FileSystem()## ALTERAR PARA AWS
-    myopen=s3.open## ALTERAR PARA AWS
-    if  Path(path).exists():## ALTERAR PARA AWS
-        file_path = get_file_path() ## ALTERAR PARA AWS
-        if os.path.getsize(file_path)<2300: ## ALTERAR PARA AWS
+
+    if  Path(path).exists():
+        if os.path.getsize(file_path)<2300: 
                 print("appendou")
                 df1 = pd.read_parquet(file_path,engine="fastparquet") 
                 df2 = pd.concat([df,df1])
                 write(file_path, df2, partition_on = partitions) 
-                #write(file_path, df2, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
 
         else:
                 print("criou de novo")
@@ -56,12 +52,10 @@ try:
                 index_file = name_file[namefile.group(0).index("-")+1:]
                 index_file_novo = int(index_file)+1
                 write(f'{path}/parquet-{index_file_novo}.parquet', df, partition_on = partitions)
-                #write(f'{path}/parquet-{index_file_novo}.parquet', df, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
 
     else:
         os.makedirs(path)## ALTERAR PARA AWS
         write(f'{path}/parquet-0.parquet', df, partition_on = partitions)
-        #write(f'{path}/parquet-0.parquet', df, partition_on = partitions,open_with=myopen) ## ALTERAR PARA AWS
 
 except Exception as e:
       print(e)

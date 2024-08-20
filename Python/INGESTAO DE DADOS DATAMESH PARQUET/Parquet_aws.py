@@ -1,6 +1,7 @@
 import pandas as pd
-import awswrangler as wr
-import re
+import fastparquet
+import os
+
 class Teste:
     nome:str
     id:str
@@ -17,13 +18,11 @@ teste =objeto.__dict__
 lista = list()
 lista.append(teste)
 partitions=['ano','mes','dia','hor']
-path_0 = "./temp_emissao"
-path =f"{path_0}ano={objeto.ano}/mes={objeto.mes}/dia={objeto.dia}/hor={objeto.hor}"
+path = f"s3://{bucket_name}/{folders}/"
 df =pd.DataFrame(lista)
 
 try:
-    wr.s3.to_parquet(path=path_0,df=df, partition_cols = partitions, dataset=True,mode='overwrite')
-
+    df.to_parquet(path=path, partition_on = partitions, engine='fastparquet',storage_options={"client_kwargs":{"region_name": os.environ.get("AWS_REGION")}})
 except Exception as e:
       print(e)
 

@@ -1,8 +1,0 @@
-com\nick\paymentservice\resource\PaymentResource.class
-com\nick\paymentservice\service\impl\PaymentServiceImpl.class
-com\nick\paymentservice\service\PaymentService.class
-com\nick\paymentservice\model\Payment.class
-com\nick\paymentservice\config\KafkaAdminConfig.class
-com\nick\paymentservice\config\JsonProducerConfig.class
-com\nick\paymentservice\PaymentServiceApplication.class
-com\nick\paymentservice\resource\impl\PaymentResourceImpl.class

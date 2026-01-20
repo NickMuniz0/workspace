@@ -1,4 +1,0 @@
-com\nick\jsonconsumer\model\Payment.class
-com\nick\jsonconsumer\config\JsonConsumerConfig.class
-com\nick\jsonconsumer\JsonConsumerApplication.class
-com\nick\jsonconsumer\listener\JsonListener.class

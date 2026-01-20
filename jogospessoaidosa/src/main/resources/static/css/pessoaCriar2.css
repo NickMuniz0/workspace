@@ -1,0 +1,169 @@
+:root {
+    --color-bg: #f4f6f8;
+    --color-text: #212529;
+    --color-primary: #0d6efd;
+    --color-warning: #ffc107;
+    --color-warning-dark: #e0a800;
+    --color-danger: #dc3545;
+    --color-muted: #f8f9fa;
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+}
+
+/* 🌐 Layout geral */
+body {
+    background-color: var(--color-bg);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: var(--color-text);
+}
+
+/* 🧾 Card principal */
+.card {
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+/* 🧢 Cabeçalho do card */
+.card-header {
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* 📝 Formulário */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: var(--color-warning);
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+/* 📞 Telefones */
+.telefone-item {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1rem;
+}
+
+/* 🔘 Botões */
+.btn {
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.btn-warning {
+    font-weight: 600;
+    background-color: var(--color-warning);
+    border-color: var(--color-warning);
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background-color: var(--color-warning-dark);
+    border-color: #d39e00;
+    color: #fff;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: var(--color-danger);
+    color: #fff;
+}
+
+/* 📊 Tabelas */
+.table {
+    border-radius: var(--radius-sm);
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 0;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    padding: 0.75rem 1rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+/* 🧭 Tabelas scrolláveis */
+
+    .scrollable-table {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+    }
+
+    .scrollable-table thead {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa;
+        z-index: 1;
+    }
+
+
+
+/* 📌 Fieldset */
+fieldset {
+    border: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+legend {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #495057;
+}
+
+/* 📱 Responsividade */
+@media (max-width: 768px) {
+    .card-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .telefone-item {
+        padding: 0.75rem;
+    }
+
+    .scrollable-table {
+        max-height: 200px;
+    }
+}

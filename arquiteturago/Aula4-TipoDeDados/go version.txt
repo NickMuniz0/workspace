@@ -1,0 +1,11 @@
+go version
+go env
+
+go run nome_arquivo 
+
+go build - cria executavel 
+
+
+go get "url"  - baixa dependencia
+
+go mod tidy - remove dependencias 

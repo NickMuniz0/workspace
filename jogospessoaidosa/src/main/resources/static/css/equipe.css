@@ -1,0 +1,106 @@
+/* === Estilo Geral === */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* === Cartão === */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* === Cabeçalho do Cartão === */
+.card-header {
+    background: linear-gradient(90deg, #17a2b8, #63cdda);
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #fff;
+    padding: 1rem;
+}
+
+/* === Tabela === */
+.table {
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    font-weight: 600;
+    color: #343a40;
+    background-color: #f1f3f5;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 0.75rem;
+}
+
+.table td {
+    vertical-align: middle;
+    background-color: #fff;
+    padding: 0.75rem;
+}
+
+/* === Container Scrollável da Tabela === */
+.table-responsive-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    scroll-behavior: smooth;
+}
+
+/* === Botões === */
+.btn {
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn-success {
+    background-color: #198754;
+    border: none;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #157347;
+}
+
+/* === Input de Busca === */
+.input-group .form-control {
+    border-radius: 6px 0 0 6px;
+}
+
+.input-group .btn {
+    border-radius: 0 6px 6px 0;
+}
+
+/* === Responsividade === */
+@media (max-width: 768px) {
+    .card-header h2 {
+        font-size: 1rem;
+    }
+
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .table th, .table td {
+        font-size: 0.875rem;
+    }
+}

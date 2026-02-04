@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateUserService } from 'src/domain/use-cases/users/create-user.service';
 import { GetUserByIdService } from 'src/domain/use-cases/users/get-user-by-id.service';
 import { CreateUsersDto } from './dtos/create-users.dto';
+import { Public } from 'src/gateways/guards/auth-guard/auth-guard.service';
 
 @Controller('users')
 export class UsersController {
@@ -22,6 +23,7 @@ export class UsersController {
     }
 
     @Post()
+    @Public()
     async create(@Body() createUsersDto: CreateUsersDto) {
         try{
             return this.createUserUseCase.execute(createUsersDto);

@@ -6,7 +6,7 @@ import { GetProjectByIdService } from 'src/domain/use-cases/projects/get-project
 import { CreateProjectDto } from './dtos/create-project.dto';
 
 
-const loggedUserId = 1; // Simulated logged-in user ID
+//const loggedUserId = 1; // Simulated logged-in user ID
 
 @Controller('projects')
 export class ProjectsController {
@@ -19,9 +19,10 @@ export class ProjectsController {
     ) { }
 
     @Get()
-    findAll(): Promise<IProject[]> {
+    findAll(@Req() request): Promise<IProject[]> {
         try{
-            return this.getAllProjectService.execute(loggedUserId);
+            const loggedUserId = request.user;
+            return this.getAllProjectService.execute(loggedUserId.sub);
         }catch(error){
             throw new Error('Error fetching projects');
         }
@@ -31,7 +32,8 @@ export class ProjectsController {
     @Get(':id')
     findById(@Req() request,@Param('id') id: number): Promise<IProject> {
         try{
-            return this.getProjectByIdService.execute({projectId:id,userId:loggedUserId});
+            const loggedUserId = request.user;
+            return this.getProjectByIdService.execute({projectId:id,userId:loggedUserId.sub});
         }catch(error){
             throw new Error('Error fetching project by ID');
         }
@@ -40,9 +42,10 @@ export class ProjectsController {
     @Post()
     create(@Req() request,@Body() createProjectDto: CreateProjectDto): Promise<IProject> {
         try{
+            const loggedUserId = request.user;
             return this.createProjectService.execute({
                     project: createProjectDto,
-                    userId: loggedUserId
+                    userId: loggedUserId.sub
                 });
         }catch(error){
             throw new Error('Error creating project');

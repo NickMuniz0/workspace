@@ -24,5 +24,7 @@ export class UsersRepositoryService  extends Repository<UserEntity> implements I
      updateById(id:number, payload: DeepPartial<IUser>) {
          return this.update(id, payload);
      }
-
+     findByEmail(email: string): Promise<IUser | null> {
+         return this.findOneBy({email});
+     }
 }

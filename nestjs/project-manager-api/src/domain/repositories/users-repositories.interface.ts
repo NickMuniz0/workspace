@@ -6,4 +6,5 @@ export interface IUsersRepositories {
     findById(id: number): Promise<IUser| null>;
     add(payload: DeepPartial<IUser>): Promise<IUser>;
     updateById(id:number, payload: DeepPartial<IUser>);
+    findByEmail(email: string): Promise<IUser | null>;
 }

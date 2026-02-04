@@ -5,7 +5,7 @@ import { GetTaskByIdService } from 'src/domain/use-cases/tasks/get-task-by-id.se
 import { CreateTasksDto } from './dtos/create-tasks.dto';
 
 
-const loggerUser = 1
+//const loggerUser = 1
 @Controller('tasks')
 export class TasksController {
 
@@ -16,9 +16,10 @@ export class TasksController {
     ) { }
 
     @Get()
-    findAll() {
+    findAll(@Req() request) {
         try{
-        return  this.getAllTasksUseCase.execute({userId:loggerUser});
+            const loggedUserId = request.user;
+            return  this.getAllTasksUseCase.execute({userId:loggedUserId.sub});
         }catch(error){
             console.log(error);
         }
@@ -27,7 +28,8 @@ export class TasksController {
     @Get(':id')
     findById(@Req() request, @Param('id') taskId: number) {
         try{
-            return this.getTaskByIdUseCase.execute({taskId:taskId, userId:loggerUser});
+            const loggedUserId = request.user;
+            return this.getTaskByIdUseCase.execute({taskId:taskId, userId:loggedUserId.sub});
         }catch(error){
             console.log(error);
         }
@@ -36,7 +38,8 @@ export class TasksController {
     @Post()
     create(@Req() request, @Body() taskData: CreateTasksDto) {
         try{
-            return this.createTaskUseCase.execute({task:taskData, userId:loggerUser});
+            const loggedUserId = request.user;
+            return this.createTaskUseCase.execute({task:taskData, userId:loggedUserId.sub});
         }catch(error){
             console.log(error);
         }

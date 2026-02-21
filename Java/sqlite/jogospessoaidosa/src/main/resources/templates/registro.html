@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registro - Jogos Pessoa Idosa</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" th:href="@{/css/registro.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+</head>
+<body>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Bootstrap JS (necessário para o menu responsivo funcionar) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<nav th:replace="~{fragments/menu :: menu}"></nav>
+
+
+<main id="conteudo" class="home-container">
+    <section class="intro">
+                            <h2>Cadastro</h2>
+                            <div th:if="${sucesso}" th:text="${sucesso}" class="sucesso"></div>
+                            <div th:if="${erro}" th:text="${erro}" class="erro"></div>
+        
+    </section>
+    <section class="actions">
+
+        <form class="actions" th:action="@{/auth/registro}" method="post" th:object="${usuario}">
+            <label>Nome:</label>
+            <input type="text" th:field="*{nome}" /><br/>
+
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" /><br/>
+            
+            <label>Palavra Magica:</label>
+            <input type="password" th:field="*{palavraMagica}" /><br/>
+
+            <label>Senha:</label>
+            <input type="password" th:field="*{senha}" /><br/>
+
+            <!-- Botão com classe Bootstrap-like -->
+            <button type="submit" class="btn btn-primary">Registrar</button>
+            <!-- Link estilizado como botão secundário -->
+            <a th:href="@{/login}" >Login</a>
+        </form>
+     
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

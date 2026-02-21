@@ -1,0 +1,114 @@
+/* Layout geral */
+body {
+    background-color: #f0f4f8;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: #212529;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container principal */
+.home-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+}
+
+/* Seção de introdução */
+.intro {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.intro h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 0.75rem;
+}
+
+.intro p {
+    font-size: 1.1rem;
+    color: #495057;
+}
+
+/* Seção de ações */
+.actions {
+    display: inline-grid;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-left: 36%;
+}
+
+.actions a.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Botões personalizados */
+.btn-primary {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+}
+
+/* Botão "tertiary" customizado */
+.btn-tertiary {
+    background-color: #20c997;
+    color: #fff;
+}
+
+.btn-tertiary:hover {
+    background-color: #17b48a;
+}
+
+/* Ícones */
+.actions i {
+    font-size: 1.2rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .intro h1 {
+        font-size: 1.5rem;
+    }
+
+    .intro p {
+        font-size: 1rem;
+    }
+
+    .actions a.btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+}
+/* Links com classe btn */
+a.btn {
+    display: inline-block;
+    text-align: center;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+}

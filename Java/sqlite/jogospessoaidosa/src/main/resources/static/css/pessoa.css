@@ -54,3 +54,9 @@ body {
 .btn-success:hover {
     background-color: #157347;
 }
+
+.pagination {
+    display: flex;
+    justify-content: flex-end; /* move para a direita */
+    gap: 10px; /* espaço entre os itens */
+}

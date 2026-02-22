@@ -6,8 +6,9 @@ import io.github.prefeituradorecife.jogospessoaidosa.Repository.PessoaRepository
 import io.github.prefeituradorecife.jogospessoaidosa.Specification.PessoaSpecification;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,8 +22,12 @@ public class PessoaService {
         this.pessoaRepository = pessoaRepository;
     }
 
-    public List<Pessoa> listarTodas() {
+    public List<Pessoa> listarTodasSemPagina() {
         return pessoaRepository.findAll();
+    }
+
+    public Page<Pessoa> listarTodas(Pageable pageable) {
+        return pessoaRepository.findAll(pageable);
     }
 
     public List<Pessoa> listarPorEquipe(Long equipeId) {
@@ -61,15 +66,18 @@ public class PessoaService {
         return pessoaRepository.getReferenceById(id);
     }
 
-    public Model buscaSpecification(String filtro,Model model){
+    public Page<Pessoa> buscaSpecification(String filtro, Pageable pageable) {
         String termo = filtro != null ? filtro.trim().toLowerCase() : "";
-        List<Pessoa> filtradas = termo.isEmpty()
-                ? pessoaRepository.findAll()
-                : pessoaRepository.findAll(PessoaSpecification.contemTermo(termo));
 
-        model.addAttribute("pessoas", filtradas);
-        return model;
+        if (termo.isEmpty()) {
+            // retorna todos paginados
+            return pessoaRepository.findAll(pageable);
+        } else {
+            // aplica Specification com paginação
+            return pessoaRepository.findAll(PessoaSpecification.contemTermo(termo), pageable);
+        }
     }
+
 
     public List<Long> buscarIdsDisponiveis() {
         return pessoaRepository.findAll().stream()

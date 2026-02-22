@@ -3,8 +3,13 @@ package io.github.prefeituradorecife.jogospessoaidosa.Controller;
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Doenca;
 import io.github.prefeituradorecife.jogospessoaidosa.Service.DoencaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,24 +22,33 @@ public class DoencaViewController {
     @Autowired
     private DoencaService doencaService;
 
+    @Cacheable("doencas")
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("doencas", doencaService.listarTodas());
+    public String listar(Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Doenca> doencasPage = doencaService.listarTodas(pageable);
+
+        model.addAttribute("doencasPage", doencasPage);
+        // model.addAttribute("doencas", doencaService.listarTodas());
         return "doenca";
     }
-
+    @CacheEvict(value = "doencas", allEntries = true)
     @GetMapping("/cadastrar2")
     public String showSignUpForm2(Model model) {
         model.addAttribute("doenca", new Doenca());
         return "doencaCriar2";
     }
-
+    @CacheEvict(value = "doencas", allEntries = true)
     @PostMapping("/salvarDoenca")
     public String salvar(@ModelAttribute Doenca doenca) {
         doencaService.salvar(doenca);
         return "redirect:/doencas";
     }
-
+    @CacheEvict(value = "doencas", allEntries = true)
     @PostMapping("/deletar")
     public String deletar(@RequestParam Long id) {
         doencaService.deletarPorId(id);
@@ -50,9 +64,13 @@ public class DoencaViewController {
     }
 
     @GetMapping("/buscar")
-    public String buscarDoencas(@RequestParam(required = false) String filtro, Model model) {
-        List<Doenca> filtradas = doencaService.buscarPorNome(filtro);
-        model.addAttribute("doencas", filtradas);
+    public String buscarDoencas(@RequestParam(required = false) String filtro, Model model,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Doenca> pessoasPage = doencaService.buscaSpecification(filtro, pageable);
+
+        model.addAttribute("doencasPage", pessoasPage);
         model.addAttribute("filtro", filtro);
         return "doenca"; // ajuste conforme o nome do seu template
     }

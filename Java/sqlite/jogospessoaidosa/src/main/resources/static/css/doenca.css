@@ -100,3 +100,9 @@ body {
         font-size: 0.875rem;
     }
 }
+
+.pagination {
+    display: flex;
+    justify-content: flex-end; /* move para a direita */
+    gap: 10px; /* espaço entre os itens */
+}

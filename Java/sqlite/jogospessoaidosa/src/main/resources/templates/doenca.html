@@ -48,7 +48,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="doenca : ${doencas}">
+                        <tr th:each="doenca : ${doencasPage.content}">
                             <td><input type="checkbox" name="idsParaExcluir" th:value="${doenca.id}" class="checkExcluir" /></td>
                             <td th:text="${doenca.nome}"></td>
                             <td>
@@ -61,6 +61,23 @@
                             <td colspan="4" class="text-center text-muted">Nenhuma doença encontrada</td>
                         </tr>
                         </tbody>
+
+                        <div class="pagination">
+                            <a th:if="${doencasPage.hasPrevious()}"
+                            th:href="@{/doencas(page=${doencasPage.number - 1}, size=${doencasPage.size})}">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+
+                            <span>
+                                Página <span th:text="${doencasPage.number + 1}"></span> 
+                                de <span th:text="${doencasPage.totalPages}"></span>
+                            </span>
+
+                            <a th:if="${doencasPage.hasNext()}"
+                            th:href="@{/doencas(page=${doencasPage.number + 1}, size=${doencasPage.size})}">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
                     </table>
                 </div>
                 <!-- ✅ Botão de exclusão -->

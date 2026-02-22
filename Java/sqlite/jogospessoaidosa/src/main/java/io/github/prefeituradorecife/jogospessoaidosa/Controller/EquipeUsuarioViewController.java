@@ -7,6 +7,8 @@ import io.github.prefeituradorecife.jogospessoaidosa.Service.EquipeService;
 import io.github.prefeituradorecife.jogospessoaidosa.Utils.PdfUtils;
 import io.github.prefeituradorecife.jogospessoaidosa.Service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -32,7 +34,7 @@ public class EquipeUsuarioViewController {
     @Autowired
     private PdfUtils pdfUtils;
 
-
+    @Cacheable("equipesView")
     @GetMapping("/{id}")
     public String listarUsuariosDaEquipe(@PathVariable Long id, Model model) {
         Equipe equipe = equipeService.buscarPorId(id);
@@ -41,7 +43,7 @@ public class EquipeUsuarioViewController {
         List<Pessoa> pessoasParticipantes = pessoaService.listarParticipantesPorEquipe(id);
 
         // Disponíveis = todas menos as que já estão na equipe
-        List<Pessoa> todas = pessoaService.listarTodas();
+        List<Pessoa> todas = pessoaService.listarTodasSemPagina();
         List<Pessoa> pessoasDisponiveis = todas.stream()
                 .filter(p -> !p.getEquipes().contains(equipe))
                 .toList();
@@ -54,7 +56,7 @@ public class EquipeUsuarioViewController {
 
         return "equipesUsuarios";
     }
-
+    @CacheEvict(value = "equipesView", allEntries = true)
     @PostMapping("/adicionarUsuariosEquipe")
     public String adicionarUsuarios(@RequestParam Long equipeId,
                                     @RequestParam(required = false) List<Long> pessoaIds) {
@@ -72,7 +74,7 @@ public class EquipeUsuarioViewController {
         return "redirect:/equipes/usuarios/" + equipeId;
     }
 
-
+    @CacheEvict(value = "equipesView", allEntries = true)
     @PostMapping("/removerUsuariosEquipe")
     public String removerUsuarios(@RequestParam Long equipeId,
                                   @RequestParam(required = false) List<Long> pessoaIds) {
@@ -87,12 +89,12 @@ public class EquipeUsuarioViewController {
         }
         return "redirect:/equipes/usuarios/" + equipeId;
     }
-
+    @CacheEvict(value = "equipesView", allEntries = true)
     @PostMapping("/adicionarUsuariosParticipantes")
     public String adicionarUsuariosParticipantes(@RequestParam Long equipeId,
                                                  @RequestParam(required = false) List<Long> pessoaIds) {
         if (pessoaIds == null || pessoaIds.isEmpty()) {
-            pessoaIds = pessoaService.listarTodas()
+            pessoaIds = pessoaService.listarTodasSemPagina()
                     .stream()
                     .map(Pessoa::getId)
                     .toList();
@@ -103,7 +105,7 @@ public class EquipeUsuarioViewController {
         return "redirect:/equipes/usuarios/" + equipeId;
     }
 
-
+    @CacheEvict(value = "equipesView", allEntries = true)
     @PostMapping("/removerUsuariosParticipantes")
     public String removerUsuariosParticipantes(@RequestParam Long equipeId,
                                             @RequestParam(required = false) List<Long> pessoaIds) {
@@ -118,7 +120,7 @@ public class EquipeUsuarioViewController {
         return "redirect:/equipes/usuarios/" + equipeId;
     }
 
-
+// ###############################################################################################################################
     @GetMapping("/gerarPdfTodasAsPessoasDaEquipe/{id}")
     public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasDaEquipe(@PathVariable Long id) throws IOException {
         // Buscar equipe pelo ID

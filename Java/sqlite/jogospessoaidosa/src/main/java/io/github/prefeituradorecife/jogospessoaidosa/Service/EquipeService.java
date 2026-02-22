@@ -6,11 +6,10 @@ import io.github.prefeituradorecife.jogospessoaidosa.Repository.PessoaRepository
 import io.github.prefeituradorecife.jogospessoaidosa.Specification.EquipeSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,8 +22,12 @@ public class EquipeService {
     @Autowired
     private PessoaRepository pessoaRepository;
 
-    public List<Equipe> listarTodas() {
+    public List<Equipe> listarTodasSemPagina() {
         return equipeRepository.findAll();
+    }
+
+    public Page<Equipe> listarTodas(Pageable pageable) {
+        return equipeRepository.findAll(pageable);
     }
 
     public void salvarOuAtualizarEquipe(Equipe equipe) {
@@ -87,15 +90,16 @@ public class EquipeService {
         equipeRepository.save(equipe);
     }
 
-    public Model buscaSpecification(String filtro,Model model){
+    public Page<Equipe> buscaSpecification(String filtro, Pageable pageable) {
         String termo = filtro != null ? filtro.trim().toLowerCase() : "";
-        List<Equipe> filtradas = termo.isEmpty()
-                ? equipeRepository.findAll()
-                : equipeRepository.findAll(EquipeSpecification.contemTermo(termo));
 
-        model.addAttribute("equipes", filtradas);
-        return model;
+        if (termo.isEmpty()) {
+            // retorna todos paginados
+            return equipeRepository.findAll(pageable);
+        } else {
+            // aplica Specification com paginação
+            return equipeRepository.findAll(EquipeSpecification.contemTermo(termo), pageable);
+        }
     }
-
  
 }

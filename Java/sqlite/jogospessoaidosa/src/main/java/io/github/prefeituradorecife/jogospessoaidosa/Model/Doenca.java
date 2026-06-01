@@ -16,6 +16,7 @@ public class Doenca {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    private boolean alergico;
 
     @Override
     public boolean equals(Object o) {

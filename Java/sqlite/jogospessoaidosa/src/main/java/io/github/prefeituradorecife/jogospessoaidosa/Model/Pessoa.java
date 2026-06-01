@@ -32,7 +32,6 @@ public class Pessoa {
 
     private boolean idoso;
 
-    private boolean avaliacaoMedica;
 
     @ManyToMany
     @JoinTable(

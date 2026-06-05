@@ -60,14 +60,15 @@
                                     <ul class="list-group">
                                         <li class="list-group-item" th:each="rep : ${equipe.representantes}">
                                             <strong th:text="${rep.nome}"></strong>
-                                            <div th:if="${rep.telefones}">
+                                            <div th:if="${rep.pessoa != null and !#lists.isEmpty(rep.pessoa.telefones)}">
                                                 <small class="text-muted">Telefones:</small>
                                                 <ul class="list-inline ms-2">
-                                                    <li class="list-inline-item" th:each="tel : ${rep.telefones}">
+                                                    <li class="list-inline-item" th:each="tel : ${rep.pessoa.telefones}">
                                                         <span th:text="'(' + ${tel.dd} + ') ' + ${tel.numero}"></span>
                                                     </li>
                                                 </ul>
                                             </div>
+                                            <span th:if="${rep.pessoa == null or #lists.isEmpty(rep.pessoa.telefones)}" class="text-muted">Sem telefone</span>
                                         </li>
                                     </ul>
                                 </div>

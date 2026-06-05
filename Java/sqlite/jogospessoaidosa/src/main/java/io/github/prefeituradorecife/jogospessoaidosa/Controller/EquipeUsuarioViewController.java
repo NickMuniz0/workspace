@@ -48,15 +48,51 @@ public class EquipeUsuarioViewController {
                 .filter(p -> !p.getEquipes().contains(equipe))
                 .toList();
 
+        List<Pessoa> pessoasBase = pessoaService.listarTodasSemPagina();
+
         model.addAttribute("equipe", equipe);
         model.addAttribute("pessoasNaEquipe", pessoasNaEquipe);
         model.addAttribute("pessoasDisponiveis", pessoasDisponiveis);
+        model.addAttribute("pessoasBase", pessoasBase);
+        model.addAttribute("representantesSelecionados", equipe.getRepresentantes().stream()
+                .map(representante -> representante.getPessoa() != null ? representante.getPessoa().getId() : null)
+                .filter(java.util.Objects::nonNull)
+                .toList());
         model.addAttribute("pessoasParticipantes", pessoasParticipantes);
         model.addAttribute("RPA", RPA.values());
 
         return "equipesUsuarios";
     }
-    @CacheEvict(value = "equipesView", allEntries = true)
+
+    @GetMapping("/{id}/buscar")
+    public String buscarUsuariosDaEquipe(@PathVariable Long id,
+                                         @RequestParam(required = false) String filtro,
+                                         Model model) {
+        Equipe equipe = equipeService.buscarPorId(id);
+
+        List<Pessoa> pessoasNaEquipe = pessoaService.listarPorEquipe(id);
+        List<Pessoa> pessoasParticipantes = pessoaService.listarParticipantesPorEquipe(id);
+        List<Pessoa> pessoasFiltradas = pessoaService.buscarPorFiltro(filtro);
+
+        List<Pessoa> pessoasDisponiveis = pessoasFiltradas.stream()
+                .filter(p -> !p.getEquipes().contains(equipe))
+                .toList();
+
+        model.addAttribute("equipe", equipe);
+        model.addAttribute("pessoasNaEquipe", pessoasNaEquipe);
+        model.addAttribute("pessoasDisponiveis", pessoasDisponiveis);
+        model.addAttribute("pessoasParticipantes", pessoasParticipantes);
+        model.addAttribute("pessoasBase", pessoasFiltradas);
+        model.addAttribute("representantesSelecionados", equipe.getRepresentantes().stream()
+                .map(representante -> representante.getPessoa() != null ? representante.getPessoa().getId() : null)
+                .filter(java.util.Objects::nonNull)
+                .toList());
+        model.addAttribute("filtro", filtro);
+        model.addAttribute("RPA", RPA.values());
+
+        return "equipesUsuarios";
+    }
+    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @PostMapping("/adicionarUsuariosEquipe")
     public String adicionarUsuarios(@RequestParam Long equipeId,
                                     @RequestParam(required = false) List<Long> pessoaIds) {
@@ -74,7 +110,7 @@ public class EquipeUsuarioViewController {
         return "redirect:/equipes/usuarios/" + equipeId;
     }
 
-    @CacheEvict(value = "equipesView", allEntries = true)
+    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @PostMapping("/removerUsuariosEquipe")
     public String removerUsuarios(@RequestParam Long equipeId,
                                   @RequestParam(required = false) List<Long> pessoaIds) {
@@ -89,7 +125,7 @@ public class EquipeUsuarioViewController {
         }
         return "redirect:/equipes/usuarios/" + equipeId;
     }
-    @CacheEvict(value = "equipesView", allEntries = true)
+    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @PostMapping("/adicionarUsuariosParticipantes")
     public String adicionarUsuariosParticipantes(@RequestParam Long equipeId,
                                                  @RequestParam(required = false) List<Long> pessoaIds) {
@@ -105,7 +141,7 @@ public class EquipeUsuarioViewController {
         return "redirect:/equipes/usuarios/" + equipeId;
     }
 
-    @CacheEvict(value = "equipesView", allEntries = true)
+    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @PostMapping("/removerUsuariosParticipantes")
     public String removerUsuariosParticipantes(@RequestParam Long equipeId,
                                             @RequestParam(required = false) List<Long> pessoaIds) {

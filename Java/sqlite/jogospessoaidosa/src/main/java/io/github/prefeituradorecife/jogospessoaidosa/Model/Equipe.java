@@ -48,22 +48,21 @@ public class Equipe {
         representante.setEquipe(this);
     }
 
-    @ManyToMany
-    @JoinTable(
-        name = "equipe_pessoa",
-        joinColumns = @JoinColumn(name = "equipe_id"),
-        inverseJoinColumns = @JoinColumn(name = "pessoa_id")
-    )
+    @ManyToMany(mappedBy = "equipes")
     private List<Pessoa> participantesJogos = new ArrayList<>();
 
-
     public void addParticipante(Pessoa pessoa) {
-        participantesJogos.add(pessoa);
+        if (!participantesJogos.contains(pessoa)) {
+            participantesJogos.add(pessoa);
+        }
+        if (!pessoa.getEquipes().contains(this)) {
+            pessoa.getEquipes().add(this);
+        }
     }
 
-    // Método utilitário para remover participante
     public void removeParticipante(Pessoa pessoa) {
-        this.participantesJogos.remove(pessoa);
+        participantesJogos.remove(pessoa);
+        pessoa.getEquipes().remove(this);
     }
 
 

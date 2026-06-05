@@ -21,4 +21,8 @@ public class Telefone {
     @ManyToOne
     @JoinColumn(name = "representante_id")
     private Representante representante;
+
+    @ManyToOne
+    @JoinColumn(name = "pessoa_id")
+    private Pessoa pessoa;
 }

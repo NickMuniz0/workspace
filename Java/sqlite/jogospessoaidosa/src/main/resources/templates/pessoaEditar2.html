@@ -77,6 +77,28 @@
                     </div>
                 </div>
 
+                <fieldset class="mb-4">
+                    <legend>📞 Telefones da Pessoa</legend>
+                    <div id="telefones-container">
+                        <div th:each="telefone, stat : *{telefones}" class="telefone-item border rounded p-3 mb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-2">
+                                    <label class="form-label">DDD</label>
+                                    <input type="text" class="form-control" th:field="*{telefones[__${stat.index}__].dd}" placeholder="DDD" />
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label">Número</label>
+                                    <input type="text" class="form-control" th:field="*{telefones[__${stat.index}__].numero}" placeholder="Número" />
+                                </div>
+                                <div class="col-md-2 d-grid">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="removerTelefone(this)">−</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="adicionarTelefone()">+ Adicionar Telefone</button>
+                </fieldset>
+
                 <!-- 🩺 Doenças -->
                 <fieldset class="mb-4">
                     <legend>➕ Adicionar Doenças</legend>
@@ -140,6 +162,33 @@
 
 <!-- 🔍 Script de busca -->
 <script>
+    function adicionarTelefone() {
+        const container = document.getElementById('telefones-container');
+        const index = container.children.length;
+        const html = `
+            <div class="telefone-item border rounded p-3 mb-3">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label">DDD</label>
+                        <input type="text" name="telefones[${index}].dd" class="form-control" placeholder="DDD" />
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Número</label>
+                        <input type="text" name="telefones[${index}].numero" class="form-control" placeholder="Número" />
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removerTelefone(this)">−</button>
+                    </div>
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function removerTelefone(button) {
+        const item = button.closest('.telefone-item');
+        if (item) item.remove();
+    }
+
     function filtrarTabela(inputId, tabelaId) {
         const filtro = document.getElementById(inputId).value.toLowerCase();
         const linhas = document.querySelectorAll(`#${tabelaId} tbody tr`);

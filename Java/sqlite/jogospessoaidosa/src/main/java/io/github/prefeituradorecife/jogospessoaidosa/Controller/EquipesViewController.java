@@ -36,14 +36,15 @@ public class EquipesViewController {
         model.addAttribute("equipesPage", equipesPage);
         return "equipe";
     }
-    @CacheEvict(value = "equipes", allEntries = true)
+    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @PostMapping("/salvarEquipe")
-    public String salvar(@ModelAttribute Equipe equipe) {
+    public String salvar(@ModelAttribute Equipe equipe,
+                         @RequestParam(required = false) List<Long> representanteIds) {
 
-        equipeService.salvarOuAtualizarEquipe(equipe);
+        equipeService.salvarOuAtualizarEquipe(equipe, representanteIds);
         return "redirect:/equipes";
     }
-    @CacheEvict(value = "equipes", allEntries = true)
+    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @GetMapping("/cadastrar2")
     public String showSignUpForm2(Model model) {
         model.addAttribute("equipe", new Equipe(null));
@@ -51,13 +52,14 @@ public class EquipesViewController {
         model.addAttribute("RPA",RPA.values());
         return "equipeCriar2";
     }
-    @CacheEvict(value = "equipes", allEntries = true)
+    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @PostMapping("/deletarMultiplos")
     public String deletarMultiplos(@RequestParam("idsParaExcluir") List<Long> ids) {
         equipeService.deletarPorIds(ids);
         return "redirect:/equipes";
     }
 
+    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @GetMapping("/buscar")
     public String buscarEquipes(@RequestParam(required = false) String filtro, Model model,
                             @RequestParam(defaultValue = "0") int page,

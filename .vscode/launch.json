@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-JogospessoaidosaApplication<jogospessoaidosa>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "io.github.prefeituradorecife.jogospessoaidosa.JogospessoaidosaApplication",
+            "projectName": "jogospessoaidosa",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

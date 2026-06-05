@@ -49,45 +49,30 @@
 
                 <!-- 👥 Representantes -->
                 <fieldset class="mb-4">
-                    <legend class="h5 mb-3">Representantes</legend>
-                    <div id="representantes-container">
-                        <div th:each="rep, repStat : *{representantes}" class="representante-block border rounded p-3 mb-3">
-                            <label class="form-label">Nome do Representante</label>
-                            <input type="text" th:field="*{representantes[__${repStat.index}__].nome}" class="form-control mb-3" placeholder="Nome do representante" />
+                    <legend class="h5 mb-3">Representantes (base de Pessoa)</legend>
+                    <p class="text-muted small">Selecione as pessoas que devem ser vinculadas como representantes da equipe.</p>
 
-                            <!-- Telefones -->
-                            <label class="form-label">Telefones</label>
-                            <div class="telefones-container">
-                                <div th:each="tel, telStat : *{representantes[__${repStat.index}__].telefones}" class="telefone-block mb-2">
-                                    <div class="row g-2">
-                                        <div class="col-md-3">
-                                            <input type="text" th:field="*{representantes[__${repStat.index}__].telefones[__${telStat.index}__].dd}" class="form-control" placeholder="DDD" />
-                                        </div>
-                                        <div class="col-md-7">
-                                            <input type="text" th:field="*{representantes[__${repStat.index}__].telefones[__${telStat.index}__].numero}" class="form-control" placeholder="Número" />
-                                        </div>
-                                        <div class="col-md-2 d-grid">
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="removerTelefone(this)">−</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Ações -->
-                            <div class="mt-3">
-                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="adicionarTelefone(this)">
-                                    <i class="bi bi-plus-circle"></i> Telefone
-                                </button>
-                                <button type="button" class="btn btn-outline-danger btn-sm ms-2" onclick="removerRepresentante(this)">
-                                    <i class="bi bi-dash-circle"></i> Representante
-                                </button>
-                            </div>
-                        </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" id="filtroRepresentantes" class="form-control" placeholder="Buscar representante por nome ou CPF" />
                     </div>
 
-                    <button type="button" class="btn btn-outline-success btn-sm" onclick="adicionarRepresentante()">
-                        <i class="bi bi-plus-circle"></i> Adicionar Representante
-                    </button>
+                    <div id="representantes-scroll" class="border rounded p-2" style="max-height: 320px; overflow-y: auto;">
+                        <div class="row g-2" th:if="${!#lists.isEmpty(pessoasDisponiveis)}">
+                            <div class="col-md-6 representante-item" th:each="pessoa : ${pessoasDisponiveis}">
+                                <label class="border rounded p-2 d-flex align-items-center gap-2 w-100 mb-0">
+                                    <input class="form-check-input" type="checkbox" name="representanteIds" th:value="${pessoa.id}" />
+                                    <span class="representante-text">
+                                        <strong th:text="${pessoa.nome}"></strong>
+                                        <small class="text-muted d-block" th:text="${pessoa.cpf != null ? 'CPF: ' + pessoa.cpf : 'Sem CPF'}"></small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="alert alert-secondary mb-0" th:if="${#lists.isEmpty(pessoasDisponiveis)}">
+                            Nenhuma pessoa disponível para ser representante no momento.
+                        </div>
+                    </div>
                 </fieldset>
 
                 <!-- Botão de envio -->
@@ -102,6 +87,19 @@
 </main>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('filtroRepresentantes');
+        if (!input) return;
+
+        input.addEventListener('input', function () {
+            const termo = this.value.trim().toLowerCase();
+            document.querySelectorAll('.representante-item').forEach(item => {
+                const texto = item.textContent.toLowerCase();
+                item.style.display = texto.includes(termo) ? '' : 'none';
+            });
+        });
+    });
+
     function adicionarRepresentante() {
     const container = document.getElementById('representantes-container');
     const repIndex = container.children.length;

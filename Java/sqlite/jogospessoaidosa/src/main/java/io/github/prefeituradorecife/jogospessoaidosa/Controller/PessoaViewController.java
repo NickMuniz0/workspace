@@ -80,7 +80,7 @@ public class PessoaViewController {
     @CacheEvict(value = "pessoas", allEntries = true)
     @PostMapping("/salvarPessoa")
     public String atualizar(@ModelAttribute Pessoa pessoa) {
-        if (!pessoa.getDataNascimentoFormatada().isEmpty()) {
+        if (pessoa.getDataNascimentoFormatada() != null && !pessoa.getDataNascimentoFormatada().isBlank()) {
             LocalDate dataNascimento = LocalDate.parse(pessoa.getDataNascimentoFormatada());
             pessoa.setDataNascimento(dataNascimento);
             int idade = Period.between(dataNascimento, LocalDate.now()).getYears();

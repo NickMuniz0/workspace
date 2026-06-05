@@ -17,7 +17,7 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long>, JpaSpecif
 
     List<Pessoa> findByEquipes_Id(Long equipeId);
 
-    @Query("SELECT p FROM Pessoa p JOIN p.participantesJogos e WHERE e.id = :equipeId")
+    @Query("SELECT p FROM Pessoa p JOIN p.equipes e WHERE e.id = :equipeId")
     List<Pessoa> findByEquipeId(@Param("equipeId") Long equipeId);
 
 

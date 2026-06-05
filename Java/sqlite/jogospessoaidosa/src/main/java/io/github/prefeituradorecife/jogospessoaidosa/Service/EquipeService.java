@@ -30,15 +30,30 @@ public class EquipeService {
         return equipeRepository.findAll(pageable);
     }
 
-    public void salvarOuAtualizarEquipe(Equipe equipe) {
-              
-        for (Representante rep : equipe.getRepresentantes()) {
-            rep.setEquipe(equipe);
-            for (Telefone tel : rep.getTelefones()) {
-                tel.setRepresentante(rep);
+    @Transactional
+    public void salvarOuAtualizarEquipe(Equipe equipe, List<Long> representanteIds) {
+        Equipe equipePersistida = (equipe.getId() != null)
+                ? equipeRepository.findById(equipe.getId()).orElseGet(() -> equipeRepository.save(equipe))
+                : equipeRepository.save(equipe);
+
+        equipePersistida.setNome(equipe.getNome());
+        equipePersistida.setRpa(equipe.getRpa());
+
+        equipePersistida.getRepresentantes().clear();
+
+        if (representanteIds != null && !representanteIds.isEmpty()) {
+            List<Pessoa> pessoas = pessoaRepository.findAllById(representanteIds);
+            for (Pessoa pessoa : pessoas) {
+                Representante representante = new Representante();
+                representante.setPessoa(pessoa);
+                representante.setNome(pessoa.getNome());
+                representante.setEquipe(equipePersistida);
+
+                equipePersistida.getRepresentantes().add(representante);
             }
         }
-        equipeRepository.save(equipe);
+
+        equipeRepository.save(equipePersistida);
     }
 
     public void deletarPorIds(List<Long> ids) {
@@ -63,7 +78,8 @@ public class EquipeService {
     }
 
     public Equipe buscarPorId(Long id) {
-        return equipeRepository.getReferenceById(id);
+        return equipeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Equipe não encontrada"));
     }
 
     @Transactional

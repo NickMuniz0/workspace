@@ -3,8 +3,10 @@ package io.github.prefeituradorecife.jogospessoaidosa.Service;
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Equipe;
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Pessoa;
 import io.github.prefeituradorecife.jogospessoaidosa.Repository.PessoaRepository;
+import io.github.prefeituradorecife.jogospessoaidosa.Repository.RepresentanteRepository;
 import io.github.prefeituradorecife.jogospessoaidosa.Specification.PessoaSpecification;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,9 @@ import java.util.stream.Collectors;
 public class PessoaService {
     @Autowired
     private PessoaRepository pessoaRepository;
+
+    @Autowired
+    private RepresentanteRepository representanteRepository;
 
     public PessoaService(PessoaRepository pessoaRepository) {
         this.pessoaRepository = pessoaRepository;
@@ -55,27 +60,45 @@ public class PessoaService {
     }
 
     public void salvarOuAtualizar(Pessoa pessoa) {
+        if (pessoa.getTelefones() != null) {
+            pessoa.getTelefones().forEach(telefone -> telefone.setPessoa(pessoa));
+        }
         pessoaRepository.save(pessoa);
     }
 
+    @Transactional
     public void deletarPorIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+
+        representanteRepository.deleteByPessoaIds(ids);
         pessoaRepository.deleteAllByIdInBatch(ids);
     }
 
     public Pessoa buscarPorId(Long id) {
-        return pessoaRepository.getReferenceById(id);
+        return pessoaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Pessoa não encontrada: " + id));
     }
 
     public Page<Pessoa> buscaSpecification(String filtro, Pageable pageable) {
         String termo = filtro != null ? filtro.trim().toLowerCase() : "";
 
         if (termo.isEmpty()) {
-            // retorna todos paginados
             return pessoaRepository.findAll(pageable);
-        } else {
-            // aplica Specification com paginação
-            return pessoaRepository.findAll(PessoaSpecification.contemTermo(termo), pageable);
         }
+
+        return pessoaRepository.findAll(PessoaSpecification.contemTermo(termo), pageable);
+    }
+
+    public List<Pessoa> buscarPorFiltro(String filtro) {
+        String termo = filtro != null ? filtro.trim().toLowerCase() : "";
+
+        if (termo.isEmpty()) {
+            return pessoaRepository.findAll();
+        }
+
+        return pessoaRepository.findAll(PessoaSpecification.contemTermo(termo));
     }
 
 

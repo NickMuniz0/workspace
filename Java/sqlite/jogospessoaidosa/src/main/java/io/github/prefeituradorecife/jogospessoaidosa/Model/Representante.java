@@ -26,6 +26,10 @@ public class Representante {
     private String nome;
 
     @ManyToOne
+    @JoinColumn(name = "pessoa_id")
+    private Pessoa pessoa;
+
+    @ManyToOne
     @JoinColumn(name = "equipe_id")
     private Equipe equipe;
 

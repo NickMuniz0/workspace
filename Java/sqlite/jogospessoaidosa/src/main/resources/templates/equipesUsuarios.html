@@ -28,13 +28,17 @@
                 <i class="bi bi-arrow-left"></i> Voltar
             </a>
         </div>
-        <!-- 🔍 Campo de busca estilizado -->
-        <div class="input-group mb-3">
-        <span class="input-group-text bg-white border-end-0">
-            <i class="bi bi-search"></i>
-        </span>
-            <input type="text" name="buscaParticipantes" class="form-control border-start-0" placeholder="Buscar participantes disponíveis..." />
-        </div>
+        <!-- 🔍 Busca real no backend -->
+        <form th:action="@{/equipes/usuarios/{id}/buscar(id=${equipe.id})}" method="get" class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="filtro" th:value="${filtro}" class="form-control border-start-0" placeholder="Buscar pessoas na base..." />
+                <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                <a th:href="@{/equipes/usuarios/{id}(id=${equipe.id})}" class="btn btn-outline-secondary">Limpar</a>
+            </div>
+        </form>
 
         <div class="card-body">
             <!-- Seção de Tabelas -->
@@ -216,35 +220,26 @@
 
                 <!-- Representantes -->
                 <fieldset class="mb-4">
-                    <legend>Representantes</legend>
-                    <div id="representantes-container">
-                        <div th:each="rep, repStat : *{representantes}" class="representante-block border p-3 mb-3 rounded">
-                            <label class="form-label">Nome do Representante</label>
-                            <input type="text" th:field="*{representantes[__${repStat.index}__].nome}" class="form-control mb-2" />
-
-                            <div class="telefones-container">
-                                <label class="form-label">Telefones</label>
-                                <div th:each="tel, telStat : *{representantes[__${repStat.index}__].telefones}" class="telefone-block mb-2">
-                                    <div class="row g-2">
-                                        <div class="col-md-3">
-                                            <input type="text" th:field="*{representantes[__${repStat.index}__].telefones[__${telStat.index}__].dd}" class="form-control" placeholder="DDD" />
-                                        </div>
-                                        <div class="col-md-7">
-                                            <input type="text" th:field="*{representantes[__${repStat.index}__].telefones[__${telStat.index}__].numero}" class="form-control" placeholder="Número" />
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="removerTelefone(this)">−</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="adicionarTelefone(this)">+ Telefone</button>
-                            <button type="button" class="btn btn-outline-danger btn-sm mt-2 ms-2" onclick="removerRepresentante(this)">− Representante</button>
+                    <legend>Representantes (base de Pessoa)</legend>
+                    <p class="text-muted small">Marque as pessoas que deverão ser os representantes da equipe.</p>
+                    <div class="row g-2" th:if="${!#lists.isEmpty(pessoasBase)}">
+                        <div class="col-md-6" th:each="pessoa : ${pessoasBase}">
+                            <label class="border rounded p-2 d-flex align-items-center gap-2 w-100">
+                                <input class="form-check-input" type="checkbox" name="representanteIds" th:value="${pessoa.id}" th:checked="${#lists.contains(representantesSelecionados, pessoa.id)}" />
+                                <span>
+                                    <strong th:text="${pessoa.nome}"></strong>
+                                    <small class="text-muted d-block" th:text="${pessoa.cpf != null ? 'CPF: ' + pessoa.cpf : 'Sem CPF'}"></small>
+                                    <small class="text-muted d-block" th:if="${!#lists.isEmpty(pessoa.telefones)}" th:each="tel : ${pessoa.telefones}">
+                                        <span th:text="'Tel: (' + ${tel.dd} + ') ' + ${tel.numero}"></span>
+                                    </small>
+                                    <small class="text-muted d-block" th:if="${#lists.isEmpty(pessoa.telefones)}">Sem telefone</small>
+                                </span>
+                            </label>
                         </div>
                     </div>
-
-                    <button type="button" class="btn btn-outline-success btn-sm" onclick="adicionarRepresentante()">+ Adicionar Representante</button>
+                    <div class="alert alert-secondary mb-0" th:if="${#lists.isEmpty(pessoasBase)}">
+                        Nenhuma pessoa disponível para representar a equipe.
+                    </div>
                 </fieldset>
 
                 <!-- Botão de Salvar -->
@@ -259,27 +254,6 @@
     </div>
 </main>
 
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const inputBusca = document.querySelector('input[name="buscaParticipantes"]');
-        const linhasTabela = document.querySelectorAll('table tbody tr');
-
-        inputBusca.addEventListener("input", function () {
-            const termo = inputBusca.value.toLowerCase();
-
-            linhasTabela.forEach(linha => {
-                const nome = linha.querySelector("td:nth-child(2)");
-                const idade = linha.querySelector("td:nth-child(3)");
-
-                if (!nome || !idade) return; // ignora linha de "Nenhum usuário"
-
-                const textoLinha = (nome.textContent + " " + idade.textContent).toLowerCase();
-                linha.style.display = textoLinha.includes(termo) ? "" : "none";
-            });
-        });
-    });
-</script>
 
 <script>
     function adicionarRepresentante() {

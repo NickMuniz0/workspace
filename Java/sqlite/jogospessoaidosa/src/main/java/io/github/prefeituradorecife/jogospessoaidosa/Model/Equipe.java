@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 
 
 
@@ -42,27 +43,35 @@ public class Equipe {
     @OneToMany(mappedBy = "equipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Representante> representantes = new ArrayList<>();
 
+    @Transient
+    private List<Long> representantesIds;
+
     // helper para manter consistência
     public void addRepresentante(Representante representante) {
         representantes.add(representante);
         representante.setEquipe(this);
     }
 
-    @ManyToMany(mappedBy = "equipes")
+    @ManyToMany
+    @JoinTable(
+        name = "equipe_participantes",
+        joinColumns = @JoinColumn(name = "equipe_id"),
+        inverseJoinColumns = @JoinColumn(name = "pessoa_id")
+    )
     private List<Pessoa> participantesJogos = new ArrayList<>();
 
     public void addParticipante(Pessoa pessoa) {
         if (!participantesJogos.contains(pessoa)) {
             participantesJogos.add(pessoa);
         }
-        if (!pessoa.getEquipes().contains(this)) {
-            pessoa.getEquipes().add(this);
+        if (!pessoa.getParticipantesJogos().contains(this)) {
+            pessoa.getParticipantesJogos().add(this);
         }
     }
 
     public void removeParticipante(Pessoa pessoa) {
         participantesJogos.remove(pessoa);
-        pessoa.getEquipes().remove(this);
+        pessoa.getParticipantesJogos().remove(this);
     }
 
 

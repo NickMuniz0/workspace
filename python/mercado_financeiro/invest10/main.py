@@ -5,6 +5,11 @@ import numpy as np
 from tabulate import tabulate
 from bs4 import BeautifulSoup
 
+
+# (Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned) ; (& C:\Users\nickp\OneDrive\Documentos\GitHub\workspace\python\mercado_financeiro\.venv\Scripts\activate) ; cd .\python\mercado_financeiro\invest10\ ; python -m main     
+# 
+# 
+#                                                                                                                 
 # historico = requests.get(f'https://investidor10.com.br/api/balancos/balancoresultados/chart/2/5/yearly/', headers=self.HEADERS).json()
 # print(historico)
 # for i in range(2, len(historico)):
@@ -22,7 +27,7 @@ class Ativo:
             self.HEADERS         = {'user-agent':'Mozilla/5.0'}
             self.CARTEIRA        = CARTEIRA
             self.qtd             = 1000
-            self.reais           = 41000
+            self.reais           = 10000
             self.start()
 
     def start(self):
@@ -43,12 +48,8 @@ class Ativo:
             
     def show(self):
         self.df = self.df.sort_values(by = ['quantidade'],ascending=False)
-        self.df = self.df[['SINAL' ,'variacao','ticket','preco', 'preco_inicial','preco_medio','preco_teto','dividendo_medio','quantidade','P/L','P/VP','EY']]
-        print(tabulate(self.df, headers="keys", tablefmt="github")  )
-
-        # variacao menor que 0
-        self.df = self.df[self.df['variacao'] < 0]
-        print(tabulate(self.df, headers="keys", tablefmt="github")  )
+        self.df = self.df[['SINAL' ,'variacao','ticket','preco','preco_medio_max','preco_medio','preco_teto','dividendo_medio','quantidade','P/L','P/L_medio','P/VP','ROE']]
+        self.empresas_com_preco_teto_valido()
 
 
     def controle(self):
@@ -71,6 +72,10 @@ class Ativo:
         self.item['preco_div'] = round( (self.qtd / self.item['preco'] )* self.item['dividendo_medio'], 2) if self.item['preco'] !=0 else 0
         self.item['preco_div_per'] = round( ( self.item['dividendo_medio'] / self.item['preco'] )*100 , 2) if self.item['preco'] !=0 else 0
         self.item['quantidade'] = round( ((  self.reais/ self.item['preco'] ) * self.item['dividendo_medio'])/12 , 2) if self.item['preco'] !=0 else 0
+
+    def empresas_com_preco_teto_valido(self):
+        self.df = self.df[self.df['SINAL'] == 'medio']
+        print(tabulate(self.df, headers="keys", tablefmt="github")  )
 
 
 
@@ -111,11 +116,19 @@ class Ativo:
         #Variacao percentual
         variacao_percentual = round(((preco_final - preco_inicial) / preco_inicial) * 100, 2)
         self.item['preco_inicial'] = round(preco_inicial,2)
+        self.item['preco_final'] = round(df.max()['price'],2)
+
+        self.item['preco_medio_max'] = round((self.item['preco_inicial'] + self.item['preco_final']) / 2, 2)
         self.item['variacao'] = variacao_percentual
 
 
 
     def indicador_dados(self,historico_indicador,indicador):
+
+        if indicador not in historico_indicador:
+            self.item[f'{indicador}'] = 0
+            self.item[f'{indicador}_medio'] = 0
+            return
         pl_df = pd.DataFrame(historico_indicador[indicador])[['value', 'year']]
 
         #garantir que "value" seja float; '-' vira NaN, vírgula vira ponto
@@ -143,27 +156,28 @@ class Ativo:
         self.indicador_dados(historico_indicador,"P/VP")
         self.indicador_dados(historico_indicador,"ROE")
         self.indicador_dados(historico_indicador,"ROA")
-        self.indicador_dados(historico_indicador,"LPA")
-        # self.indicador_dados(historico_indicador,"PAYOUT")
+        self.indicador_dados(historico_indicador,"LPA")        
+        self.indicador_dados(historico_indicador,"ROIC")
+        self.indicador_dados(historico_indicador,"Dívida Líquida / Ebitda")
 
     def preco_teto(self):
-        self.df['preco_teto'] = round((self.df['dividendo_medio']/0.08),2)
+        self.df['preco_teto'] = round((self.df['dividendo_medio']/0.09),2)
 
     def sinal(self):
             self.df['SINAL'] = np.where(
-                # (pd.to_numeric(self.df['P/VP'], errors='coerce')
-                #  < 1)
-                # &
-                (pd.to_numeric(self.df['P/L'], errors='coerce')
-                 < 10 )
-                &
+                (pd.to_numeric(self.df['ROE'], errors='coerce')
+                                > 0)
+                                &
                 (pd.to_numeric(self.df['preco'], errors='coerce')
-                 < pd.to_numeric(self.df['preco_medio'], errors='coerce'))
+                 < pd.to_numeric(self.df['preco_medio_max'], errors='coerce'))
                  &
                  (pd.to_numeric(self.df['preco'], errors='coerce')
-                 < pd.to_numeric(self.df['preco_teto'], errors='coerce'))
-
-                ,'COMPRAR', ''
+                                  < pd.to_numeric(self.df['preco_medio'], errors='coerce'))
+                &
+                (pd.to_numeric(self.df['preco'], errors='coerce')
+                                 < pd.to_numeric(self.df['preco_teto'], errors='coerce'))
+                                               
+                ,'medio', ''
             )
 
 anos=5
@@ -256,3 +270,6 @@ https://investidor10.com.br/api/cotacoes/acao/chart/BRAP4/
 ((precoFinal - precoInicial) / precoInicial) * 100;
 
     '''
+
+
+

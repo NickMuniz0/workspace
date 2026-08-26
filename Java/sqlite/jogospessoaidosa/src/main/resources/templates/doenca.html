@@ -17,7 +17,11 @@
     <div class="card shadow">
         <!-- Cabeçalho -->
         <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-            <h2 class="mb-0"><i class="fas fa-virus"></i> Lista de Doenças</h2>
+            <h2 class="mb-0 d-flex align-items-center">
+                <i class="fas fa-virus me-2"></i>
+                Lista de Doenças
+                <span class="badge bg-light text-dark ms-3" th:text="${totalDoencas}"></span>
+            </h2>
             <div class="d-flex gap-2">
                 <a th:href="@{/doencas/cadastrar2}" class="btn btn-light">
                     <i class="fas fa-plus-circle"></i> Nova Doença
@@ -27,12 +31,25 @@
 
         <div class="card-body">
             <!-- Formulário de busca -->
-            <form th:action="@{/doencas/buscar}" method="get" class="mb-4">
-                <div class="input-group">
-                    <input type="text" name="filtro" class="form-control" placeholder="Buscar por nome da doença..." th:value="${filtro}">
-                    <button type="submit" class="btn btn-outline-danger">
-                        <i class="fas fa-search"></i> Buscar
-                    </button>
+            <form th:action="@{/doencas/buscar}" method="get" class="mb-4" id="formBusca">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" name="filtro" class="form-control" placeholder="Buscar por nome da doença..." th:value="${filtro}">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select" name="size" id="selectSize" onchange="document.getElementById('formBusca').submit()">
+                            <option value="5" th:selected="${doencasPage.size == 5}">5</option>
+                            <option value="10" th:selected="${doencasPage.size == 10}">10</option>
+                            <option value="25" th:selected="${doencasPage.size == 25}">25</option>
+                            <option value="50" th:selected="${doencasPage.size == 50}">50</option>
+                            <option value="100" th:selected="${doencasPage.size == 100}">100</option>
+                        </select>
+                    </div>
                 </div>
             </form>
 
@@ -61,25 +78,55 @@
                             <td colspan="4" class="text-center text-muted">Nenhuma doença encontrada</td>
                         </tr>
                         </tbody>
-
-                        <div class="pagination">
-                            <a th:if="${doencasPage.hasPrevious()}"
-                            th:href="@{/doencas(page=${doencasPage.number - 1}, size=${doencasPage.size})}">
-                                <i class="fas fa-arrow-left"></i>
-                            </a>
-
-                            <span>
-                                Página <span th:text="${doencasPage.number + 1}"></span> 
-                                de <span th:text="${doencasPage.totalPages}"></span>
-                            </span>
-
-                            <a th:if="${doencasPage.hasNext()}"
-                            th:href="@{/doencas(page=${doencasPage.number + 1}, size=${doencasPage.size})}">
-                                <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
                     </table>
                 </div>
+
+            <!-- Paginação -->
+                <div class="d-flex justify-content-center mt-3">
+                    <nav aria-label="Paginação da lista de doencas">
+                        <ul class="pagination mb-0">
+
+                            <!-- Primeira -->
+                            <li class="page-item" th:classappend="${doencasPage.first}? ' disabled'">
+                                <a class="page-link"
+                                th:href="@{/doencas/buscar(page=0, size=${doencasPage.size}, filtro=${filtro})}">Primeira</a>
+                            </li>
+
+                            <!-- Anterior -->
+                            <li class="page-item" th:classappend="${!doencasPage.hasPrevious()}? ' disabled'">
+                                <a class="page-link"
+                                th:href="@{/doencas/buscar(page=${doencasPage.number - 1}, size=${doencasPage.size}, filtro=${filtro})}">Anterior</a>
+                            </li>
+
+                            <!-- Números -->
+                            <th:block th:with="start=${T(java.lang.Math).max(0, doencasPage.number - 2)},
+                                            end=${T(java.lang.Math).min(doencasPage.totalPages - 1, doencasPage.number + 2)}">
+                                <li class="page-item"
+                                    th:each="i : ${#numbers.sequence(start, end)}"
+                                    th:classappend="${i == doencasPage.number}? ' active'">
+                                    <a class="page-link"
+                                    th:text="${i + 1}"
+                                    th:href="@{/doencas/buscar(page=${i}, size=${doencasPage.size}, filtro=${filtro})}"></a>
+                                </li>
+                            </th:block>
+
+                            <!-- Próxima -->
+                            <li class="page-item" th:classappend="${!doencasPage.hasNext()}? ' disabled'">
+                                <a class="page-link"
+                                th:href="@{/doencas/buscar(page=${doencasPage.number + 1}, size=${doencasPage.size}, filtro=${filtro})}">Próxima</a>
+                            </li>
+
+                            <!-- Última -->
+                            <li class="page-item" th:classappend="${doencasPage.last}? ' disabled'">
+                                <a class="page-link"
+                                th:href="@{/doencas/buscar(page=${doencasPage.totalPages - 1}, size=${doencasPage.size}, filtro=${filtro})}">Última</a>
+                            </li>
+
+
+                        </ul>
+                    </nav>
+                </div>
+
                 <!-- ✅ Botão de exclusão -->
                 <div class="text-end">
                     <button type="submit" class="btn btn-danger" id="btnExcluir" disabled onclick="return confirmarExclusao()">
@@ -91,8 +138,25 @@
     </div>
 </main>
 
+
+
 <!-- 🧠 Scripts -->
 <script>
+    document.getElementById('formBusca').addEventListener('submit', function(e) {
+        const filtroInput = this.querySelector('input[name="filtro"]');
+        const pageInput = this.querySelector('input[name="page"]');
+        
+        // Se há um filtro, reseta a página para 0
+        if (filtroInput && filtroInput.value.trim()) {
+            if (!pageInput) {
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'page';
+                hidden.value = '0';
+                this.appendChild(hidden);
+            }
+        }
+    });
     function toggleAll(source) {
         const checkboxes = document.querySelectorAll('.checkExcluir');
         checkboxes.forEach(cb => cb.checked = source.checked);
@@ -109,7 +173,7 @@
     });
 
     function confirmarExclusao() {
-        return confirm("Tem certeza que deseja excluir as pessoas selecionadas?");
+        return confirm("Tem certeza que deseja excluir as doencas selecionadas?");
     }
 </script>
 </body>

@@ -8,6 +8,17 @@
             "mainClass": "io.github.prefeituradorecife.jogospessoaidosa.JogospessoaidosaApplication",
             "projectName": "jogospessoaidosa",
             "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=51275 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=jogospessoaidosa"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ArquiteturaspringApplication<arquiteturaspring>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "io.github.demo1.arquiteturaspring.ArquiteturaspringApplication",
+            "projectName": "arquiteturaspring",
+            "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
     ]

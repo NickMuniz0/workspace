@@ -3,12 +3,11 @@ package io.github.prefeituradorecife.jogospessoaidosa.Controller;
 import io.github.prefeituradorecife.jogospessoaidosa.Enum.RPA;
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Equipe;
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Pessoa;
+import io.github.prefeituradorecife.jogospessoaidosa.Model.Representante;
 import io.github.prefeituradorecife.jogospessoaidosa.Service.EquipeService;
 import io.github.prefeituradorecife.jogospessoaidosa.Utils.PdfUtils;
 import io.github.prefeituradorecife.jogospessoaidosa.Service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,10 +15,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.List;
 
 @Controller
 @RequestMapping("/equipes/usuarios")
@@ -34,65 +43,125 @@ public class EquipeUsuarioViewController {
     @Autowired
     private PdfUtils pdfUtils;
 
-    @Cacheable("equipesView")
     @GetMapping("/{id}")
-    public String listarUsuariosDaEquipe(@PathVariable Long id, Model model) {
-        Equipe equipe = equipeService.buscarPorId(id);
+    public String listarUsuariosDaEquipe(@PathVariable Long id,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "10") int size,
+                                     Model model) {
+    Equipe equipe = equipeService.buscarPorId(id);
 
-        List<Pessoa> pessoasNaEquipe = pessoaService.listarPorEquipe(id);
-        List<Pessoa> pessoasParticipantes = pessoaService.listarParticipantesPorEquipe(id);
+    Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
+    Page<Pessoa> pageDisponiveis = pessoaService.buscarDisponiveis(null, id, pageable);
 
-        // Disponíveis = todas menos as que já estão na equipe
-        List<Pessoa> todas = pessoaService.listarTodasSemPagina();
-        List<Pessoa> pessoasDisponiveis = todas.stream()
-                .filter(p -> !p.getEquipes().contains(equipe))
-                .toList();
+    // IDs dos representantes já vinculados
+    List<Long> representantesSelecionados = equipe.getRepresentantes().stream()
+        .map(rep -> rep.getPessoa() != null ? rep.getPessoa().getId() : null)
+        .filter(Objects::nonNull)
+        .toList();
+    equipe.setRepresentantesIds(representantesSelecionados);
+    // Adiciona atributos ao modelo
+    model.addAttribute("equipe", equipe);
+    model.addAttribute("pessoasDisponiveis", equipe.getRepresentantes().stream()
+        .map(Representante::getPessoa)
+        .filter(Objects::nonNull)
+        .toList());
+    model.addAttribute("RPA", RPA.values());
 
-        List<Pessoa> pessoasBase = pessoaService.listarTodasSemPagina();
+    // Paginação
+    model.addAttribute("currentPage", pageDisponiveis.getNumber());
+    model.addAttribute("totalPages", pageDisponiveis.getTotalPages());
+    model.addAttribute("totalItems", pageDisponiveis.getTotalElements());
+    model.addAttribute("pageSize", pageDisponiveis.getSize());
 
-        model.addAttribute("equipe", equipe);
-        model.addAttribute("pessoasNaEquipe", pessoasNaEquipe);
-        model.addAttribute("pessoasDisponiveis", pessoasDisponiveis);
-        model.addAttribute("pessoasBase", pessoasBase);
-        model.addAttribute("representantesSelecionados", equipe.getRepresentantes().stream()
-                .map(representante -> representante.getPessoa() != null ? representante.getPessoa().getId() : null)
-                .filter(java.util.Objects::nonNull)
-                .toList());
-        model.addAttribute("pessoasParticipantes", pessoasParticipantes);
-        model.addAttribute("RPA", RPA.values());
+    return "equipesUsuarios";
+}
 
-        return "equipesUsuarios";
+
+@GetMapping("/{id}/buscar")
+public String buscarUsuariosDaEquipe(@PathVariable Long id,
+                                     @RequestParam(required = false) String filtro,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "10") int size,
+                                     Model model) {
+    Equipe equipe = equipeService.buscarPorId(id);
+
+    List<Pessoa> pessoasNaEquipe = pessoaService.listarPorEquipe(id);
+    List<Pessoa> pessoasParticipantes = pessoaService.listarParticipantesPorEquipe(id);
+
+    Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
+    Page<Pessoa> pageDisponiveis = pessoaService.buscarDisponiveis(filtro, null, pageable);
+
+    List<Pessoa> pessoasBase;
+    if (filtro != null && !filtro.trim().isEmpty()) {
+        String termo = filtro.trim().toLowerCase();
+
+        java.util.function.Predicate<Pessoa> matches = p -> {
+            if (p == null) return false;
+            if (p.getNome() != null && p.getNome().toLowerCase().contains(termo)) return true;
+            if (p.getCpf() != null && p.getCpf().toLowerCase().contains(termo)) return true;
+            if (p.getRg() != null && p.getRg().toLowerCase().contains(termo)) return true;
+            if (p.getIdade() != null && String.valueOf(p.getIdade()).equals(termo)) return true;
+            if ((termo.equalsIgnoreCase("sim") || termo.equals("1") || termo.equalsIgnoreCase("true") || termo.equalsIgnoreCase("idoso"))
+                && Boolean.TRUE.equals(p.getIdoso())) return true;
+            if ((termo.equalsIgnoreCase("nao") || termo.equalsIgnoreCase("não") || termo.equals("0") || termo.equalsIgnoreCase("false"))
+                && Boolean.FALSE.equals(p.getIdoso())) return true;
+            if (p.getDoencas() != null) {
+                for (var d : p.getDoencas()) {
+                    if (d != null && d.getNome() != null && d.getNome().toLowerCase().contains(termo)) return true;
+                }
+            }
+            return false;
+        };
+
+        List<Pessoa> combined = new ArrayList<>();
+        combined.addAll(pessoasNaEquipe.stream().filter(matches).toList());
+        combined.addAll(pessoasParticipantes.stream().filter(matches).toList());
+        combined.addAll(pageDisponiveis.getContent());
+
+        Map<Long, Pessoa> byId = new LinkedHashMap<>();
+        for (Pessoa p : combined) {
+            if (p != null && p.getId() != null) {
+                byId.putIfAbsent(p.getId(), p);
+            }
+        }
+        pessoasBase = new ArrayList<>(byId.values());
+    } else {
+        pessoasBase = new ArrayList<>(pageDisponiveis.getContent());
     }
 
-    @GetMapping("/{id}/buscar")
-    public String buscarUsuariosDaEquipe(@PathVariable Long id,
-                                         @RequestParam(required = false) String filtro,
-                                         Model model) {
-        Equipe equipe = equipeService.buscarPorId(id);
+    // IDs dos representantes já vinculados
+    List<Long> representantesSelecionados = equipe.getRepresentantes().stream()
+        .map(r -> r.getPessoa() != null ? r.getPessoa().getId() : null)
+        .filter(Objects::nonNull)
+        .toList();
 
-        List<Pessoa> pessoasNaEquipe = pessoaService.listarPorEquipe(id);
-        List<Pessoa> pessoasParticipantes = pessoaService.listarParticipantesPorEquipe(id);
-        List<Pessoa> pessoasFiltradas = pessoaService.buscarPorFiltro(filtro);
-
-        List<Pessoa> pessoasDisponiveis = pessoasFiltradas.stream()
-                .filter(p -> !p.getEquipes().contains(equipe))
-                .toList();
-
-        model.addAttribute("equipe", equipe);
-        model.addAttribute("pessoasNaEquipe", pessoasNaEquipe);
-        model.addAttribute("pessoasDisponiveis", pessoasDisponiveis);
-        model.addAttribute("pessoasParticipantes", pessoasParticipantes);
-        model.addAttribute("pessoasBase", pessoasFiltradas);
-        model.addAttribute("representantesSelecionados", equipe.getRepresentantes().stream()
-                .map(representante -> representante.getPessoa() != null ? representante.getPessoa().getId() : null)
-                .filter(java.util.Objects::nonNull)
-                .toList());
-        model.addAttribute("filtro", filtro);
-        model.addAttribute("RPA", RPA.values());
-
-        return "equipesUsuarios";
+    // Garante que representantes estejam na base
+    Set<Long> ids = pessoasBase.stream().map(Pessoa::getId).collect(Collectors.toSet());
+    for (Representante rep : equipe.getRepresentantes()) {
+        Pessoa p = rep.getPessoa();
+        if (p != null && ids.add(p.getId())) {
+            pessoasBase.add(p);
+        }
     }
-    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
+
+    model.addAttribute("equipe", equipe);
+    model.addAttribute("pessoasNaEquipe", pessoasNaEquipe);
+    model.addAttribute("pessoasDisponiveis", pageDisponiveis.getContent());
+    model.addAttribute("pessoasParticipantes", pessoasParticipantes);
+    model.addAttribute("pessoasBase", pessoasBase);
+    model.addAttribute("representantesSelecionados", representantesSelecionados);
+    model.addAttribute("filtro", filtro);
+    model.addAttribute("RPA", RPA.values());
+
+    model.addAttribute("currentPage", pageDisponiveis.getNumber());
+    model.addAttribute("totalPages", pageDisponiveis.getTotalPages());
+    model.addAttribute("totalItems", pageDisponiveis.getTotalElements());
+    model.addAttribute("pageSize", pageDisponiveis.getSize());
+
+    return "equipesUsuarios";
+}
+
+// ###############################################################################################################################
     @PostMapping("/adicionarUsuariosEquipe")
     public String adicionarUsuarios(@RequestParam Long equipeId,
                                     @RequestParam(required = false) List<Long> pessoaIds) {
@@ -110,63 +179,56 @@ public class EquipeUsuarioViewController {
         return "redirect:/equipes/usuarios/" + equipeId;
     }
 
-    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @PostMapping("/removerUsuariosEquipe")
     public String removerUsuarios(@RequestParam Long equipeId,
-                                  @RequestParam(required = false) List<Long> pessoaIds) {
-        if (pessoaIds != null && !pessoaIds.isEmpty()) {
-            pessoaService.removerEquipeDasPessoas(equipeId, pessoaIds);
-        }else{
-            // Buscar todos os IDs das pessoas disponíveis para adicionar
-            List<Long> todosIds = pessoaService.findByEquipesIds(equipeId);
-            if (!todosIds.isEmpty()) {
-                pessoaService.removerEquipeDasPessoas(equipeId, todosIds);
-            }
+                                  @RequestParam(value = "pessoaIds", required = false) List<Long> pessoaIds,
+                                  @RequestParam(value = "pessoaIds[]", required = false) List<Long> pessoaIdsArray) {
+        List<Long> idsSelecionados = pessoaIds != null && !pessoaIds.isEmpty() ? pessoaIds : pessoaIdsArray;
+        if (idsSelecionados != null && !idsSelecionados.isEmpty()) {
+            pessoaService.removerEquipeDasPessoas(equipeId, idsSelecionados);
         }
         return "redirect:/equipes/usuarios/" + equipeId;
     }
-    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
+    
     @PostMapping("/adicionarUsuariosParticipantes")
     public String adicionarUsuariosParticipantes(@RequestParam Long equipeId,
-                                                 @RequestParam(required = false) List<Long> pessoaIds) {
-        if (pessoaIds == null || pessoaIds.isEmpty()) {
-            pessoaIds = pessoaService.listarTodasSemPagina()
-                    .stream()
-                    .map(Pessoa::getId)
-                    .toList();
-        }
+                                                 @RequestParam(value = "pessoaIds", required = false) List<Long> pessoaIds,
+                                                 @RequestParam(value = "pessoaIds[]", required = false) List<Long> pessoaIdsArray) {
+        List<Long> idsSelecionados = pessoaIds != null && !pessoaIds.isEmpty() ? pessoaIds : pessoaIdsArray;
 
-        equipeService.adicionarPessoasNaEquipe(equipeId, pessoaIds);
+        if (idsSelecionados != null && !idsSelecionados.isEmpty()) {
+            equipeService.adicionarPessoasNaEquipe(equipeId, idsSelecionados);
+        }
 
         return "redirect:/equipes/usuarios/" + equipeId;
     }
 
-    @CacheEvict(value = {"equipes", "equipesView"}, allEntries = true)
     @PostMapping("/removerUsuariosParticipantes")
     public String removerUsuariosParticipantes(@RequestParam Long equipeId,
-                                            @RequestParam(required = false) List<Long> pessoaIds) {
+                                               @RequestParam(value = "pessoaIds", required = false) List<Long> pessoaIds,
+                                               @RequestParam(value = "pessoaIds[]", required = false) List<Long> pessoaIdsArray) {
 
-        // Se não vier nada, remove todos os participantes da equipe
-        List<Long> idsParaRemover = (pessoaIds == null || pessoaIds.isEmpty())
-                ? pessoaService.listarPorEquipe(equipeId).stream().map(Pessoa::getId).toList()
-                : pessoaIds;
-
-        equipeService.removerPessoasDaEquipe(equipeId, idsParaRemover);
+        List<Long> idsSelecionados = pessoaIds != null && !pessoaIds.isEmpty() ? pessoaIds : pessoaIdsArray;
+        if (idsSelecionados != null && !idsSelecionados.isEmpty()) {
+            equipeService.removerPessoasDaEquipe(equipeId, idsSelecionados);
+        }
 
         return "redirect:/equipes/usuarios/" + equipeId;
     }
 
 // ###############################################################################################################################
     @GetMapping("/gerarPdfTodasAsPessoasDaEquipe/{id}")
-    public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasDaEquipe(@PathVariable Long id) throws IOException {
-        // Buscar equipe pelo ID
+    public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasDaEquipe(@PathVariable Long id,
+                                                                             @RequestParam(value = "representanteIds", required = false) List<Long> representanteIds) throws IOException {
         Equipe equipe = equipeService.buscarPorId(id);
-
-        // Buscar todas as pessoas vinculadas à equipe
         List<Pessoa> pessoasNaEquipe = pessoaService.listarPorEquipe(id);
 
-        // Gerar PDF com PDFBox
-        ByteArrayInputStream bis = pdfUtils.gerarPdf(pessoasNaEquipe, equipe);
+        List<Pessoa> representantesSelecionados = (representanteIds == null || representanteIds.isEmpty())
+                ? List.of()
+                : pessoaService.buscarPorIds(representanteIds);
+
+        String subtitulo = PdfUtils.formatarRepresentantesSelecionados(representantesSelecionados);
+        ByteArrayInputStream bis = pdfUtils.gerarPdf(pessoasNaEquipe, equipe, subtitulo.isBlank() ? null : subtitulo);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=relatorio-equipe.pdf");
@@ -179,20 +241,20 @@ public class EquipeUsuarioViewController {
 
 
     @GetMapping("/gerarPdfTodasAsPessoasDaEquipeIdosos/{id}")
-    public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasDaEquipeIdosos(@PathVariable Long id) throws IOException {
-        // Buscar equipe pelo ID
+    public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasDaEquipeIdosos(@PathVariable Long id,
+                                                                                  @RequestParam(value = "representanteIds", required = false) List<Long> representanteIds) throws IOException {
         Equipe equipe = equipeService.buscarPorId(id);
-
-        // Buscar todas as pessoas da equipe
         List<Pessoa> pessoasNaEquipe = pessoaService.listarPorEquipe(id);
-
-        // Filtrar apenas idosos (idade >= 60)
         List<Pessoa> idososNaEquipe = pessoasNaEquipe.stream()
                 .filter(p -> p.getIdade() >= 60)
                 .toList();
 
-        // Gerar PDF com PDFBox
-        ByteArrayInputStream bis = pdfUtils.gerarPdf(idososNaEquipe, equipe);
+        List<Pessoa> representantesSelecionados = (representanteIds == null || representanteIds.isEmpty())
+                ? List.of()
+                : pessoaService.buscarPorIds(representanteIds);
+
+        String subtitulo = PdfUtils.formatarRepresentantesSelecionados(representantesSelecionados);
+        ByteArrayInputStream bis = pdfUtils.gerarPdf(idososNaEquipe, equipe, subtitulo.isBlank() ? null : subtitulo);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=idosos-equipe.pdf");
@@ -204,15 +266,16 @@ public class EquipeUsuarioViewController {
     }
 
     @GetMapping("/gerarPdfTodasAsPessoasParticipantes/{id}")
-    public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasParticipantes(@PathVariable Long id) throws IOException {
-        // Buscar equipe pelo ID
+    public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasParticipantes(@PathVariable Long id,
+                                                                                 @RequestParam(value = "representanteIds", required = false) List<Long> representanteIds) throws IOException {
         Equipe equipe = equipeService.buscarPorId(id);
-
-        // Buscar todas as pessoas participantes da equipe
         List<Pessoa> participantes = pessoaService.listarParticipantesPorEquipe(id);
+        List<Pessoa> representantesSelecionados = (representanteIds == null || representanteIds.isEmpty())
+                ? List.of()
+                : pessoaService.buscarPorIds(representanteIds);
 
-        // Gerar PDF com PDFBox
-        ByteArrayInputStream bis = pdfUtils.gerarPdf(participantes, equipe);
+        String subtitulo = PdfUtils.formatarRepresentantesSelecionados(representantesSelecionados);
+        ByteArrayInputStream bis = pdfUtils.gerarPdf(participantes, equipe, subtitulo.isBlank() ? null : subtitulo);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=participantes-equipe.pdf");
@@ -223,20 +286,20 @@ public class EquipeUsuarioViewController {
                 .body(new InputStreamResource(bis));
     }
     @GetMapping("/gerarPdfTodasAsPessoasParticipantesIdosos/{id}")
-    public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasParticipantesIdosos(@PathVariable Long id) throws IOException {
-        // Buscar equipe pelo ID
+    public ResponseEntity<InputStreamResource> gerarPdfTodasAsPessoasParticipantesIdosos(@PathVariable Long id,
+                                                                                       @RequestParam(value = "representanteIds", required = false) List<Long> representanteIds) throws IOException {
         Equipe equipe = equipeService.buscarPorId(id);
-
-        // Buscar todos os participantes da equipe
         List<Pessoa> participantes = pessoaService.listarParticipantesPorEquipe(id);
-
-        // Filtrar apenas idosos (idade >= 60)
         List<Pessoa> idososParticipantes = participantes.stream()
                 .filter(p -> p.getIdade() >= 60)
                 .toList();
 
-        // Gerar PDF com PDFBox
-        ByteArrayInputStream bis = pdfUtils.gerarPdf(idososParticipantes, equipe);
+        List<Pessoa> representantesSelecionados = (representanteIds == null || representanteIds.isEmpty())
+                ? List.of()
+                : pessoaService.buscarPorIds(representanteIds);
+
+        String subtitulo = PdfUtils.formatarRepresentantesSelecionados(representantesSelecionados);
+        ByteArrayInputStream bis = pdfUtils.gerarPdf(idososParticipantes, equipe, subtitulo.isBlank() ? null : subtitulo);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=participantes-idosos-equipe.pdf");

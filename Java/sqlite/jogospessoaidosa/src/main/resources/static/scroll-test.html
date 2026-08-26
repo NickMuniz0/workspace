@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Teste de Scroll - Pessoas Disponiveis</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;padding:20px}
+    .pagination{display:flex;gap:6px}
+    .page-link{cursor:pointer;padding:6px 10px;border:1px solid #ccc;border-radius:4px;text-decoration:none;color:#333}
+    .scrollable-table{border:1px solid #ddd;padding:10px;border-radius:6px}
+    .row-item{padding:6px 4px;border-bottom:1px solid #f0f0f0}
+  </style>
+</head>
+<body>
+  <h3>Teste de Scroll para paginação</h3>
+
+  <p>Controles:</p>
+  <label>Itens na próxima página: <input id="inputItems" type="number" value="1" min="0" style="width:60px"></label>
+  <button id="btnGo" style="margin-left:10px">Simular navegar para página 2</button>
+  <p class="small text-muted">Clique em um dos links de paginação abaixo para simular navegação.</p>
+
+  <div class="pagination" style="margin:12px 0">
+    <a class="page-link" href="?page=1">1</a>
+    <a class="page-link" href="?page=2">2</a>
+    <a class="page-link" href="?page=3">3</a>
+  </div>
+
+  <div style="height:400px;background:#f8f9fa;padding:12px;margin-bottom:12px">
+    <strong>Topo da página</strong>
+    <p>Conteúdo artificial acima da tabela para simular paginação real.</p>
+  </div>
+
+  <div id="pessoasDisponiveisSection" class="scrollable-table" style="min-height:160px">
+    <a id="pessoasDisponiveis"></a>
+    <h4>Pessoas Disponíveis</h4>
+    <div id="listContainer"></div>
+  </div>
+
+  <script>
+    // populate list based on query params "page" and "items"
+    function getParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    function renderList(count) {
+      const container = document.getElementById('listContainer');
+      container.innerHTML = '';
+      for (let i=0;i<count;i++){
+        const d = document.createElement('div');
+        d.className = 'row-item';
+        d.textContent = 'Pessoa ' + (i+1) + (count===1 ? ' (única)' : '');
+        container.appendChild(d);
+      }
+      if (count===0){
+        const d = document.createElement('div'); d.className='row-item'; d.textContent='Nenhuma pessoa disponível'; container.appendChild(d);
+      }
+    }
+
+    // button simulates clicking a pagination link but sets items for page 2
+    document.getElementById('btnGo').addEventListener('click', function(){
+      const items = parseInt(document.getElementById('inputItems').value || '1',10);
+      // set session flag so scroll script knows intent
+      try{ sessionStorage.setItem('jogosp.scrollToPessoas', '1'); }catch(e){}
+      // navigate to same page with query string
+      const base = location.pathname;
+      location.href = base + '?page=2&items=' + items + '#pessoasDisponiveis';
+    });
+
+    // populate based on URL
+    const page = parseInt(getParam('page')||'1',10);
+    const items = parseInt(getParam('items')|| (page===1?5:1),10);
+    renderList(items);
+
+    // attach click listener to pagination links to set session flag
+    document.querySelectorAll('.pagination a.page-link').forEach(a => {
+      a.addEventListener('click', function(ev){
+        try{ sessionStorage.setItem('jogosp.scrollToPessoas', '1'); }catch(e){}
+        // let navigation happen normally
+      });
+    });
+
+    // strong scroll attempt similar to template: retry until page height stabilizes
+    (function(){
+      const section = document.getElementById('pessoasDisponiveisSection');
+      const anchor = document.getElementById('pessoasDisponiveis');
+      if (!section) return;
+
+      function getTargetTop() {
+        const target = anchor || section;
+        return Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - 20);
+      }
+
+      const shouldScroll = (sessionStorage.getItem('jogosp.scrollToPessoas') === '1') || /[?&]page=/.test(location.search) || location.hash === '#pessoasDisponiveis';
+      if (!shouldScroll) return;
+
+      let attempts = 0; let lastHeight = 0; let stableCount = 0; const maxAttempts = 25;
+      const interval = setInterval(() => {
+        const curHeight = document.body.scrollHeight;
+        if (curHeight === lastHeight) stableCount++; else { stableCount = 0; lastHeight = curHeight; }
+
+        const targetTop = getTargetTop();
+        try { window.scrollTo({ top: targetTop, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, targetTop); }
+
+        attempts++;
+        if (stableCount >= 3 || attempts >= maxAttempts) {
+          clearInterval(interval);
+          try{ sessionStorage.removeItem('jogosp.scrollToPessoas'); }catch(e){}
+          if (location.hash) history.replaceState(null, null, location.pathname + location.search);
+        }
+      }, 200);
+    })();
+  </script>
+</body>
+</html>

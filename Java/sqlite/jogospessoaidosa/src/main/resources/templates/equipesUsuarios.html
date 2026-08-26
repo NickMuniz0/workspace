@@ -10,6 +10,10 @@
     <link rel="stylesheet" th:href="@{/css/equipeUsuarios.css}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 </head>
 <body class="bg-light">
@@ -41,92 +45,41 @@
         </form>
 
         <div class="card-body">
-            <!-- Seção de Tabelas -->
             <section class="row g-4">
+
                 <!-- 👥 Usuários na Equipe -->
                 <div class="col-md-6">
-                    <h5 class="mb-3">👥 Usuários na Equipe</h5>
+                    <h5 class="mb-3 d-flex align-items-center">
+                        👥 Usuários na Equipe
+                        <span class="badge bg-secondary ms-2" th:text="${pessoasNaEquipe != null ? pessoasNaEquipe.size() : 0}"></span>
+                    </h5>
 
                     <!-- 📋 Tabela com rolagem -->
-                    <div class="scrollable-table mb-3">
-                        <table class="table table-striped table-hover align-middle mb-0">
-                            <thead class="table-light">
-                            <tr>
-                                <th>Remover</th>
-                                <th>Nome</th>
-                                <th>Idade</th>
-                                <th>Idoso</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="pessoa : ${pessoasNaEquipe}">
-                                <td><input type="checkbox" name="pessoaIds" form="pessoasEquipe" th:value="${pessoa.id}" /></td>
-                                <td th:text="${pessoa.nome}"></td>
-                                <td th:text="${pessoa.idade}"></td>
-                                <td th:text="${pessoa.idoso ? 'Sim' : 'Não'}"></td>
-
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(pessoasNaEquipe)}">
-                                <td colspan="5" class="text-center text-muted">Nenhum usuário na equipe</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- 🧭 Ações -->
-                    <div class="d-flex justify-content-between">
-                        <form th:action="@{/equipes/usuarios/adicionarUsuariosParticipantes}" method="post"  >
-                            <input type="hidden" name="equipeId" th:value="${equipe.id}" />
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-arrow-down"></i>                 </button>
-                        </form>
-                        <form th:action="@{/equipes/usuarios/removerUsuariosEquipe}" method="post"  id="pessoasEquipe">
-                            <input type="hidden" name="equipeId" th:value="${equipe.id}" />
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash-fill"></i>                              </button>
-                        </form>
-
-                        <form th:action="@{/equipes/usuarios/gerarPdfTodasAsPessoasDaEquipe/{id}(id=${equipe.id})}" method="get" target="_blank">
-                            <button type="submit" class="btn btn-outline-secondary">
-                                <i class="bi bi-file-earmark-pdf-fill"></i> TODOS
-                            </button>
-                        </form>
-                        <form th:action="@{/equipes/usuarios/gerarPdfTodasAsPessoasDaEquipeIdosos/{id}(id=${equipe.id})}" method="get" target="_blank">
-                            <button type="submit" class="btn btn-outline-secondary">
-                                <i class="bi bi-file-earmark-pdf-fill"></i> IDOSOS
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- ➕ Adicionar Novos Usuários -->
-                <div class="col-md-6">
-                    <h5 class="mb-3">➕ Adicionar Novos Usuários</h5>
-
-                    <!-- 📋 Tabela com rolagem -->
-                    <div class="scrollable-table mb-3">
-                        <form th:action="@{/equipes/usuarios/adicionarUsuariosEquipe}" method="post" id="pessoasDisponiveis">
+                    <div id="pessoasDisponiveisSection" class="scrollable-table mb-3" style="min-height:160px;">
+                        <form th:action="@{/equipes/usuarios/removerUsuariosEquipe}" method="post" id="formRemoverEquipe" data-equipe-id="${equipe.id}">
                             <input type="hidden" name="equipeId" th:value="${equipe.id}" />
                             <table class="table table-striped table-hover align-middle mb-0">
                                 <thead class="table-light">
                                 <tr>
-                                    <th>Selecionar</th>
+                                    <th>
+                                        <input type="checkbox" class="form-check-input select-all-checkbox" data-target="formRemoverEquipe" title="Selecionar todos" />
+                                    </th>
                                     <th>Nome</th>
                                     <th>Idade</th>
                                     <th>Idoso</th>
-
+                                    <th>Doenças</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="pessoa : ${pessoasDisponiveis}">
+                                <tr th:each="pessoa : ${pessoasNaEquipe}">
                                     <td><input type="checkbox" name="pessoaIds" th:value="${pessoa.id}" /></td>
                                     <td th:text="${pessoa.nome}"></td>
                                     <td th:text="${pessoa.idade}"></td>
                                     <td th:text="${pessoa.idoso ? 'Sim' : 'Não'}"></td>
-
+                                    <td th:text="${#lists.isEmpty(pessoa.doencas) ? 'Nenhuma' : #strings.listJoin(pessoa.doencas.![nome], ', ')}"></td>
                                 </tr>
-                                <tr class="no-results" th:if="${#lists.isEmpty(pessoasDisponiveis)}">
-                                    <td colspan="3" class="text-center text-muted">Nenhuma pessoa disponível para adicionar</td>
+                                <tr th:if="${#lists.isEmpty(pessoasNaEquipe)}">
+                                    <td colspan="5" class="text-center text-muted">Nenhum usuário na equipe</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -135,69 +88,142 @@
 
                     <!-- 🧭 Ações -->
                     <div class="d-flex justify-content-between">
-                        <button type="submit" form="pessoasDisponiveis" class="btn btn-success">
-                            <i class="bi bi-arrow-left"></i>
+                        <form th:action="@{/equipes/usuarios/adicionarUsuariosParticipantes}" method="post" id="formAdicionarParticipantes" data-equipe-id="${equipe.id}">
+                            <input type="hidden" name="equipeId" th:value="${equipe.id}" />
+                        </form>
+                        <button type="submit" form="formAdicionarParticipantes" class="btn btn-success btn-adicionar-participantes">
+                            <i class="bi bi-arrow-down"></i>
                         </button>
+                        <button type="submit" form="formRemoverEquipe" class="btn btn-danger">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+
+                        <a class="btn btn-outline-secondary btn-gerar-pdf-equipe"
+                           th:href="@{/equipes/usuarios/gerarPdfTodasAsPessoasDaEquipe/{id}(id=${equipe.id})}">
+                            <i class="bi bi-file-earmark-pdf-fill"></i> TODOS
+                        </a>
+                        <a class="btn btn-outline-secondary btn-gerar-pdf-equipe-idosos"
+                           th:href="@{/equipes/usuarios/gerarPdfTodasAsPessoasDaEquipeIdosos/{id}(id=${equipe.id})}">
+                            <i class="bi bi-file-earmark-pdf-fill"></i> IDOSOS
+                        </a>
                     </div>
                 </div>
 
-                <!-- ➕ Adicionar Participantes -->
-                <div class="col-md-12">
-                    <h5 class="mb-3">➕ Adicionar Participantes</h5>
+                <!-- ➕ Adicionar Novos Usuários-->         
+                <div class="col-md-6">
+                    <h5 class="mb-3 d-flex align-items-center">
+                        ➕ Adicionar Novos Usuários</h5>
+                    </h5>
 
-                      <!-- 📋 Tabela com rolagem -->
+                    <!-- 📋 Tabela com rolagem -->
                     <div class="scrollable-table mb-3">
-                        <table class="table table-striped table-hover align-middle mb-0">
-                            <thead class="table-light">
-                            <tr>
-                                <th>Remover</th>
-                                <th>Nome</th>
-                                <th>Idade</th>
-                                <th>Idoso</th>
+                        <form  id="pessoasDisponiveis"   th:action="@{/equipes/usuarios/adicionarUsuariosEquipe}" method="post" data-equipe-id="${equipe.id}"  >
+                            <input type="hidden" name="equipeId" th:value="${equipe.id}" />
 
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="pessoa : ${pessoasParticipantes}">
-                                <td><input type="checkbox" name="pessoaIds" form="pessoasParticipantes" th:value="${pessoa.id}" /></td>
-                                <td th:text="${pessoa.nome}"></td>
-                                <td th:text="${pessoa.idade}"></td>
-                                <td th:text="${pessoa.idoso ? 'Sim' : 'Não'}"></td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(pessoasParticipantes)}">
-                                <td colspan="5" class="text-center text-muted">Nenhum usuário na equipe</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                            <table class="table table-striped table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" class="form-check-input select-all-checkbox" data-target="pessoasDisponiveis" title="Selecionar todos" />
+                                    </th>
+                                    <th>Nome</th>
+                                    <th>Idade</th>
+                                    <th>Idoso</th>
+                                    <th>Doenças</th>
+
+                                </tr>
+                                </thead>
+                                <tbody >
+                                <tr th:each="pessoa : ${pessoasDisponiveis}">
+                                    <td><input type="checkbox" name="pessoaIds" th:value="${pessoa.id}" /></td>
+                                    <td th:text="${pessoa.nome}"></td>
+                                    <td th:text="${pessoa.idade}"></td>
+                                    <td th:text="${pessoa.idoso ? 'Sim' : 'Não'}"></td>
+                                    <td th:text="${#lists.isEmpty(pessoa.doencas) ? 'Nenhuma' : #strings.listJoin(pessoa.doencas.![nome], ', ')}"></td>
+                                </tr>
+                                <tr class="no-results" th:if="${#lists.isEmpty(pessoasDisponiveis)}">
+                                    <td colspan="5" class="text-center text-muted">Nenhuma pessoa disponível para adicionar</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
                     </div>
 
                     <!-- 🧭 Ações -->
                     <div class="d-flex justify-content-between">
-                        <form th:action="@{/equipes/usuarios/removerUsuariosParticipantes}" method="post" id="pessoasParticipantes">
+
+                        <button type="submit" form="pessoasDisponiveis" class="btn btn-success" data-equipe-id="${equipe.id}">
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
+                        
+                    </div>
+                </div>
+
+                 <!-- ➕ Adicionar Participantes -->
+                <div class="col-md-12">
+                    <h5 class="mb-3 d-flex align-items-center">
+                        ➕ Adicionar Participantes
+                        <span class="badge bg-secondary ms-2" th:text="${pessoasParticipantes != null ? pessoasParticipantes.size() : 0}"></span>
+                    </h5>
+
+                      <!-- 📋 Tabela com rolagem -->
+                    <div class="scrollable-table mb-3">
+                        <form th:action="@{/equipes/usuarios/removerUsuariosParticipantes}" method="post" id="formRemoverParticipantes" data-equipe-id="${equipe.id}">
                             <input type="hidden" name="equipeId" th:value="${equipe.id}" />
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash-fill"></i>                       </button>
+                            <table class="table table-striped table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" class="form-check-input select-all-checkbox" data-target="formRemoverParticipantes" title="Selecionar todos" />
+                                    </th>
+                                    <th>Nome</th>
+                                    <th>Idade</th>
+                                    <th>Idoso</th>
+                                    <th>Doenças</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="pessoa : ${pessoasParticipantes}">
+                                    <td><input type="checkbox" name="pessoaIds" th:value="${pessoa.id}" /></td>
+                                    <td th:text="${pessoa.nome}"></td>
+                                    <td th:text="${pessoa.idade}"></td>
+                                    <td th:text="${pessoa.idoso ? 'Sim' : 'Não'}"></td>
+                                    <td th:text="${#lists.isEmpty(pessoa.doencas) ? 'Nenhuma' : #strings.listJoin(pessoa.doencas.![nome], ', ')}"></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(pessoasParticipantes)}">
+                                    <td colspan="5" class="text-center text-muted">Nenhum usuário na equipe</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </form>
+                    </div>
 
-                        <form th:action="@{/equipes/usuarios/gerarPdfTodasAsPessoasParticipantes/{id}(id=${equipe.id})}" method="get" target="_blank">
-                            <button type="submit" class="btn btn-outline-secondary">
-                                <i class="bi bi-file-earmark-pdf-fill"></i> TODOS
-                            </button>
-                        </form>
+                    <!-- 🧭 Ações -->
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" form="formRemoverParticipantes" class="btn btn-danger">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
 
-                        <form th:action="@{/equipes/usuarios/gerarPdfTodasAsPessoasParticipantesIdosos/{id}(id=${equipe.id})}" method="get" target="_blank">
-                            <button type="submit" class="btn btn-outline-secondary">
-                                <i class="bi bi-file-earmark-pdf-fill"></i> IDOSOS
-                            </button>
-                        </form>
+                        <a class="btn btn-outline-secondary btn-gerar-pdf-participantes"
+                           th:href="@{/equipes/usuarios/gerarPdfTodasAsPessoasParticipantes/{id}(id=${equipe.id})}">
+                            <i class="bi bi-file-earmark-pdf-fill"></i> TODOS
+                        </a>
+
+                        <a class="btn btn-outline-secondary btn-gerar-pdf-participantes-idosos"
+                           th:href="@{/equipes/usuarios/gerarPdfTodasAsPessoasParticipantesIdosos/{id}(id=${equipe.id})}">
+                            <i class="bi bi-file-earmark-pdf-fill"></i> IDOSOS
+                        </a>
                     </div>
                 </div>
 
 
             </section>
 
+
             <!-- Formulário da Equipe -->
-            <form th:action="@{/equipes/salvarEquipe}" th:object="${equipe}" method="post">
+            <form th:action="@{/equipes/salvarEquipe}" th:object="${equipe}" method="post" 
+                id="formSalvarEquipe" data-equipe-id="${equipe.id}" >
+
                 <!-- Nome da Equipe -->
                 <div class="mb-3">
                     <input type="hidden" th:field="*{id}" />
@@ -213,142 +239,304 @@
                         <option value="" disabled selected>Selecione a RPA</option>
                         <option th:each="rpaItem : ${RPA}"
                                 th:value="${rpaItem}"
-                                th:text="${rpaItem}">RPA</option>
+                                th:text="${rpaItem}"></option>
                     </select>
                     <div class="text-danger" th:if="${#fields.hasErrors('rpa')}" th:errors="*{rpa}"></div>
                 </div>
 
                 <!-- Representantes -->
                 <fieldset class="mb-4">
-                    <legend>Representantes (base de Pessoa)</legend>
-                    <p class="text-muted small">Marque as pessoas que deverão ser os representantes da equipe.</p>
-                    <div class="row g-2" th:if="${!#lists.isEmpty(pessoasBase)}">
-                        <div class="col-md-6" th:each="pessoa : ${pessoasBase}">
-                            <label class="border rounded p-2 d-flex align-items-center gap-2 w-100">
-                                <input class="form-check-input" type="checkbox" name="representanteIds" th:value="${pessoa.id}" th:checked="${#lists.contains(representantesSelecionados, pessoa.id)}" />
-                                <span>
-                                    <strong th:text="${pessoa.nome}"></strong>
-                                    <small class="text-muted d-block" th:text="${pessoa.cpf != null ? 'CPF: ' + pessoa.cpf : 'Sem CPF'}"></small>
-                                    <small class="text-muted d-block" th:if="${!#lists.isEmpty(pessoa.telefones)}" th:each="tel : ${pessoa.telefones}">
-                                        <span th:text="'Tel: (' + ${tel.dd} + ') ' + ${tel.numero}"></span>
-                                    </small>
-                                    <small class="text-muted d-block" th:if="${#lists.isEmpty(pessoa.telefones)}">Sem telefone</small>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="alert alert-secondary mb-0" th:if="${#lists.isEmpty(pessoasBase)}">
-                        Nenhuma pessoa disponível para representar a equipe.
-                    </div>
+                                <label for="representantes" class="form-label">Representantes</label>
+                                <select th:field="*{representantesIds}" id="representantes" class="form-select" multiple="multiple">
+                                            <option th:each="pessoa : ${pessoasDisponiveis}"
+                                                    th:value="${pessoa.id}"
+                                                    th:text="${pessoa.nome}"
+                                                    >
+                                            </option>
+
+                                </select>       
+                                    
                 </fieldset>
 
                 <!-- Botão de Salvar -->
-                <div class="text-end">
+                <div class="text-end mt-3">
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-save"></i> Salvar Equipe
                     </button>
                 </div>
             </form>
 
+
         </div>
     </div>
 </main>
 
 
-<script>
-    function adicionarRepresentante() {
-        const container = document.getElementById('representantes-container');
-        const repIndex = container.children.length;
 
-        const html = `
-            <div class="border rounded p-3 mb-3 representante-block">
-                <div class="mb-3">
-                    <label class="form-label">Nome do Representante</label>
-                    <input type="text" name="representantes[${repIndex}].nome" class="form-control" />
-                </div>
 
-                <div class="telefones-container">
-                    <label class="form-label">Telefones</label>
-                    <div class="row g-2 align-items-end telefone-block mb-2">
-                        <div class="col-md-3">
-                            <input type="text" name="representantes[${repIndex}].telefones[0].ddd" class="form-control" placeholder="DDD" />
-                        </div>
-                        <div class="col-md-7">
-                            <input type="text" name="representantes[${repIndex}].telefones[0].numero" class="form-control" placeholder="Número" />
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-danger btn-sm" onclick="removerTelefone(this)">−</button>
-                        </div>
-                    </div>
-                </div>
+<script th:inline="javascript">
+    $(document).ready(function() {
+                $('#representantes').select2({
+                    placeholder: "Buscar e selecionar pessoas",
+                    minimumInputLength: 2,
+                    ajax: {
+                        url: '/pessoas/search',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return { filtro: params.term };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.map(p => ({
+                                    id: p.id,
+                                    text: p.text
+                                }))
+                            };
+                        }
+                    }
+                });
 
-                <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="adicionarTelefone(this)">+ Telefone</button>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', html);
-    }
+        // Pré-carregar os já selecionados
+        let selecionados = [[${representanteIds}]];      // ex: [1,2,3]
+        let nomes = [[${nomesRepresentantes}]];         // ex: ["Maria","João","Ana"]
 
-    function adicionarTelefone(button) {
-        const repBlock = button.closest('.representante-block');
-        const telefonesContainer = repBlock.querySelector('.telefones-container');
-        const repIndex = Array.from(document.getElementById('representantes-container').children).indexOf(repBlock);
-        const telIndex = telefonesContainer.querySelectorAll('.telefone-block').length;
-
-        const html = `
-            <div class="row g-2 align-items-end telefone-block mb-2">
-                <div class="col-md-3">
-                    <input type="text" name="representantes[${repIndex}].telefones[${telIndex}].ddd" class="form-control" placeholder="DDD" />
-                </div>
-                <div class="col-md-7">
-                    <input type="text" name="representantes[${repIndex}].telefones[${telIndex}].numero" class="form-control" placeholder="Número" />
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-danger btn-sm" onclick="removerTelefone(this)">−</button>
-                </div>
-            </div>
-        `;
-        telefonesContainer.insertAdjacentHTML('beforeend', html);
-    }
-
-    function removerTelefone(button) {
-        const block = button.closest('.telefone-block');
-        block.remove();
-    }
-
-    function removerRepresentante(button) {
-        const card = button.closest('.representante-block');
-        if (card) {
-            card.remove();
+        if (selecionados && nomes) {
+            selecionados.forEach((id, index) => {
+                let option = new Option(nomes[index], id, true, true);
+                $('#representantes').append(option).trigger('change');
+            });
         }
-    }
-
-    function removerTelefone(button) {
-        const bloco = button.closest('.telefone-block');
-        if (bloco) {
-            bloco.remove();
-        }
-    }
-
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const adicionarForm = document.querySelector('form[action*="adicionarUsuariosParticipantes"]');
-        const removerForm = document.querySelector('form[action*="removerUsuariosEquipe"]');
-
-        adicionarForm.addEventListener("submit", function () {
-            removerForm.removeAttribute("id");
-            adicionarForm.setAttribute("id", "pessoasEquipe");
-        });
-
-        removerForm.addEventListener("submit", function () {
-            adicionarForm.removeAttribute("id");
-            removerForm.setAttribute("id", "pessoasEquipe");
-        });
     });
 </script>
 
 
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const formDisponiveis = document.getElementById('pessoasDisponiveis');
+    const formAdicionar = document.getElementById('formAdicionarEquipe');
+
+    if (!formDisponiveis || !formAdicionar) return;
+
+    // intercepta o submit do formAdicionarEquipe
+    formAdicionar.addEventListener('submit', function (event) {
+        // limpa inputs ocultos antigos
+        formAdicionar.querySelectorAll('input[name="pessoaIds"][type="hidden"]').forEach(el => el.remove());
+
+        // pega apenas os checkboxes marcados na tabela de disponíveis
+        const selecionados = formDisponiveis.querySelectorAll('input[name="pessoaIds"]:checked');
+        if (selecionados.length === 0) {
+            event.preventDefault(); // evita submit vazio
+            alert("Selecione pelo menos um usuário para adicionar.");
+            return;
+        }
+
+        selecionados.forEach(cb => {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'pessoaIds';
+            hidden.value = cb.value;
+            formAdicionar.appendChild(hidden);
+        });
+    });
+});
+</script>
+
+<script>
+
+    document.querySelectorAll('.select-all-checkbox').forEach(selectAll => {
+                    selectAll.addEventListener('change', function () {
+                        const formId = this.getAttribute('data-target');
+                        const form = document.getElementById(formId);
+                        if (!form) return;
+                        form.querySelectorAll('input[name="pessoaIds"]').forEach(cb => {
+                            cb.checked = this.checked;
+                        });
+                    });
+                }); 
+                
+                ///////
+                  function atualizarCheckboxMestre(form) {
+            const masterCheckbox = form.querySelector('.select-all-checkbox');
+            if (!masterCheckbox) return;
+
+            const checkboxes = Array.from(form.querySelectorAll('input[name="pessoaIds"]'));
+            const marcados = checkboxes.filter(cb => cb.checked).length;
+            masterCheckbox.checked = checkboxes.length > 0 && marcados === checkboxes.length;
+            masterCheckbox.indeterminate = marcados > 0 && marcados < checkboxes.length;
+        }
+
+        document.querySelectorAll('.select-all-checkbox').forEach(master => {
+            master.addEventListener('change', function () {
+                const form = this.closest('form');
+                if (!form) return;
+
+                const checkboxes = form.querySelectorAll('input[name="pessoaIds"]');
+                checkboxes.forEach(cb => {
+                    cb.checked = this.checked;
+                });
+
+                atualizarCheckboxMestre(form);
+            });
+        });
+
+        function abrirPdfParticipantes(url) {
+            const selecionados = Array.from(document.querySelectorAll('input[name="representanteIds"]:checked'))
+                .map(input => input.value)
+                .filter(Boolean);
+
+            const targetUrl = new URL(url, window.location.origin);
+            targetUrl.searchParams.delete('representanteIds');
+            selecionados.forEach(value => targetUrl.searchParams.append('representanteIds', value));
+            window.open(targetUrl.toString(), '_blank');
+        }
+
+        const botaoPdfTodos = document.querySelector('.btn-gerar-pdf-participantes');
+        const botaoPdfIdosos = document.querySelector('.btn-gerar-pdf-participantes-idosos');
+        const botaoPdfEquipeTodos = document.querySelector('.btn-gerar-pdf-equipe');
+        const botaoPdfEquipeIdosos = document.querySelector('.btn-gerar-pdf-equipe-idosos');
+
+        if (botaoPdfTodos) {
+            botaoPdfTodos.addEventListener('click', function (event) {
+                event.preventDefault();
+                abrirPdfParticipantes(this.getAttribute('href'));
+            });
+        }
+
+        if (botaoPdfIdosos) {
+            botaoPdfIdosos.addEventListener('click', function (event) {
+                event.preventDefault();
+                abrirPdfParticipantes(this.getAttribute('href'));
+            });
+        }
+
+        if (botaoPdfEquipeTodos) {
+            botaoPdfEquipeTodos.addEventListener('click', function (event) {
+                event.preventDefault();
+                abrirPdfParticipantes(this.getAttribute('href'));
+            });
+        }
+
+        if (botaoPdfEquipeIdosos) {
+            botaoPdfEquipeIdosos.addEventListener('click', function (event) {
+                event.preventDefault();
+                abrirPdfParticipantes(this.getAttribute('href'));
+            });
+        }
+
+        document.querySelectorAll('form').forEach(form => {
+            const checkboxes = form.querySelectorAll('input[name="pessoaIds"]');
+            if (checkboxes.length > 0) {
+                checkboxes.forEach(cb => cb.addEventListener('change', () => atualizarCheckboxMestre(form)));
+                atualizarCheckboxMestre(form);
+            }
+        });
+
+        const adicionarParticipantesForm = document.getElementById("formAdicionarParticipantes");
+        const removerEquipeForm = document.getElementById("formRemoverEquipe");
+        const removerParticipantesForm = document.getElementById("formRemoverParticipantes");
+
+        if (adicionarParticipantesForm && removerEquipeForm ) {
+            adicionarParticipantesForm.addEventListener("submit", function (event) {
+                const selecionados = Array.from(removerEquipeForm.querySelectorAll('input[name="pessoaIds"]:checked'));
+                if (selecionados.length === 0 ) {
+                    event.preventDefault();
+                    return;
+                }
+                removerEquipeForm.querySelectorAll('input[name="pessoaIds"]').forEach(input => input.removeAttribute('name'));
+
+                adicionarParticipantesForm.querySelectorAll('input[name="pessoaIds"]').forEach(input => input.remove());
+                selecionados.forEach(checkbox => {
+                    const hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = 'pessoaIds';
+                    hidden.value = checkbox.value;
+                    adicionarParticipantesForm.appendChild(hidden);
+                });
+            });
+        }
+
+        if (removerEquipeForm) {
+            removerEquipeForm.addEventListener("submit", function (event) {
+                const hasSelection = removerEquipeForm.querySelector('input[name="pessoaIds"]:checked');
+                if (!hasSelection) {
+                    event.preventDefault();
+                }
+            });
+        }
+
+        if (removerParticipantesForm) {
+            removerParticipantesForm.addEventListener("submit", function (event) {
+                const hasSelection = removerParticipantesForm.querySelector('input[name="pessoaIds"]:checked');
+                if (!hasSelection) {
+                    event.preventDefault();
+                }
+            });
+        }
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("pessoasDisponiveis");
+    const botao = document.querySelector('button[form="pessoasDisponiveis"]');
+    const master = form ? form.querySelector('.select-all-checkbox') : null;
+
+    if (form ) {
+        botao.addEventListener("click", (event) => {
+            console.log("Clique no botão detectado!");
+
+            // 🔑 Usa setTimeout para esperar o navegador atualizar o checked
+            setTimeout(() => {
+                const selecionados = Array.from(
+                    form.querySelectorAll('tbody input[type="checkbox"][name="pessoaIds"]:checked')
+                );
+
+                console.log("Selecionados encontrados:", selecionados);
+
+                if (selecionados.length === 0) {
+                    event.preventDefault();
+                    alert("Selecione pelo menos uma pessoa.");
+                    return;
+                }
+
+                // Remove name dos originais
+                form.querySelectorAll('tbody input[type="checkbox"][name="pessoaIds"]').forEach(input => {
+                    input.removeAttribute('name');
+                });
+
+                // Cria inputs ocultos só para os selecionados
+                selecionados.forEach(cb => {
+                    const hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = 'pessoaIds';
+                    hidden.value = cb.value;
+                    form.appendChild(hidden);
+                });
+
+                console.log("IDs enviados:", selecionados.map(cb => cb.value));
+
+                // Força envio real
+                const hiddenSubmit = document.createElement('button');
+                hiddenSubmit.type = 'submit';
+                hiddenSubmit.style.display = 'none';
+                form.appendChild(hiddenSubmit);
+                hiddenSubmit.click();
+            }, 0); // espera o ciclo do navegador
+        });
+    }
+
+    if (master && form) {
+        master.addEventListener("change", () => {
+            const all = form.querySelectorAll('tbody input[type="checkbox"][name="pessoaIds"]');
+            all.forEach(cb => cb.checked = master.checked);
+        });
+    }
+});
+
+
+</script>
 
 </body>
 </html>

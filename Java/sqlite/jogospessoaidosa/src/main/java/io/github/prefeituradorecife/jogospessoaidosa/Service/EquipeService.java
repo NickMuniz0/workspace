@@ -4,6 +4,7 @@ import io.github.prefeituradorecife.jogospessoaidosa.Model.*;
 import io.github.prefeituradorecife.jogospessoaidosa.Repository.EquipeRepository;
 import io.github.prefeituradorecife.jogospessoaidosa.Repository.PessoaRepository;
 import io.github.prefeituradorecife.jogospessoaidosa.Specification.EquipeSpecification;
+import io.github.prefeituradorecife.jogospessoaidosa.Specification.EquipeSpecificationBuilder;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 @Service
 public class EquipeService {
@@ -23,7 +26,7 @@ public class EquipeService {
     private PessoaRepository pessoaRepository;
 
     public List<Equipe> listarTodasSemPagina() {
-        return equipeRepository.findAll();
+        return equipeRepository.findAll(Sort.by("nome").ascending());
     }
 
     public Page<Equipe> listarTodas(Pageable pageable) {
@@ -33,12 +36,14 @@ public class EquipeService {
     @Transactional
     public void salvarOuAtualizarEquipe(Equipe equipe, List<Long> representanteIds) {
         Equipe equipePersistida = (equipe.getId() != null)
-                ? equipeRepository.findById(equipe.getId()).orElseGet(() -> equipeRepository.save(equipe))
-                : equipeRepository.save(equipe);
+                ? equipeRepository.findById(equipe.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Equipe não encontrada"))
+                : new Equipe();
 
         equipePersistida.setNome(equipe.getNome());
         equipePersistida.setRpa(equipe.getRpa());
 
+        // Limpa representantes antigos
         equipePersistida.getRepresentantes().clear();
 
         if (representanteIds != null && !representanteIds.isEmpty()) {
@@ -47,14 +52,15 @@ public class EquipeService {
                 Representante representante = new Representante();
                 representante.setPessoa(pessoa);
                 representante.setNome(pessoa.getNome());
-                representante.setEquipe(equipePersistida);
 
-                equipePersistida.getRepresentantes().add(representante);
+                // Usa o helper para manter consistência
+                equipePersistida.addRepresentante(representante);
             }
         }
 
         equipeRepository.save(equipePersistida);
     }
+
 
     public void deletarPorIds(List<Long> ids) {
         equipeRepository.deleteAllById(ids);
@@ -78,8 +84,14 @@ public class EquipeService {
     }
 
     public Equipe buscarPorId(Long id) {
-        return equipeRepository.findById(id)
+        return equipeRepository.findByIdWithRepresentantes(id)
                 .orElseThrow(() -> new EntityNotFoundException("Equipe não encontrada"));
+    }
+
+
+
+    public int contarUsuariosNaEquipe(Long equipeId) {
+        return pessoaRepository.findByEquipes_Id(equipeId).size();
     }
 
     @Transactional
@@ -101,21 +113,23 @@ public class EquipeService {
                 .orElseThrow(() -> new EntityNotFoundException("Equipe não encontrada"));
 
         List<Pessoa> pessoas = pessoaRepository.findAllById(pessoaIds);
-        equipe.getParticipantesJogos().removeAll(pessoas);
+        for (Pessoa pessoa : pessoas) {
+            equipe.removeParticipante(pessoa);
+        }
 
         equipeRepository.save(equipe);
     }
 
     public Page<Equipe> buscaSpecification(String filtro, Pageable pageable) {
-        String termo = filtro != null ? filtro.trim().toLowerCase() : "";
+        Specification<Equipe> spec = new EquipeSpecificationBuilder()
+                .comTermo(filtro)
+                .build();
 
-        if (termo.isEmpty()) {
-            // retorna todos paginados
-            return equipeRepository.findAll(pageable);
-        } else {
-            // aplica Specification com paginação
-            return equipeRepository.findAll(EquipeSpecification.contemTermo(termo), pageable);
-        }
+        return equipeRepository.findAll(spec, pageable);
+    }
+    
+    public long contarTodos() {
+        return equipeRepository.count();
     }
  
 }

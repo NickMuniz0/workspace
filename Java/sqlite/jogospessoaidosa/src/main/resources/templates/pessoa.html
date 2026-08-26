@@ -19,108 +19,183 @@
     <div class="card shadow">
         <!-- 🔷 Cabeçalho -->
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h2 class="mb-0"><i class="fas fa-users"></i> Lista de Pessoas</h2>
+            <h2 class="mb-0 d-flex align-items-center">
+                <i class="fas fa-users me-2"></i>
+                Lista de Pessoas
+                <span class="badge bg-light text-dark ms-3" th:text="${totalPessoas}"></span>
+            </h2>
             <div class="d-flex gap-2">
                 <a th:href="@{/pessoas/cadastrar2}" class="btn btn-light">
                     <i class="fas fa-user-plus"></i> Nova Pessoa
                 </a>
             </div>
         </div>
+<div class="card-body">
 
-        <div class="card-body">
-            <!-- 🔍 Formulário de busca -->
-            <form th:action="@{/pessoas/buscar}" method="get" class="mb-4">
+    <!-- 🔍 Formulário de busca -->
+    <form th:action="@{/pessoas/buscar}" method="get" class="mb-2" id="formBusca">
+        <div class="row g-3">
+            <div class="col-md-8">
                 <div class="input-group">
-                    <input type="text" name="filtro" class="form-control" placeholder="Buscar por nome, CPF ou RG..." th:value="${filtro}">
+                    <input type="text" name="filtro" class="form-control"
+                           placeholder="Buscar por nome, CPF ou RG..."
+                           th:value="${filtro}">
                     <button type="submit" class="btn btn-outline-primary">
                         <i class="fas fa-search"></i> Buscar
                     </button>
                 </div>
-            </form>
-
-            <!-- 🗑️ Formulário de exclusão múltipla -->
-            <form th:action="@{/pessoas/deletarMultiplos}" method="post" id="formPessoas">
-
-
-                <div class="table-responsive mb-3">
-                    <table class="table table-bordered table-hover align-middle">
-                        <thead class="table-light">
-                        <tr>
-                            <th><input type="checkbox" onclick="toggleAll(this)" /></th>
-                            <th>Nome</th>
-                            <th>Idade</th>
-                            <th>RG</th>
-                            <th>CPF</th>
-                            <th>Idoso</th>
-                            <th>Avaliação Médica</th>
-                            <th>Doenças</th>
-                            <th>Equipes</th>
-                            <th>Ações</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="pessoa : ${pessoasPage.content}">
-                            <td><input type="checkbox" name="idsParaExcluir" th:value="${pessoa.id}" class="checkExcluir" /></td>
-                            <td th:text="${pessoa.nome}"></td>
-                            <td th:text="${pessoa.idade}"></td>
-                            <td th:text="${pessoa.rg}"></td>
-                            <td th:text="${pessoa.cpf}"></td>
-                            <td th:text="${pessoa.idoso ? 'Sim' : 'Não'}"></td>
-                            <td th:text="${pessoa.avaliacaoMedica ? 'Sim' : 'Não'}"></td>
-                            <td>
-                                <ul class="list-group">
-                                    <li class="list-group-item" th:each="doenca : ${pessoa.doencas}" th:text="${doenca.nome}"></li>
-                                </ul>
-                            </td>
-                            <td>
-                                <ul class="list-group">
-                                    <li class="list-group-item" th:each="equipe : ${pessoa.equipes}" th:text="${equipe.nome}"></li>
-                                </ul>
-                            </td>
-                            <td>
-                                <a th:href="@{/pessoas/edit2/{id}(id=${pessoa.id})}" class="btn btn-outline-primary btn-sm me-2">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(pessoas)}">
-                            <td colspan="11" class="text-center text-muted">Nenhuma pessoa encontrada</td>
-                        </tr>
-                        </tbody>
-                        
-                        <div class="pagination">
-                            <a th:if="${pessoasPage.hasPrevious()}"
-                            th:href="@{/pessoas(page=${pessoasPage.number - 1}, size=${pessoasPage.size})}">
-                                <i class="fas fa-arrow-left"></i>
-                            </a>
-
-                            <span>
-                                Página <span th:text="${pessoasPage.number + 1}"></span> 
-                                de <span th:text="${pessoasPage.totalPages}"></span>
-                            </span>
-
-                            <a th:if="${pessoasPage.hasNext()}"
-                            th:href="@{/pessoas(page=${pessoasPage.number + 1}, size=${pessoasPage.size})}">
-                                <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
-
-                    </table>
-                </div>
-
-                <!-- ✅ Botão de exclusão -->
-                <div class="text-end">
-                    <button type="submit" class="btn btn-danger" id="btnExcluir" disabled onclick="return confirmarExclusao()">
-                        <i class="fas fa-trash"></i> Excluir Selecionados
-                    </button>
-                </div>
-            </form>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" name="size" id="selectSize"
+                        onchange="document.getElementById('formBusca').submit()">
+                    <option value="5" th:selected="${pessoasPage.size == 5}">5</option>
+                    <option value="10" th:selected="${pessoasPage.size == 10}">10</option>
+                    <option value="25" th:selected="${pessoasPage.size == 25}">25</option>
+                    <option value="50" th:selected="${pessoasPage.size == 50}">50</option>
+                    <option value="100" th:selected="${pessoasPage.size == 100}">100</option>
+                </select>
+            </div>
         </div>
+    </form>
+
+    <!-- 🗑️ Formulário de exclusão múltipla -->
+    <form th:action="@{/pessoas/deletarMultiplos}" method="post" id="formPessoas">
+
+        <!-- Tabela -->
+        <div class="table-responsive mb-3">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th><input type="checkbox" onclick="toggleAll(this)" /></th>
+                    <th>Nome</th>
+                    <th>Idade</th>
+                    <th>RG</th>
+                    <th>CPF</th>
+                    <th>Idoso</th>
+                    <th>Avaliação Médica</th>
+                    <th>Doenças</th>
+                    <th>Equipes</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pessoa : ${pessoasPage.content}">
+                    <td><input type="checkbox" name="idsParaExcluir" th:value="${pessoa.id}" class="checkExcluir" /></td>
+                    <td th:text="${pessoa.nome}"></td>
+                    <td th:text="${pessoa.idade}"></td>
+                    <td th:text="${pessoa.rg}"></td>
+                    <td th:text="${pessoa.cpf}"></td>
+                    <td th:text="${pessoa.idoso ? 'Sim' : 'Não'}"></td>
+                    <td th:text="${pessoa.avaliacaoMedica ? 'Sim' : 'Não'}"></td>
+                    <td>
+                        <div th:if="${#lists.isEmpty(pessoa.doencas)}" class="text-muted">Nenhuma</div>
+                        <div th:if="${!#lists.isEmpty(pessoa.doencas)}">
+                            <span th:each="doenca, iterStat : ${pessoa.doencas}">
+                                <span th:text="${doenca.nome}"></span>
+                                <span th:if="${!iterStat.last}"> | </span>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div th:if="${#lists.isEmpty(pessoa.equipes)}" class="text-muted">Nenhuma</div>
+                        <div th:if="${!#lists.isEmpty(pessoa.equipes)}">
+                            <span th:each="equipe, iterStat : ${pessoa.equipes}">
+                                <span th:text="${equipe.nome}"></span>
+                                <span th:if="${!iterStat.last}"> | </span>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <a th:href="@{/pessoas/edit2/{id}(id=${pessoa.id})}" class="btn btn-outline-primary btn-sm me-2">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pessoasPage.content)}">
+                    <td colspan="11" class="text-center text-muted">Nenhuma pessoa encontrada</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginação -->
+        <div class="d-flex justify-content-center mt-3">
+            <nav aria-label="Paginação da lista de pessoas">
+                <ul class="pagination mb-0">
+
+                    <!-- Primeira -->
+                    <li class="page-item" th:classappend="${pessoasPage.first}? ' disabled'">
+                        <a class="page-link"
+                        th:href="@{/pessoas/buscar(page=0, size=${pessoasPage.size}, filtro=${filtro})}">Primeira</a>
+                    </li>
+
+                    <!-- Anterior -->
+                    <li class="page-item" th:classappend="${!pessoasPage.hasPrevious()}? ' disabled'">
+                        <a class="page-link"
+                        th:href="@{/pessoas/buscar(page=${pessoasPage.number - 1}, size=${pessoasPage.size}, filtro=${filtro})}">Anterior</a>
+                    </li>
+
+                    <!-- Números -->
+                    <th:block th:with="start=${T(java.lang.Math).max(0, pessoasPage.number - 2)},
+                                    end=${T(java.lang.Math).min(pessoasPage.totalPages - 1, pessoasPage.number + 2)}">
+                        <li class="page-item"
+                            th:each="i : ${#numbers.sequence(start, end)}"
+                            th:classappend="${i == pessoasPage.number}? ' active'">
+                            <a class="page-link"
+                            th:text="${i + 1}"
+                            th:href="@{/pessoas/buscar(page=${i}, size=${pessoasPage.size}, filtro=${filtro})}"></a>
+                        </li>
+                    </th:block>
+
+                    <!-- Próxima -->
+                    <li class="page-item" th:classappend="${!pessoasPage.hasNext()}? ' disabled'">
+                        <a class="page-link"
+                        th:href="@{/pessoas/buscar(page=${pessoasPage.number + 1}, size=${pessoasPage.size}, filtro=${filtro})}">Próxima</a>
+                    </li>
+
+                    <!-- Última -->
+                    <li class="page-item" th:classappend="${pessoasPage.last}? ' disabled'">
+                        <a class="page-link"
+                        th:href="@{/pessoas/buscar(page=${pessoasPage.totalPages - 1}, size=${pessoasPage.size}, filtro=${filtro})}">Última</a>
+                    </li>
+
+
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Botão de exclusão -->
+        <div class="text-end">
+            <button type="submit" class="btn btn-danger" id="btnExcluir" disabled onclick="return confirmarExclusao()">
+                <i class="fas fa-trash"></i> Excluir Selecionados
+            </button>
+        </div>
+    </form>
+</div>
+
+       
     </div>
 </main>
 
 <!-- 🧠 Scripts -->
 <script>
+    // Garantir que page volta para 0 quando faz uma busca
+    document.getElementById('formBusca').addEventListener('submit', function(e) {
+        const filtroInput = this.querySelector('input[name="filtro"]');
+        const pageInput = this.querySelector('input[name="page"]');
+        
+        // Se há um filtro, reseta a página para 0
+        if (filtroInput && filtroInput.value.trim()) {
+            if (!pageInput) {
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'page';
+                hidden.value = '0';
+                this.appendChild(hidden);
+            }
+        }
+    });
+
     function toggleAll(source) {
         const checkboxes = document.querySelectorAll('.checkExcluir');
         checkboxes.forEach(cb => cb.checked = source.checked);

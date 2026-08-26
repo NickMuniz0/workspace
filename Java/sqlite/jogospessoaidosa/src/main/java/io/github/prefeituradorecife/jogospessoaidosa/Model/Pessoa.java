@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Getter
@@ -35,6 +36,14 @@ public class Pessoa {
     private boolean idoso;
     private Boolean avaliacaoMedica;
 
+    public Boolean getIdoso() {
+        return idoso || (idade != null && idade >= 60);
+    }
+
+    public void setIdoso(Boolean idoso) {
+        this.idoso = idoso != null && idoso;
+    }
+
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Telefone> telefones = new ArrayList<>();
 
@@ -42,6 +51,10 @@ public class Pessoa {
         telefones.add(telefone);
         telefone.setPessoa(this);
     }
+    @ManyToOne
+    private Equipe equipe;
+
+
 
     @ManyToMany
     @JoinTable(

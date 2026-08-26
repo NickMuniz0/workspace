@@ -2,8 +2,8 @@ package io.github.prefeituradorecife.jogospessoaidosa.Controller;
 
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Doenca;
 import io.github.prefeituradorecife.jogospessoaidosa.Service.DoencaService;
+import io.github.prefeituradorecife.jogospessoaidosa.Utils.PageSortingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 @Controller
 @RequestMapping("/doencas")
@@ -26,29 +27,33 @@ public class DoencaViewController {
     @GetMapping
     public String listar(Model model,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "nome") String sortBy,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction
 
     ) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Doenca> doencasPage = doencaService.listarTodas(pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<Doenca> doencasPage = PageSortingUtils.orderByName(
+                doencaService.listarTodas(pageable),
+                pageable,
+                Doenca::getNome
+        );
 
         model.addAttribute("doencasPage", doencasPage);
+        model.addAttribute("totalDoencas", doencaService.contarTodos());
         // model.addAttribute("doencas", doencaService.listarTodas());
         return "doenca";
     }
-    @CacheEvict(value = "doencas", allEntries = true)
     @GetMapping("/cadastrar2")
     public String showSignUpForm2(Model model) {
         model.addAttribute("doenca", new Doenca());
         return "doencaCriar2";
     }
-    @CacheEvict(value = "doencas", allEntries = true)
     @PostMapping("/salvarDoenca")
     public String salvar(@ModelAttribute Doenca doenca) {
         doencaService.salvar(doenca);
         return "redirect:/doencas";
     }
-    @CacheEvict(value = "doencas", allEntries = true)
     @PostMapping("/deletar")
     public String deletar(@RequestParam Long id) {
         doencaService.deletarPorId(id);
@@ -67,12 +72,21 @@ public class DoencaViewController {
     public String buscarDoencas(@RequestParam(required = false) String filtro, Model model,
                             @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "5") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Doenca> pessoasPage = doencaService.buscaSpecification(filtro, pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "nome"));
+        Page<Doenca> doencasPage = doencaService.buscaSpecification(filtro, pageable);
 
-        model.addAttribute("doencasPage", pessoasPage);
-        model.addAttribute("filtro", filtro);
-        return "doenca"; // ajuste conforme o nome do seu template
+        
+        System.out.println("[DEBUG] " + filtro + " - "
+                + doencasPage.getTotalPages() + "-"
+                + doencasPage.getSize() + "-"
+                + doencasPage.getNumber() + "-"
+                + doencasPage.getTotalElements() + "-"
+                + doencasPage.getContent().stream().findFirst().orElse(null));
+
+        model.addAttribute("doencasPage", doencasPage);
+        model.addAttribute("filtro", filtro != null ? filtro : "");
+        model.addAttribute("totalDoencas", doencasPage.getTotalElements());
+        return "doenca"; 
     }
 
     @PostMapping("/deletarMultiplos")

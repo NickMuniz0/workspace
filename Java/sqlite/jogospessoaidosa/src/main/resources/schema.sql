@@ -83,6 +83,14 @@ CREATE TABLE IF NOT EXISTS pessoa_equipes (
     FOREIGN KEY (equipe_id) REFERENCES equipe(id)
 );
 
+CREATE TABLE IF NOT EXISTS equipe_participantes (
+    equipe_id INTEGER NOT NULL,
+    pessoa_id INTEGER NOT NULL,
+    PRIMARY KEY (equipe_id, pessoa_id),
+    FOREIGN KEY (equipe_id) REFERENCES equipe(id) ON DELETE CASCADE,
+    FOREIGN KEY (pessoa_id) REFERENCES pessoa(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS equipe_pessoa (
     equipe_id INTEGER NOT NULL,
     pessoa_id INTEGER NOT NULL,

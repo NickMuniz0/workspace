@@ -1,19 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Home - Jogos Pessoa Idosa</title>
-    <meta charset="UTF-8"/>
-    <link rel="stylesheet" th:href="@{/css/index.css}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-</head>
+<head th:replace="~{fragments/base :: head(title='Home - Jogos Pessoa Idosa', cssFile='/css/index.css')}"></head>
 <body>
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<!-- Bootstrap JS (necessário para o menu responsivo funcionar) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/base :: bootstrapScripts}"></script>
 <nav th:replace="~{fragments/menu :: menu}"></nav>
 
 <main id="conteudo" class="home-container">

@@ -1,9 +1,11 @@
 package io.github.prefeituradorecife.jogospessoaidosa.Controller;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -26,56 +28,69 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/auth")
 public class ApiAuthController {
-    @Autowired private UsuarioService usuarioService;
+    private static final String REDIRECT_LOGIN = "redirect:/login";
+    private static final String REDIRECT_INDEX = "redirect:/index";
+
+    private final UsuarioService usuarioService;
+
+    public ApiAuthController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
 
     @PostMapping("/registro")
-    public String registrar(@ModelAttribute RegistroDTO dto, RedirectAttributes redirectAttributes) {
+    public String registrar(@ModelAttribute("usuario") RegistroDTO dto, RedirectAttributes redirectAttributes) {
         usuarioService.registrar(dto);
         redirectAttributes.addFlashAttribute("sucesso", "Usuário registrado com sucesso!");
-        return "redirect:/login";
+        return REDIRECT_LOGIN;
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute LoginDTO dto,
+    public String login(@ModelAttribute("login") LoginDTO dto,
                         RedirectAttributes redirectAttributes,
                         HttpSession session) {
         try {
             Usuario usuario = usuarioService.login(dto);
-
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(usuario, null, List.of());
-
-            // registra no contexto
-            SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(auth);
-            SecurityContextHolder.setContext(context);
-
-            // salva o contexto na sessão (ESSENCIAL!)
-            session.setAttribute("SPRING_SECURITY_CONTEXT", context);
-
+            autenticarUsuario(usuario, session);
             redirectAttributes.addFlashAttribute("sucesso", "Login realizado com sucesso!");
-            return "redirect:/index";
+            return REDIRECT_INDEX;
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
-            return "redirect:/login";
+            return REDIRECT_LOGIN;
         }
     }
 
-
     @PostMapping("/resetar")
-    public String reset(@ModelAttribute ResetSenhaDTO dto) {
-        usuarioService.resetSenha(dto);
-        return "redirect:/login";
+    public String reset(@ModelAttribute("reset") ResetSenhaDTO dto,
+                        RedirectAttributes redirectAttributes) {
+        try {
+            usuarioService.resetSenha(dto);
+            redirectAttributes.addFlashAttribute("sucesso", "Senha redefinida com sucesso!");
+            return REDIRECT_LOGIN;
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return REDIRECT_LOGIN;
+        }
     }
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
-        return "redirect:/login"; // redireciona para a página de login com parâmetro
+        SecurityContextHolder.clearContext();
+        return REDIRECT_LOGIN;
     }
 
+    private void autenticarUsuario(Usuario usuario, HttpSession session) {
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(usuario.getEmail(), null, authorities);
 
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+
+        session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+    }
 }

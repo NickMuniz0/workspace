@@ -6,7 +6,7 @@ import io.github.prefeituradorecife.jogospessoaidosa.Repository.PessoaRepository
 import io.github.prefeituradorecife.jogospessoaidosa.Repository.RepresentanteRepository;
 import io.github.prefeituradorecife.jogospessoaidosa.Specification.PessoaSpecification;
 import io.github.prefeituradorecife.jogospessoaidosa.Specification.PessoaSpecificationBuilder;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,7 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,14 +26,15 @@ import jakarta.persistence.criteria.Root;
 
 @Service
 public class PessoaService {
-    @Autowired
-    private PessoaRepository pessoaRepository;
+    private final PessoaRepository pessoaRepository;
+    private final RepresentanteRepository representanteRepository;
 
-    @Autowired
-    private RepresentanteRepository representanteRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public PessoaService(PessoaRepository pessoaRepository) {
+    public PessoaService(PessoaRepository pessoaRepository, RepresentanteRepository representanteRepository) {
         this.pessoaRepository = pessoaRepository;
+        this.representanteRepository = representanteRepository;
     }
 
     public List<Pessoa> listarTodasSemPagina() {
@@ -45,14 +47,12 @@ public class PessoaService {
 
     public Page<Pessoa> buscarDisponiveis(String filtro, Long equipeId, Pageable pageable) {
         String termo = filtro != null ? filtro.trim().toLowerCase() : "";
-        // comportamento anterior: se não houver filtro, retornar todos (incluindo membros da equipe)
         if (termo.isEmpty()) {
             return pessoaRepository.findAll(pageable);
         }
 
         Specification<Pessoa> specTerm = PessoaSpecification.contemTermo(termo);
 
-        // Obter IDs das pessoas que já pertencem à equipe e excluir da busca quando houver filtro
         List<Long> idsNaEquipe = equipeId == null ? List.of() : findByEquipesIds(equipeId);
         Specification<Pessoa> specExclusao = null;
         if (idsNaEquipe != null && !idsNaEquipe.isEmpty()) {
@@ -64,22 +64,14 @@ public class PessoaService {
             spec = spec.and(specExclusao);
         }
 
-        // debug: log termo and excluded IDs to diagnose empty results
-        try {
-            System.out.println("[DEBUG buscarDisponiveis] termo='" + termo + "' equipeId=" + equipeId + " idsNaEquipeCount=" + (idsNaEquipe == null ? 0 : idsNaEquipe.size()));
-            if (idsNaEquipe != null && !idsNaEquipe.isEmpty()) System.out.println("[DEBUG buscarDisponiveis] idsNaEquipe=" + idsNaEquipe);
-        } catch (Exception ignored) {}
-
         return pessoaRepository.findAll(spec, pageable);
     }
 
     public List<Pessoa> listarPorEquipe(Long equipeId) {
-        // Usar versão que carrega doenças para evitar coleção vazia por lazy loading
         return ordenarPessoas(pessoaRepository.findByEquipeIdWithDoencas(equipeId));
     }
 
     public List<Pessoa> listarParticipantesPorEquipe(Long equipeId) {
-        // Participantes também precisam das doenças carregadas
         return ordenarPessoas(pessoaRepository.findByParticipantesEquipeIdWithDoencas(equipeId));
     }
 
@@ -99,11 +91,14 @@ public class PessoaService {
         pessoaRepository.saveAll(pessoas);
     }
 
+    @Transactional
     public void salvarOuAtualizar(Pessoa pessoa) {
         if (pessoa.getTelefones() != null) {
             pessoa.getTelefones().forEach(telefone -> telefone.setPessoa(pessoa));
         }
         pessoaRepository.save(pessoa);
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Transactional
@@ -139,7 +134,6 @@ public class PessoaService {
         return ordenarPessoas(pessoaRepository.findAll(PessoaSpecification.contemTermo(termo)));
     }
 
-
     public List<Long> buscarIdsDisponiveis() {
         return ordenarPessoas(pessoaRepository.findAll()).stream()
                 .map(Pessoa::getId)
@@ -148,8 +142,7 @@ public class PessoaService {
 
     private List<Pessoa> ordenarPessoas(List<Pessoa> pessoas) {
         return pessoas.stream()
-                .sorted(Comparator
-                        .comparing(Pessoa::getNome, Comparator.nullsLast(String::compareToIgnoreCase))
+                .sorted(Comparator.comparing(Pessoa::getNome, Comparator.nullsLast(String::compareToIgnoreCase))
                         .thenComparing(Pessoa::getId, Comparator.nullsLast(Long::compareTo)))
                 .collect(Collectors.toList());
     }
@@ -179,9 +172,6 @@ public class PessoaService {
     }
 
     public List<Pessoa> buscarDisponiveis(String filtro, Long equipeId) {
-        Pageable pageable = Pageable.unpaged(); // sem limite
-    return pessoaRepository.buscarDisponiveis(filtro, equipeId);
+        return pessoaRepository.buscarDisponiveis(filtro, equipeId);
     }
-
-
 }

@@ -6,7 +6,7 @@ import io.github.prefeituradorecife.jogospessoaidosa.Repository.PessoaRepository
 import io.github.prefeituradorecife.jogospessoaidosa.Specification.EquipeSpecification;
 import io.github.prefeituradorecife.jogospessoaidosa.Specification.EquipeSpecificationBuilder;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +19,19 @@ import org.springframework.data.jpa.domain.Specification;
 
 @Service
 public class EquipeService {
-    @Autowired
-    private EquipeRepository equipeRepository;
+    private final EquipeRepository equipeRepository;
+    private final PessoaRepository pessoaRepository;
 
-    @Autowired
-    private PessoaRepository pessoaRepository;
+    public EquipeService(EquipeRepository equipeRepository, PessoaRepository pessoaRepository) {
+        this.equipeRepository = equipeRepository;
+        this.pessoaRepository = pessoaRepository;
+    }
 
     public List<Equipe> listarTodasSemPagina() {
         return equipeRepository.findAll(Sort.by("nome").ascending());
     }
 
+    @Transactional(readOnly = true)
     public Page<Equipe> listarTodas(Pageable pageable) {
         return equipeRepository.findAll(pageable);
     }
@@ -42,8 +45,6 @@ public class EquipeService {
 
         equipePersistida.setNome(equipe.getNome());
         equipePersistida.setRpa(equipe.getRpa());
-
-        // Limpa representantes antigos
         equipePersistida.getRepresentantes().clear();
 
         if (representanteIds != null && !representanteIds.isEmpty()) {
@@ -52,15 +53,12 @@ public class EquipeService {
                 Representante representante = new Representante();
                 representante.setPessoa(pessoa);
                 representante.setNome(pessoa.getNome());
-
-                // Usa o helper para manter consistência
                 equipePersistida.addRepresentante(representante);
             }
         }
 
         equipeRepository.save(equipePersistida);
     }
-
 
     public void deletarPorIds(List<Long> ids) {
         equipeRepository.deleteAllById(ids);
@@ -69,26 +67,24 @@ public class EquipeService {
     public void deletarEquipe(Long id) {
         equipeRepository.deleteById(id);
     }
-    
+
     public List<Equipe> buscarPorFiltro(String filtro) {
         if (filtro == null || filtro.isBlank()) {
             return equipeRepository.findAll();
         }
-        // busca por nome OU rpa
+
         List<Equipe> porNome = equipeRepository.findByNomeContainingIgnoreCase(filtro);
         List<Equipe> porRpa = equipeRepository.findByRpaContainingIgnoreCase(filtro);
 
         return Stream.concat(porNome.stream(), porRpa.stream())
-                    .distinct()
-                    .collect(Collectors.toList());
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public Equipe buscarPorId(Long id) {
         return equipeRepository.findByIdWithRepresentantes(id)
                 .orElseThrow(() -> new EntityNotFoundException("Equipe não encontrada"));
     }
-
-
 
     public int contarUsuariosNaEquipe(Long equipeId) {
         return pessoaRepository.findByEquipes_Id(equipeId).size();
@@ -100,13 +96,13 @@ public class EquipeService {
                 .orElseThrow(() -> new EntityNotFoundException("Equipe não encontrada"));
 
         List<Pessoa> pessoas = pessoaRepository.findAllById(pessoaIds);
-
         for (Pessoa p : pessoas) {
             equipe.addParticipante(p);
         }
 
         equipeRepository.save(equipe);
     }
+
     @Transactional
     public void removerPessoasDaEquipe(Long equipeId, List<Long> pessoaIds) {
         Equipe equipe = equipeRepository.findById(equipeId)
@@ -127,9 +123,8 @@ public class EquipeService {
 
         return equipeRepository.findAll(spec, pageable);
     }
-    
+
     public long contarTodos() {
         return equipeRepository.count();
     }
- 
 }

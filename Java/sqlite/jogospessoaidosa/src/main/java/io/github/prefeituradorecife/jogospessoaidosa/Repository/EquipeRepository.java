@@ -19,15 +19,15 @@ import java.util.Optional;
 public interface EquipeRepository extends JpaRepository<Equipe, Long>, JpaSpecificationExecutor<Equipe> {
 
     @Override
-    @EntityGraph(attributePaths = {"representantes", "representantes.pessoa"})
+    @EntityGraph(attributePaths = {"representantes", "representantes.pessoa", "representantes.pessoa.telefones"})
     Page<Equipe> findAll(Pageable pageable);
 
     @Override
-    @EntityGraph(attributePaths = {"representantes", "representantes.pessoa"})
+    @EntityGraph(attributePaths = {"representantes", "representantes.pessoa", "representantes.pessoa.telefones"})
     List<Equipe> findAll();
 
     @Override
-    @EntityGraph(attributePaths = {"representantes", "representantes.pessoa"})
+    @EntityGraph(attributePaths = {"representantes", "representantes.pessoa", "representantes.pessoa.telefones"})
     Page<Equipe> findAll(Specification<Equipe> spec, Pageable pageable);
 
     // Busca exata

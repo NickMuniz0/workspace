@@ -1,16 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Lista de Pessoas</title>
-    <meta charset="UTF-8"/>
-    <!-- Estilos -->
-    <link rel="stylesheet" th:href="@{/css/pessoa.css}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-</head>
+<head th:replace="~{fragments/base :: head(title='Lista de Pessoas', cssFile='/css/pessoa.css')}"></head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/base :: bootstrapScripts}"></script>
 
 <!-- Menu -->
 <nav th:replace="~{fragments/menu :: menu}"></nav>
@@ -177,44 +169,7 @@
     </div>
 </main>
 
-<!-- 🧠 Scripts -->
-<script>
-    // Garantir que page volta para 0 quando faz uma busca
-    document.getElementById('formBusca').addEventListener('submit', function(e) {
-        const filtroInput = this.querySelector('input[name="filtro"]');
-        const pageInput = this.querySelector('input[name="page"]');
-        
-        // Se há um filtro, reseta a página para 0
-        if (filtroInput && filtroInput.value.trim()) {
-            if (!pageInput) {
-                const hidden = document.createElement('input');
-                hidden.type = 'hidden';
-                hidden.name = 'page';
-                hidden.value = '0';
-                this.appendChild(hidden);
-            }
-        }
-    });
-
-    function toggleAll(source) {
-        const checkboxes = document.querySelectorAll('.checkExcluir');
-        checkboxes.forEach(cb => cb.checked = source.checked);
-        atualizarBotao();
-    }
-
-    function atualizarBotao() {
-        const selecionados = document.querySelectorAll('.checkExcluir:checked');
-        document.getElementById('btnExcluir').disabled = selecionados.length === 0;
-    }
-
-    document.querySelectorAll('.checkExcluir').forEach(cb => {
-        cb.addEventListener('change', atualizarBotao);
-    });
-
-    function confirmarExclusao() {
-        return confirm("Tem certeza que deseja excluir as pessoas selecionadas?");
-    }
-</script>
+<script th:replace="~{fragments/base :: bulkActionsScript}"></script>
 
 </body>
 </html>

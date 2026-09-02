@@ -1,6 +1,8 @@
 package io.github.prefeituradorecife.jogospessoaidosa.Model;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.github.prefeituradorecife.jogospessoaidosa.Enum.RPA;
 import lombok.Getter;
@@ -40,8 +42,11 @@ public class Equipe {
     @Enumerated(EnumType.STRING)
     private RPA rpa;
 
+    // @OneToMany(mappedBy = "equipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<Representante> representantes = new ArrayList<>();
+
     @OneToMany(mappedBy = "equipe", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Representante> representantes = new ArrayList<>();
+    private Set<Representante> representantes = new HashSet<>();
 
     @Transient
     private List<Long> representantesIds;

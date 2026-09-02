@@ -9,6 +9,7 @@ import io.github.prefeituradorecife.jogospessoaidosa.Model.Equipe;
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Pessoa;
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Doenca;
 import io.github.prefeituradorecife.jogospessoaidosa.Model.Representante;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -16,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,6 +51,16 @@ public class PdfUtils {
                     return "- " + nome + " - " + telefone;
                 })
                 .collect(Collectors.joining("\n"));
+    }
+
+    @Async("virtualTaskExecutor")
+    public CompletableFuture<ByteArrayInputStream> gerarPdfAsync(List<Pessoa> pessoa, Equipe equipe) {
+        return CompletableFuture.completedFuture(gerarPdf(pessoa, equipe, (String) null));
+    }
+
+    @Async("virtualTaskExecutor")
+    public CompletableFuture<ByteArrayInputStream> gerarPdfAsync(List<Pessoa> pessoa, Equipe equipe, String subtitulo) {
+        return CompletableFuture.completedFuture(gerarPdf(pessoa, equipe, subtitulo, true));
     }
 
     public ByteArrayInputStream gerarPdf(List<Pessoa> pessoa, Equipe equipe) {

@@ -15,13 +15,15 @@ import org.springframework.data.jpa.domain.Specification;
 
 @Service
 public class DoencaService {
-    @Autowired
-    private DoencaRepository doencaRepository;
+    private final DoencaRepository doencaRepository;
+
+    public DoencaService(DoencaRepository doencaRepository) {
+        this.doencaRepository = doencaRepository;
+    }
 
     public List<Doenca> listarTodasSemPagina() {
         return doencaRepository.findAll(Sort.by("nome").ascending());
     }
-
 
     public Page<Doenca> listarTodas(Pageable pageable) {
         return doencaRepository.findAll(pageable);

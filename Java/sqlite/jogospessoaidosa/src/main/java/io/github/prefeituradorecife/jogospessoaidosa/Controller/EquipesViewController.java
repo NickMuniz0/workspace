@@ -23,19 +23,23 @@ import org.springframework.data.domain.Sort;
 @Controller
 @RequestMapping("/equipes")
 public class EquipesViewController {
-    @Autowired
-    private  EquipeService equipeService;
-    @Autowired
-    private  PessoaService pessoaService;
+    private static final String VIEW_LISTA = "equipe";
+    private static final String VIEW_CADASTRO = "equipeCriar2";
 
-    @Cacheable("equipes")
+    private final EquipeService equipeService;
+    private final PessoaService pessoaService;
+
+    public EquipesViewController(EquipeService equipeService, PessoaService pessoaService) {
+        this.equipeService = equipeService;
+        this.pessoaService = pessoaService;
+    }
+
     @GetMapping
     public String listar(Model model,
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
                         @RequestParam(defaultValue = "nome") String sortBy,
-                        @RequestParam(defaultValue = "ASC") Sort.Direction direction
-    ) {
+                        @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         Page<Equipe> equipesPage = PageSortingUtils.orderByName(
                 equipeService.listarTodas(pageable),
@@ -43,23 +47,18 @@ public class EquipesViewController {
                 Equipe::getNome
         );
 
-        Map<Long, Integer> quantidadeUsuariosNaEquipeMap = new LinkedHashMap<>();
-        for (Equipe equipe : equipesPage.getContent()) {
-            quantidadeUsuariosNaEquipeMap.put(equipe.getId(), equipeService.contarUsuariosNaEquipe(equipe.getId()));
-        }
-
         model.addAttribute("equipesPage", equipesPage);
         model.addAttribute("totalEquipes", equipeService.contarTodos());
-        model.addAttribute("quantidadeUsuariosNaEquipeMap", quantidadeUsuariosNaEquipeMap);
-        return "equipe";
+        model.addAttribute("quantidadeUsuariosNaEquipeMap", contarUsuariosPorEquipe(equipesPage));
+        return VIEW_LISTA;
     }
-    @PostMapping("/salvarEquipe")
-    public String salvar(@ModelAttribute Equipe equipe,
-                         @RequestParam(required = false) List<Long> representantes) {
 
+    @PostMapping("/salvarEquipe")
+    public String salvar(@ModelAttribute Equipe equipe) {
         equipeService.salvarOuAtualizarEquipe(equipe, equipe.getRepresentantesIds());
         return "redirect:/equipes";
     }
+
     @GetMapping("/cadastrar2")
     public String showSignUpForm2(Model model,
                                   @RequestParam(required = false) String filtro,
@@ -69,24 +68,24 @@ public class EquipesViewController {
         model.addAttribute("equipe", new Equipe(null));
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "nome"));
-        var pagePessoas = pessoaService.buscarDisponiveis(filtro, null, pageable);
+        Page<Pessoa> pagePessoas = pessoaService.buscarDisponiveis(filtro, null, pageable);
 
         model.addAttribute("pessoasDisponiveis", pagePessoas.getContent());
         model.addAttribute("currentPage", pagePessoas.getNumber());
         model.addAttribute("totalPages", pagePessoas.getTotalPages());
         model.addAttribute("totalItems", pagePessoas.getTotalElements());
         model.addAttribute("pageSize", pagePessoas.getSize());
-
         model.addAttribute("filtro", filtro);
-        model.addAttribute("RPA",RPA.values());
+        model.addAttribute("RPA", RPA.values());
 
         String requestedWith = request.getHeader("X-Requested-With");
         if ("XMLHttpRequest".equals(requestedWith)) {
             return "equipeCriar2 :: representantesFragment";
         }
 
-        return "equipeCriar2";
+        return VIEW_CADASTRO;
     }
+
     @PostMapping("/deletarMultiplos")
     public String deletarMultiplos(@RequestParam("idsParaExcluir") List<Long> ids) {
         equipeService.deletarPorIds(ids);
@@ -99,25 +98,19 @@ public class EquipesViewController {
                             @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "nome"));
         Page<Equipe> equipesPage = equipeService.buscaSpecification(filtro, pageable);
-  
-        Map<Long, Integer> quantidadeUsuariosNaEquipeMap = new LinkedHashMap<>();
-        for (Equipe equipe : equipesPage.getContent()) {
-            quantidadeUsuariosNaEquipeMap.put(equipe.getId(), equipeService.contarUsuariosNaEquipe(equipe.getId()));
-        }
-
-        System.out.println("[DEBUG] " + filtro + " - "
-        + equipesPage.getTotalPages() + "-"
-        + equipesPage.getSize() + "-"
-        + equipesPage.getNumber() + "-"
-        + equipesPage.getTotalElements() + "-"
-        + equipesPage.getContent().stream().findFirst().orElse(null));
 
         model.addAttribute("equipesPage", equipesPage);
         model.addAttribute("filtro", filtro);
         model.addAttribute("totalEquipes", equipesPage.getTotalElements());
-        model.addAttribute("quantidadeUsuariosNaEquipeMap", quantidadeUsuariosNaEquipeMap);
-        return "equipe";
+        model.addAttribute("quantidadeUsuariosNaEquipeMap", contarUsuariosPorEquipe(equipesPage));
+        return VIEW_LISTA;
     }
 
-
+    private Map<Long, Integer> contarUsuariosPorEquipe(Page<Equipe> equipesPage) {
+        Map<Long, Integer> quantidadeUsuariosNaEquipeMap = new LinkedHashMap<>();
+        for (Equipe equipe : equipesPage.getContent()) {
+            quantidadeUsuariosNaEquipeMap.put(equipe.getId(), equipeService.contarUsuariosNaEquipe(equipe.getId()));
+        }
+        return quantidadeUsuariosNaEquipeMap;
+    }
 }

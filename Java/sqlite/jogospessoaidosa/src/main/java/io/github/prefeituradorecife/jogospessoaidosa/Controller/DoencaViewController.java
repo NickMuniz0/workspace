@@ -20,8 +20,15 @@ import org.springframework.data.domain.Sort;
 @RequestMapping("/doencas")
 public class DoencaViewController {
 
-    @Autowired
-    private DoencaService doencaService;
+    private static final String VIEW_LISTA = "doenca";
+    private static final String VIEW_CADASTRO = "doencaCriar2";
+    private static final String VIEW_EDICAO = "doencaEditar2";
+
+    private final DoencaService doencaService;
+
+    public DoencaViewController(DoencaService doencaService) {
+        this.doencaService = doencaService;
+    }
 
     @Cacheable("doencas")
     @GetMapping
@@ -29,9 +36,7 @@ public class DoencaViewController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nome") String sortBy,
-            @RequestParam(defaultValue = "ASC") Sort.Direction direction
-
-    ) {
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         Page<Doenca> doencasPage = PageSortingUtils.orderByName(
                 doencaService.listarTodas(pageable),
@@ -41,19 +46,21 @@ public class DoencaViewController {
 
         model.addAttribute("doencasPage", doencasPage);
         model.addAttribute("totalDoencas", doencaService.contarTodos());
-        // model.addAttribute("doencas", doencaService.listarTodas());
-        return "doenca";
+        return VIEW_LISTA;
     }
+
     @GetMapping("/cadastrar2")
     public String showSignUpForm2(Model model) {
         model.addAttribute("doenca", new Doenca());
-        return "doencaCriar2";
+        return VIEW_CADASTRO;
     }
+
     @PostMapping("/salvarDoenca")
     public String salvar(@ModelAttribute Doenca doenca) {
         doencaService.salvar(doenca);
         return "redirect:/doencas";
     }
+
     @PostMapping("/deletar")
     public String deletar(@RequestParam Long id) {
         doencaService.deletarPorId(id);
@@ -65,7 +72,7 @@ public class DoencaViewController {
         Doenca doenca = doencaService.buscarPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Doença não encontrada"));
         model.addAttribute("doenca", doenca);
-        return "doencaEditar2";
+        return VIEW_EDICAO;
     }
 
     @GetMapping("/buscar")
@@ -75,18 +82,10 @@ public class DoencaViewController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "nome"));
         Page<Doenca> doencasPage = doencaService.buscaSpecification(filtro, pageable);
 
-        
-        System.out.println("[DEBUG] " + filtro + " - "
-                + doencasPage.getTotalPages() + "-"
-                + doencasPage.getSize() + "-"
-                + doencasPage.getNumber() + "-"
-                + doencasPage.getTotalElements() + "-"
-                + doencasPage.getContent().stream().findFirst().orElse(null));
-
         model.addAttribute("doencasPage", doencasPage);
         model.addAttribute("filtro", filtro != null ? filtro : "");
         model.addAttribute("totalDoencas", doencasPage.getTotalElements());
-        return "doenca"; 
+        return VIEW_LISTA;
     }
 
     @PostMapping("/deletarMultiplos")
@@ -94,5 +93,4 @@ public class DoencaViewController {
         doencaService.deletarPorIds(ids);
         return "redirect:/doencas";
     }
-
 }

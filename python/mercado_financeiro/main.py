@@ -1,23 +1,18 @@
 from carteira import CARTEIRA
 import requests
 import pandas as pd
-import numpy as np
 from tabulate import tabulate
-from bs4 import BeautifulSoup
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 
+def get_json(url, headers):
+    response = requests.get(url, headers=headers, timeout=(5, 10))
+    response.raise_for_status()
+    return response.json()
 
-# (Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned) ; (& C:\Users\nickp\OneDrive\Documentos\GitHub\workspace\python\mercado_financeiro\.venv\Scripts\activate) ; cd .\python\mercado_financeiro\ ; python -m main
-# 
-# 
-#                                                                                                                 
-# historico = requests.get(f'https://investidor10.com.br/api/balancos/balancoresultados/chart/2/5/yearly/', headers=self.HEADERS).json()
-# print(historico)
-# for i in range(2, len(historico)):
-#     print(historico[i][0])
 
 class Ativo:
     def __init__(self,anos):
@@ -29,170 +24,150 @@ class Ativo:
             self.anos            = anos
             self.acao            = None
             self.HEADERS         = {'user-agent':'Mozilla/5.0'}
-            # self.CARTEIRA        = ['UNIP6','CMIG4']
             self.CARTEIRA        = CARTEIRA
-            # self.qtd             = 1000
-            self.reais           = int(input("Quantos reais deseja investir:\n"))
+            # self.CARTEIRA        = ["VALE3"]
             self.start()
 
     def start(self):
-        for acao in self.CARTEIRA:
-            self.item = {}
-            self.acao = acao
-            self.controle()
-            self.lista_de_itens.append(self.item)
 
-        # self.acao = "TAEE3"
-        # self.controle()
-        # self.lista_de_itens.append(self.item)
-
-        self.cria_dataframe()
-        self.preco_teto()
-        self.sinal()
         self.show()
-            
+
     def show(self):
-        self.df = self.df.sort_values(by = ['quantidade'],ascending=False)
-        self.df = self.df[['SINAL' ,'variacao','ticket','preco','preco_medio_max','preco_medio','preco_teto','dividendo_medio','quantidade']]
         self.empresas_com_preco_teto_valido()
 
 
-    def controle(self):
-        self.tickers()
-        self.preco()
-        self.variacao()
-        self.preco_medio()
-        self.dividendos_medio()
-        self.indicadores()
-        self.preco_dividendo()
-        self.earning_yield()
-
-    def cria_dataframe(self):
-        self.df = pd.DataFrame(self.lista_de_itens)
-
-    def earning_yield(self):
-        self.item['EY'] = round( (self.item['LPA'] / self.item['preco'] )*100 , 2) if self.item['preco'] !=0 else 0
-
-    def preco_dividendo(self):
-        # self.item['preco_div'] = round( (self.qtd / self.item['preco'] )* self.item['dividendo_medio'], 2) if self.item['preco'] !=0 else 0
-        # self.item['preco_div_per'] = round( ( self.item['dividendo_medio'] / self.item['preco'] )*100 , 2) if self.item['preco'] !=0 else 0
-        self.item['quantidade'] = round( ((  self.reais/ self.item['preco'] ) * self.item['dividendo_medio'])/12 , 2) if self.item['preco'] !=0 else 0
-
     def empresas_com_preco_teto_valido(self):
-        self.df = self.df[self.df['SINAL'] == 'medio']
-        print(tabulate(self.df, headers="keys", tablefmt="github")  )
-        tickers = ",".join(self.df['ticket'].unique().tolist())
+        inicio = time.perf_counter()
+        try:
+            # tickers = ",".join(self.df['ticket'].unique().tolist())
+            tickers = ",".join(self.CARTEIRA)
 
-        subprocess.run(
-            [sys.executable, str(Path(__file__).with_name("lucroXcotacao.py")), tickers],
-            cwd=Path(__file__).parent,
-            check=True
-        )
-
-    def tickers(self):
-        tickers = requests.get('https://investidor10.com.br/api/get-tickers/', headers=self.HEADERS).json()['data']
-        df = pd.DataFrame(tickers)
-
-        ativos = df[df['name'].isin(self.CARTEIRA)][['id', 'company_id', 'name']]
-        dado = ativos[ativos["name"] == self.acao][['id', 'company_id']]
-        self.id = dado['id'].values[0]
-        self.company_id = dado['company_id'].values[0]
-        self.item['ticket'] = self.acao
-
-    def preco_medio(self):
-        cotacao_lucro_data = requests.get(f'https://investidor10.com.br/api/cotacao-lucro/{self.acao}/', headers=self.HEADERS).json()
-        df = pd.DataFrame(cotacao_lucro_data).T                     
-        df = df[df.index.str.isdigit()]  
-        df.index = df.index.astype(int)
-        df['quotation'] = df['quotation'].astype(float)
-        self.item['preco_medio'] = round(df.sort_index().tail(self.anos)['quotation'].mean(), 2)
-
-    def preco(self):
-        cotacao = requests.get(f'https://investidor10.com.br/api/cotacao/ticker/{self.id}', headers=self.HEADERS).json()
-        self.item['preco'] = cotacao['price']
-
-    def dividendos_medio(self):
-        dividendos = requests.get(f'https://investidor10.com.br/api/dividendos/chart/{self.acao}/1825', headers=self.HEADERS).json()
-        df = pd.DataFrame(dividendos)
-        self.item['dividendo_medio'] = round(df.sort_index().tail(self.anos)['price'].mean(),2)
-
-    def variacao(self):
-        dividendos = requests.get(f'https://investidor10.com.br/api/cotacoes/acao/chart/{self.acao}/', headers=self.HEADERS).json()['real']
-        df = pd.DataFrame(dividendos)
-        #Primeiro Preco
-        preco_inicial = df.iloc[0]['price']
-        #Ultimo Preco
-        preco_final = df.iloc[-1]['price']
-        #Variacao percentual
-        variacao_percentual = round(((preco_final - preco_inicial) / preco_inicial) * 100, 2)
-        self.item['preco_inicial'] = round(preco_inicial,2)
-        self.item['preco_final'] = round(df.max()['price'],2)
-
-        self.item['preco_medio_max'] = round((self.item['preco_inicial'] + self.item['preco_final']) / 2, 2)
-        self.item['variacao'] = variacao_percentual
-
-
-
-    def indicador_dados(self,historico_indicador,indicador):
-
-        if indicador not in historico_indicador:
-            self.item[f'{indicador}'] = 0
-            self.item[f'{indicador}_medio'] = 0
-            return
-        pl_df = pd.DataFrame(historico_indicador[indicador])[['value', 'year']]
-
-        #garantir que "value" seja float; '-' vira NaN, vírgula vira ponto
-        pl_df['value'] = (
-            pl_df['value']
-            .astype(str)
-            .str.replace(',', '.', regex=False)      # se houver vírgulas
-            .replace('-', 0)                    # valores faltantes
-        )
-        pl_df['value'] = pd.to_numeric(pl_df['value'], errors='coerce')
-
-        # ano também pode ser útil como inteiro
-        pl_df['year'] = pd.to_numeric(pl_df['year'], errors='coerce').astype('Int64')
-
-        # pegar o primeiro registro como “atual” e a média dos seguintes três
-        pl_atual = round(pl_df.iloc[0]['value'], 2)
-        pl_medio = round(pl_df['value'].iloc[:abs(self.anos)].mean(), 2)
-
-        self.item[f'{indicador}'] = pl_atual
-        self.item[f'{indicador}_medio'] = pl_medio
-
-    def indicadores(self):
-        historico_indicador =requests.get(f'https://investidor10.com.br/api/historico-indicadores/{self.id}/10?v=2', headers=self.HEADERS).json()
-        self.indicador_dados(historico_indicador,"P/L")
-        self.indicador_dados(historico_indicador,"P/VP")
-        self.indicador_dados(historico_indicador,"ROE")
-        self.indicador_dados(historico_indicador,"ROA")
-        self.indicador_dados(historico_indicador,"LPA")        
-        self.indicador_dados(historico_indicador,"ROIC")
-        self.indicador_dados(historico_indicador,"Dívida Líquida / Ebitda")
-
-    def preco_teto(self):
-        self.df['preco_teto'] = round((self.df['dividendo_medio']/0.09),2)
-
-    def sinal(self):
-            self.df['SINAL'] = np.where(
-                (pd.to_numeric(self.df['ROE'], errors='coerce')
-                                > 0)
-                                &
-                (pd.to_numeric(self.df['preco'], errors='coerce')
-                 < pd.to_numeric(self.df['preco_medio_max'], errors='coerce'))
-                 &
-                 (pd.to_numeric(self.df['preco'], errors='coerce')
-                                  < pd.to_numeric(self.df['preco_medio'], errors='coerce'))
-                &
-                (pd.to_numeric(self.df['preco'], errors='coerce')
-                                 < pd.to_numeric(self.df['preco_teto'], errors='coerce'))
-                                               
-                ,'medio', ''
+            # Executa o script externo
+            subprocess.run(
+                [sys.executable, str(Path(__file__).with_name("lucroXcotacao.py")), tickers],
+                cwd=Path(__file__).parent,
+                check=True
             )
 
-anos=5
-Ativo(anos=anos)
+            # Carrega o CSV gerado pelo lucroXcotacao.py
+            dados_consolidados = pd.read_csv("dados_consolidados.csv")
 
+            # Gera relatório refinado com base nos dados consolidados
+            self.gerar_tabela_semaforo(dados_consolidados)
+        finally:
+            duracao = time.perf_counter() - inicio
+            print(f"Tempo de execução de empresas_com_preco_teto_valido: {duracao:.2f} segundos")
+
+    def avaliar_dividendos(self, dividendo_medio):
+        resultado =""
+        if dividendo_medio >= 3 :
+            resultado = "Dividendos alto"
+        elif 1 < dividendo_medio <3:
+            resultado = "Dividendos medio"
+        else:
+            resultado = "Dividendos fracos"
+
+        return resultado
+
+
+
+    def avaliar_desconto(self, preco_atual, preco_medio, preco_max):
+        desvalorizacao_media = ((preco_atual - preco_medio) / preco_medio) * 100
+        desvalorizacao_max = ((preco_atual - preco_max) / preco_max) * 100
+        resultado = ""
+        if desvalorizacao_media > 0:
+            resultado = ""
+        elif desvalorizacao_media <= -20 or desvalorizacao_max <= -30:
+            resultado = "Forte Desconto"
+        elif desvalorizacao_media <= -10 or desvalorizacao_max <= -15:
+            resultado = "Moderado Desconto"
+        else:
+            resultado = "Leve Desconto"
+
+        return resultado
+
+
+    def gerar_relatorio(self, dados_consolidados):
+        relatorio = []
+        for ticker, grupo in dados_consolidados.groupby("Ticker"):
+            grupo = grupo.sort_values("Ano").tail(self.anos)
+            lucro_series = grupo["Lucro Líquido (bi R$)"].tolist()
+            payout_series = grupo["Payout"].tolist()
+            dividendo_series = grupo["dividendo"].tolist()
+            preco_series = grupo["Preco"].tolist()
+
+            # Valores atuais
+            lucro_atual = round(lucro_series[-1],2)
+            payout_atual = payout_series[-1]
+            dividendo_atual = dividendo_series[-1]
+            dividendo_medio = round(grupo["dividendo"].mean(),2)
+            preco_atual = round(preco_series[-1],2)
+
+            # Médias históricas
+            lucro_medio = round(grupo["Lucro Líquido (bi R$)"].mean(),2)
+            preco_medio = round(grupo["Preco"].mean(),2)
+            preco_max = grupo["Preco"].max()
+
+            # Tendência de lucro
+            tendencia_lucro = "Crescente" if lucro_series[-1] > lucro_series[-3] else "Decrescente"
+
+
+
+            # 1. Dividendos
+            dividendos_status = self.avaliar_dividendos(dividendo_medio)
+
+            # 3. Desconto consolidado
+            desconto_status = self.avaliar_desconto(preco_atual, preco_medio, preco_max)
+            qtd = (20000/preco_atual)
+            relatorio.append({
+                "Ticker": ticker,
+                "GANHO": qtd*dividendo_medio,
+                "QTD": qtd,
+                "Preço Atual": preco_atual,
+                "Preço Médio": preco_medio,
+                "Lucro Atual": lucro_atual,
+                "Lucro Médio": lucro_medio,
+                "Preco Teto": round(dividendo_medio/0.06,2),
+                "Lucro": tendencia_lucro,
+                "Dividendos":dividendo_medio,
+                "Desconto":desconto_status,
+                "Payout":payout_atual,
+                "Margem": (1- (preco_atual /preco_medio)) * 100,
+            })
+
+        df = pd.DataFrame(relatorio)
+        df = df.sort_values(by="GANHO", ascending=False)
+        return df
+
+    def gerar_tabela_semaforo(self, dados_consolidados):
+        df = self.gerar_relatorio(dados_consolidados)
+
+        sinal_compra = []
+
+        for _, row in df.iterrows():
+            desconto = row["Desconto"]
+
+            if "Forte Desconto" in desconto :
+                sinal_compra.append("🟢 Compra")
+            elif "Moderado Desconto" in desconto :
+                sinal_compra.append("🟡 Observação")
+            else:
+                sinal_compra.append("🔴 Evitar")
+
+        df["Sinal de Compra"] = sinal_compra
+
+        print("\n=== Ranking de Atratividade (Tabela com Semáforo + Sinal de Compra) ===\n")
+        print(tabulate(df, headers="keys", tablefmt="github"))
+
+        return df
+
+
+
+
+Ativo(anos=4)
+# print("iniciando")
+# dividendos = requests.get(f'https://investidor10.com.br/api/cotacoes/acao/chart/PETR4/', headers={'user-agent':'Mozilla/5.0'}).json()['real']
+# print(dividendos)
 '''
     P/L < 10                                        | Quanto paga pelo lucro
         Preço/Lucro : cara ou barata
@@ -280,6 +255,3 @@ https://investidor10.com.br/api/cotacoes/acao/chart/BRAP4/
 ((precoFinal - precoInicial) / precoInicial) * 100;
 
     '''
-
-
-

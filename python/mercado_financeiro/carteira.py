@@ -13,14 +13,14 @@ CARTEIRA =[
 "SANB3",
 # "BRBI11",
 
+#SANEAMENTO
+# "SBSB3",
 
 #ELETRICAS
 "TAEE3",
 "CMIG4",
 "ISAE3",
-# 'AURE3',
-# "ENGI3",
-# "AXIA3",
+"ALUP4",
 
 #CLORO
 "UNIP6",
@@ -38,7 +38,7 @@ CARTEIRA =[
 
 #PETROLEO
 "PETR4",
-# "RECV3",
+"RECV3",
 
 #CELULOSE
 "KLBN3",
@@ -48,7 +48,7 @@ CARTEIRA =[
 # "CGAS5",
 
 #HOLDING
-"BRAP4"
+# "BRAP4"
 
 #ARMAS
 # "TASA4"

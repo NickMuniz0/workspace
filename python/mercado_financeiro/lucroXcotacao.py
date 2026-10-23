@@ -1,4 +1,5 @@
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import re
 
 import pandas as pd
@@ -13,6 +14,12 @@ ANOS = ["2021", "2022", "2023", "2024", "2025", "Atual"]
 headers = {"user-agent": "Mozilla/5.0"}
 
 
+def get_json(url):
+    response = requests.get(url, headers=headers, timeout=(5, 20))
+    response.raise_for_status()
+    return response.json()
+
+
 def normalizar_tickers(tickers):
     """Normaliza a lista de tickers recebida por parâmetro."""
     lista = []
@@ -25,13 +32,30 @@ def normalizar_tickers(tickers):
 # -----------------------------
 # Funções utilitárias
 # -----------------------------
-def buscar_ticker(nome: str):
-    """Busca o company_id e id do ticker pelo nome."""
+def carregar_tickers_disponiveis():
+    """Carrega uma vez os identificadores de todos os tickers."""
     url = "https://investidor10.com.br/api/get-tickers/"
-    tickers = requests.get(url, headers=headers).json()["data"]
-    df = pd.DataFrame(tickers)
-    ativo = df[df["name"] == nome][["company_id", "id"]]
-    return int(ativo["company_id"].values[0]), int(ativo["id"].values[0])
+    return {
+        ativo["name"]: (int(ativo["company_id"]), int(ativo["id"]))
+        for ativo in get_json(url)["data"]
+    }
+
+
+def processar_ticker(ticker: str, mapa_tickers: dict) -> pd.DataFrame:
+    """Carrega e consolida os dados de um ticker."""
+    try:
+        company_id, ticker_id = mapa_tickers[ticker]
+    except KeyError as erro:
+        raise ValueError(f"Ticker não encontrado: {ticker}") from erro
+
+    df = carregar_balanco(company_id)
+    monetarios, percentuais = separar_tabelas(df)
+    cotacoes = carregar_cotacoes(ticker)
+    preco_atual = carregar_preco_atual(ticker_id)
+    indicadores = carregar_indicadores_completos(ticker_id)
+    dividendo = dividendos_medio(ticker)
+
+    return juntar_dados(monetarios, cotacoes, preco_atual, indicadores, ticker, dividendo)
 
 def limpar_valor(x):
     """Limpa valores monetários e converte para float."""
@@ -63,7 +87,7 @@ def limpar_percentual(x):
 def carregar_balanco(company_id: int) -> pd.DataFrame:
     """Carrega balanço anual da empresa."""
     url = f"https://investidor10.com.br/api/balancos/balancoresultados/chart/{company_id}/5/yearly/"
-    historico = requests.get(url, headers=headers).json()
+    historico = get_json(url)
     df = pd.DataFrame(historico)
     df = df.rename(columns={
         df.columns[0]: "Indicador",
@@ -96,7 +120,7 @@ def separar_tabelas(df: pd.DataFrame):
 def carregar_cotacoes(ticker: str) -> pd.DataFrame:
     """Carrega histórico de cotações do ticker."""
     url = f"https://investidor10.com.br/api/cotacao-lucro/{ticker}/"
-    cotacao_data = requests.get(url, headers=headers).json()
+    cotacao_data = get_json(url)
     df_cotacao = pd.DataFrame(cotacao_data).T
     df_cotacao = df_cotacao[df_cotacao.index.str.isdigit()]
     df_cotacao.index = df_cotacao.index.astype(str)
@@ -106,13 +130,13 @@ def carregar_cotacoes(ticker: str) -> pd.DataFrame:
 def carregar_preco_atual(id: int) -> float:
     """Carrega preço atual da ação."""
     url = f"https://investidor10.com.br/api/cotacao/ticker/{id}"
-    cotacao = requests.get(url, headers=headers).json()
+    cotacao = get_json(url)
     return float(cotacao["price"])
 
 def carregar_indicadores_completos(id: int) -> pd.DataFrame:
     """Carrega histórico de indicadores financeiros e organiza em formato tabular."""
     url = f"https://investidor10.com.br/api/historico-indicadores/{id}/5/?v=2"
-    indicadores = requests.get(url, headers=headers).json()
+    indicadores = get_json(url)
 
     # Transformar cada indicador em linhas com ano e valor
     registros = []
@@ -161,7 +185,7 @@ def juntar_dados(monetarios, cotacoes, preco_atual, indicadores, ticker: str, di
     return final_df
 
 def dividendos_medio(acao):
-    dividendos = requests.get(f'https://investidor10.com.br/api/dividendos/chart/{acao}/1825', headers=headers).json()
+    dividendos = get_json(f'https://investidor10.com.br/api/dividendos/chart/{acao}/1825')
     df = pd.DataFrame(dividendos)
     df = df.rename(columns={"created_at":"Ano","price":"dividendo"})
     df["Ano"] = df["Ano"].astype(str) # NAO PODE RETIRAR DEVIDO A COLUNA DE ANO
@@ -187,22 +211,21 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    tickers = normalizar_tickers(args.tickers) if args.tickers else ["UNIP6", "CMIG4"]
+    tickers = normalizar_tickers(args.tickers) if args.tickers else ["UNIP6", "CMIG4","CMIN3","VALE3"]
 
-    resultados = []
-    for ticker in tickers:
-        company_id, id = buscar_ticker(ticker)
-        df = carregar_balanco(company_id)
-        monetarios, percentuais = separar_tabelas(df)
-        cotacoes = carregar_cotacoes(ticker)
-        preco_atual = carregar_preco_atual(id)
-        indicadores = carregar_indicadores_completos(id)
-        dividendo = dividendos_medio(ticker)
-
-        final_df = juntar_dados(monetarios, cotacoes, preco_atual, indicadores, ticker, dividendo)
-        resultados.append(final_df)
+    tickers_disponiveis = carregar_tickers_disponiveis()
+    max_workers = min(9, len(tickers))
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        resultados = list(
+            executor.map(
+                lambda ticker: processar_ticker(ticker, tickers_disponiveis),
+                tickers
+            )
+        )
 
     df_final = pd.concat(resultados, ignore_index=True)
 
     print("\nDados consolidados:")
-    print(df_final)
+    # print(df_final)
+    # Salvar em CSV
+    df_final.to_csv("dados_consolidados.csv", index=False)

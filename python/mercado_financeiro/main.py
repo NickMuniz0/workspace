@@ -78,11 +78,11 @@ class Ativo:
         if desvalorizacao_media > 0:
             resultado = ""
         elif desvalorizacao_media <= -20 or desvalorizacao_max <= -30:
-            resultado = "Forte Desconto"
+            resultado = "F Desconto"
         elif desvalorizacao_media <= -10 or desvalorizacao_max <= -15:
-            resultado = "Moderado Desconto"
+            resultado = "M Desconto"
         else:
-            resultado = "Leve Desconto"
+            resultado = "L Desconto"
 
         return resultado
 
@@ -118,25 +118,32 @@ class Ativo:
 
             # 3. Desconto consolidado
             desconto_status = self.avaliar_desconto(preco_atual, preco_medio, preco_max)
-            qtd = (20000/preco_atual)
+            qtd = (10000/preco_atual)
+
+            # Dividend Yield
+            dy = (dividendo_medio / preco_atual)* 100
+            preco_esperado = (dividendo_medio / 10 ) *100
             relatorio.append({
                 "Ticker": ticker,
+                "DY": dy,
                 "GANHO": qtd*dividendo_medio,
                 "QTD": qtd,
-                "Preço Atual": preco_atual,
-                "Preço Médio": preco_medio,
-                "Lucro Atual": lucro_atual,
-                "Lucro Médio": lucro_medio,
-                "Preco Teto": round(dividendo_medio/0.06,2),
-                "Lucro": tendencia_lucro,
+                "P Atual": preco_atual,
+                "P Esperado": preco_esperado,
+                "P Teto": round(dividendo_medio/0.06,2),
+                "P Médio": preco_medio,
+                "L Atual": lucro_atual,
+                "L Médio": lucro_medio,
+                "L": tendencia_lucro,
                 "Dividendos":dividendo_medio,
                 "Desconto":desconto_status,
                 "Payout":payout_atual,
-                "Margem": (1- (preco_atual /preco_medio)) * 100,
+                "Margem": ((preco_atual /preco_medio)-1) * 100,
             })
 
         df = pd.DataFrame(relatorio)
-        df = df.sort_values(by="GANHO", ascending=False)
+        df = df[df["DY"]>= 10]
+        df = df.sort_values(by="DY", ascending=False)
         return df
 
     def gerar_tabela_semaforo(self, dados_consolidados):
@@ -147,9 +154,9 @@ class Ativo:
         for _, row in df.iterrows():
             desconto = row["Desconto"]
 
-            if "Forte Desconto" in desconto :
+            if "F Desconto" in desconto :
                 sinal_compra.append("🟢 Compra")
-            elif "Moderado Desconto" in desconto :
+            elif "M Desconto" in desconto :
                 sinal_compra.append("🟡 Observação")
             else:
                 sinal_compra.append("🔴 Evitar")
